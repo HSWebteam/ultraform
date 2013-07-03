@@ -9,6 +9,12 @@ class Api extends CI_Controller {
 
 	public function index()
 	{
+		// Load ultraform
+		$this->load->library('ultraform');
+		
+		// Create a form
+		$form = new Ultraform();
+		
 		echo 'This is the API speaking';
 	}
 }
