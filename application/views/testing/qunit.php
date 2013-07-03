@@ -4,6 +4,7 @@
     <title>QUnit Test Suite</title>
     <link rel="stylesheet" href="<?php echo base_url('css/qunit-1.12.0.css'); ?>">
 
+    <script>var $base_url = "<?php echo base_url(); ?>"</script>
     <!-- For testing -->
     <script src="<?php echo base_url('scripts/qunit-1.12.0.js'); ?>"></script>
     <script src="<?php echo base_url('scripts/sinon-1.7.3.js'); ?>"></script>
@@ -13,6 +14,8 @@
     <script src="<?php echo base_url('scripts/jquery.validVal-4.4.1-min.js'); ?>"></script>
     <script src="<?php echo base_url('scripts/underscore.js'); ?>"></script>
     <script src="<?php echo base_url('scripts/backbone.js'); ?>"></script>
+    <!-- Validation -->
+    <script src="<?php echo base_url('scripts/jquery.validVal-4.4.1-min.js'); ?>"></script>
     <!-- Your application -->
     <script src="<?php echo base_url('scripts/ultraform.js'); ?>"></script>
     <!-- Your tests -->
@@ -24,5 +27,6 @@
     <div id="qunit-testrunner-toolbar"></div>
     <h2 id="qunit-userAgent"></h2>
     <ol id="qunit-tests">test markup, hidden.</ol>
+    <div id="qunit-fixture"></div>
 </body>
 </html>

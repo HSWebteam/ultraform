@@ -11,6 +11,21 @@ class Testing extends CI_Controller {
 		$this->load->view('testing/qunit');
 	}
 
+	public function temp()
+	{
+		$this->load->helper('url');
+		$this->load->view('testing/temp');
+	}
+
+	/**
+	* Form for testing validVal/Backbone, copied HTML5 example from validVal webiste
+	*/
+	public function form1()
+	{
+		$this->load->helper('url');
+		$this->load->view('testing/form1');
+	}
+
 	/**
 	* testobjects -- Mocks the API
 	*/
