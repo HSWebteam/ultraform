@@ -163,7 +163,7 @@ label {
 
 
 textarea, select,
-input[type='text'], input[type='password'], input[type='number'], input[type='email'], input[type='url'] {
+input[type='text'], input[type='password'], input.number, input[type='email'], input[type='url'] {
 	background-color: #fff;
 	border: solid 1px #999;
 	padding: 5px;
@@ -177,7 +177,7 @@ textarea {
 	height: 100px;
 }
 textarea,
-input[type='text'], input[type='password'], input[type='number'], input[type='email'], input[type='url'] {
+input[type='text'], input[type='password'], input.number, input[type='email'], input[type='url'] {
 	width: 240px;
 }
 select {
@@ -191,16 +191,16 @@ input[type='radio'], input[type='checkbox'] {
 }
 
 textarea.focus, select.focus,
-input[type='text'].focus, input[type='password'].focus, input[type='number'].focus, input[type='email'].focus, input[type='url'].focus {
+input[type='text'].focus, input[type='password'].focus, input.number.focus, input[type='email'].focus, input[type='url'].focus {
 	border-color: #000 !important;
 }
 textarea.inactive, select.inactive, option.inactive,
-input[type='text'].inactive, input[type='password'].inactive, input[type='number'].inactive, input[type='email'].inactive, input[type='url'].inactive {
+input[type='text'].inactive, input[type='password'].inactive, input.number.inactive, input[type='email'].inactive, input[type='url'].inactive {
 	color: #999;
 	font-style: italic;
 }
 textarea.invalid, select.invalid,
-input[type='text'].invalid, input[type='password'].invalid, input[type='number'].invalid, input[type='email'].invalid, input[type='url'].invalid {
+input[type='text'].invalid, input[type='password'].invalid, input.number.invalid, input[type='email'].invalid, input[type='url'].invalid {
 	border-color: red;
 }
 
@@ -242,7 +242,7 @@ input[type='text'].required, textarea.required {
 	</div>
 	<div>
 		<label for="number_1">Number</label>
-		<input id="number_1" type="number" class="number" name="number_1" value="" />
+		<input id="number_1" class="number" name="number_1" value="" />
 	</div>
 	<div>
 		<label for="email_1">E-mail</label>
@@ -289,7 +289,7 @@ input[type='text'].required, textarea.required {
 	</div>
 	<div>
 		<label for="number_2">Number</label>
-		<input id="number_2" type="number" class="number" name="number_2" value="" />
+		<input id="number_2" class="number" name="number_2" value="" />
 	</div>
 	<div>
 		<label for="email_2">E-mail</label>

@@ -37,7 +37,8 @@
 
       initialize: function() {
         this.on('change', function() {
-          alert('the model has been changed');
+          console.log('MODEL -- model "' + this.cid + '" has been changed');
+          console.dir({'model-attributes':this.attributes});
         });
       }
 
@@ -84,7 +85,7 @@
               var fieldName = that.getFieldName(this);
 
               // for debugging
-              console.log(fieldName + ' has been changed to VALID: ' + $(this).val());
+              console.log('VIEW -- ' + fieldName + ' changed to ' + JSON.stringify($(this).val()) + ' (valid)');
 
               // udpate the model
               that.model.set(fieldName, $f.val());
@@ -97,7 +98,7 @@
 
               // for debugging
               var fieldName = that.getFieldName(this);
-              console.log(fieldName + ' BECAME INVALID: ' + $(this).val());
+              console.log('VIEW -- ' + fieldName + ' changed to ' + JSON.stringify($(this).val()) + ' (INVALID)');
             }
           }
 
