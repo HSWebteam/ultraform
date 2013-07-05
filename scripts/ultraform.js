@@ -5,142 +5,183 @@
 
 /* Requirements:
  * - Backbone.js
- * - jQuery.validVal
+ * - Mustache.js
+ * - Underscore.js
+ * - jQuery.js
  */
 
-//alias the global object
-//alias jQuery so we can potentially use other libraries that utilize $
-//alias Backbone to save us on some typing
-(function(exports, $, bb){
+console.log('loading ultraform');
 
-  //document ready
-  $(function(){
 
-    /**
-    ***************************************
-    * Cached Globals
-    ***************************************
-    */
-    var $window, $body, $document;
+/**
+***************************************
+* The Ultraform Namespace
+***************************************
+*/
 
-    $window  = $(window);
-    $document = $(document);
-    $body   = $('body');
+var Ultraform = {};
 
-    /**
-    ***************************************
-    * The Ultraform model
-    ***************************************
-    */
+/**
+***************************************
+* MODEL: FormModel
+* The Ultraform Model for a <form>
+***************************************
+*/
 
-    var UltraformModel = bb.Model.extend({
+Ultraform.FormModel = Backbone.Model.extend({
 
-      initialize: function() {
-        this.on('change', function() {
-          console.log('MODEL -- model "' + this.cid + '" has been changed');
-          console.dir({'model-attributes':this.attributes});
-        });
-      }
+  elementModels: {},
 
-    });
+  initialize: function() {
 
-    /**
-    ***************************************
-    * All Ultraforms on a page
-    ***************************************
-    */
+    console.log('initializing FormModel');
 
-    var UltraformList = bb.Collection.extend({
-      model: UltraformModel
-    });
+    var model = this;
 
-    /**
-    ***************************************
-    * An Ultraform view
-    ***************************************
-    */
-
-    var UltraformView = bb.View.extend({
-
-      initialize: function() {
-
-        var that = this;
-
-        // activate jQuery.validVal on the form
-        this.$el.validVal({
-
-          validate: {
-            onBlur: false,    // disable validVal automatic validation on blur
-            onSubmit: false   // disable validVal automatic validation on submit
-          },
-
-          fields: {
-            onValid: function() {
-
-              // update the DOM to show this input field is invalid
-              var $f = $(this);
-              $f.add( $f.parent() ).removeClass( 'invalid' );
-
-              // propagate the change to the model
-              var fieldName = that.getFieldName(this);
-
-              // for debugging
-              console.log('VIEW -- ' + fieldName + ' changed to ' + JSON.stringify($(this).val()) + ' (valid)');
-
-              // udpate the model
-              that.model.set(fieldName, $f.val());
-            },
-            onInvalid: function() {
-
-              // update the DOM to NOT show this input field is invalid
-              var $f = $(this);
-              $f.add( $f.parent() ).addClass( 'invalid' );
-
-              // for debugging
-              var fieldName = that.getFieldName(this);
-              console.log('VIEW -- ' + fieldName + ' changed to ' + JSON.stringify($(this).val()) + ' (INVALID)');
-            }
-          }
-
-        });
-
+    // load the model from the server
+    this.fetch({
+      success: function() {
+        Backbone.FormModelOnReady.apply(model);
       },
-
-      events: {
-        "blur input" : "validate",
-        "change select": "validate"
-      },
-
-      validate: function(event) {
-
-        // call jQuery.validVal on the input element
-        $(event.target).trigger( "validate.vv" );
-
-      },
-
-      // get the model property name that corresponds with the DOM element
-      getFieldName: function(DomElement) {
-        // get the element id
-        var id = $(DomElement).attr('id');
-
-        // do something with it ????
-
-        // return the result
-        return id;
+      error: function() {
+        console.error('the model '+this.cid+' could not be loaded');
       }
     });
 
+  }
 
-    /**
-    ***************************************
-    * Export the Ultraform model and list
-    ***************************************
-    */
+});
 
-     exports.UltraformModel = UltraformModel;
-     exports.UltraformList = UltraformList;
-     exports.UltraformView = UltraformView;
+// load all element models of the form model
+Backbone.FormModelOnReady = function() {
 
-  });//end document ready
+  var that = this;
 
-}(this, jQuery, Backbone));
+  // generate the models for the elements
+  // every attribute is an element
+  $.each(this.attributes, function(index, value) {
+
+    // create model for the element
+    that.elementModels[value.name] = new Ultraform.ElementModel({
+      name: value.name,
+      type: value.type,
+      rules: value.rules
+    }, {
+      parent: that
+    });
+
+  });
+
+  // bind the change event after the initialization fetch was performed
+  this.on('change', function() {
+    console.log('MODEL -- model "' + this.cid + '" has been changed');
+    console.dir({'model-attributes':this.attributes});
+  });
+};
+
+/**
+***************************************
+* MODEL: ElementModel
+* The Ultraform Model for a DOM element
+***************************************
+*/
+
+Ultraform.ElementModel = Backbone.Model.extend({
+
+  initialize: function() {
+    console.log('initializing ElementModel '+this.attributes.name);
+  },
+
+  // keep the validate function in the model small
+  // the real work is done in Backbone.Validate
+  validate: function(changedAttributes) {
+    this.validationError = Backbone.Validate(this);
+    if (!_.isEmpty(this.validationError)) {
+      return this.validationError;
+    }
+  }
+
+});
+
+/**
+***************************************
+* The Ultraform Collection
+***************************************
+*/
+
+Ultraform.Collection = Backbone.Collection.extend({
+  model: Ultraform.FormModel
+});
+
+/**
+***************************************
+* The Ultraform View for a <form>
+***************************************
+*/
+
+Ultraform.FormView = Backbone.View.extend({
+
+  initialize: function() {
+  },
+
+  events: {
+    "blur input" : "validate",
+    "change select": "validate"
+  },
+
+  validate: function(event) {
+  },
+
+  // get the model property name that corresponds with the DOM element
+  getFieldName: function(DomElement) {
+    // get the element id
+    var id = $(DomElement).attr('id');
+
+    // do something with it ????
+
+    // return the result
+    return id;
+  }
+
+});
+
+/**
+***************************************
+* The Ultraform View for an <input>
+***************************************
+*/
+
+Ultraform.ElementView = Backbone.View.extend({
+
+  initialize: function() {
+  },
+
+  events: {
+    "blur input" : "validate",
+    "change select": "validate"
+  },
+
+  validate: function(event) {
+  },
+
+  // get the model property name that corresponds with the DOM element
+  getFieldName: function(DomElement) {
+    // get the element id
+    var id = $(DomElement).attr('id');
+
+    // do something with it ????
+
+    // return the result
+    return id;
+  }
+
+});
+
+/**
+***************************************
+* Validation
+***************************************
+*/
+
+Backbone.Validate = function(model, changedAttributes) {
+};

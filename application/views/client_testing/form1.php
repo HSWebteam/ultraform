@@ -231,7 +231,7 @@ input[type='text'].required, textarea.required {
 }
 </style>
 
-<h1>This form IS connected to Backbone and jQuery.validVal:</h1>
+<h1>This is the first form:</h1>
 <p><b>See firebug console for some extra feedback</b></p>
 <form id="form2" class="form-wrapper" action="#ex2" method="post">
 	<div>
@@ -280,7 +280,7 @@ input[type='text'].required, textarea.required {
 		<input type="reset" name="reset_2" value="Reset" />
 	</div>
 </form>
-<h1>This form is NOT connected to Backbone:</h1>
+<h1>This is the second form:</h1>
 <form id="form1" class="form-wrapper" action="#ex1" method="post">
 	<div>
 		<label for="default_1">Placeholder</label>
