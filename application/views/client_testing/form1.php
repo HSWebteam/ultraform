@@ -231,28 +231,32 @@ input[type='text'].required, textarea.required {
 }
 </style>
 
-<h1>This is the first form:</h1>
+<h1>A test form:</h1>
 <p><b>See firebug console for some extra feedback</b></p>
-<form id="form2" class="form-wrapper" action="#ex2" method="post">
-	<div>
-		<label for="default_2">Placeholder</label>
-		<input id="default_2" type="text" name="default_2" value="" size="24" placeholder="Default value" />
+<form id="ufo-33" class="form-wrapper" action="#ex2" method="post">
+	<div id="ufo-33-name">
+		<label for="name">Name</label>
+		<input id="name" type="text" name="default_2" value="" size="24" placeholder="Default value" />
+		<span class="validationError"></span>
 	</div>
-	<div>
-		<label for="req_2">Required</label>
-		<input id="req_2" class="required" type="text" name="req_2" value="" size="24" required="required" />
+	<div id="ufo-33-age">
+		<label for="age">Age</label>
+		<input id="age" class="required" type="text" name="age" value="" size="24" required="required" />
 	</div>
-	<div>
-		<label for="number_2">Number</label>
-		<input id="number_2" class="number" name="number_2" value="" />
+	<div id="ufo-33-cursus">
+		<label for="cursus">Cursus</label>
+		<input id="cursus" class="number" name="cursus" value="" />
+		<span class="validationError"></span>
 	</div>
-	<div>
-		<label for="email_2">E-mail</label>
-		<input id="email_2" type="email" name="email_2" value="" />
+	<div id="ufo-33-duration">
+		<label for="duration">Duration</label>
+		<input id="duration" type="email" name="duration" value="" />
+		<span class="validationError"></span>
 	</div>
-	<div>
-		<label for="url_2">Url</label>
-		<input id="url_2" type="url" name="url_2" value="" />
+	<div id="ufo-33-price">
+		<label for="price">Url</label>
+		<input id="price" type="url" name="price" value="" />
+		<span class="validationError"></span>
 	</div>
 	<div>
 		<label for="select_2">Select</label>
@@ -262,69 +266,10 @@ input[type='text'].required, textarea.required {
 			<option value="val3">Third value</option>
 			<option value="val4">Fourth value</option>
 		</select>
+		<span class="validationError"></span>
 	</div>
-	<div>
-		<label for="check_2">Required</label><span class="checkbox-container">
-			<input id="check_2" type="checkbox" name="check1_1" value="yes" data-vv-requiredgroup="group_1" />
-			<input type="checkbox" name="check2_1" value="yes" data-vv-requiredgroup="group_1" />
-			<input type="checkbox" name="check3_1" value="yes" data-vv-requiredgroup="group_1" />
-		</span></div>
-	<div>
-		<label for="radio_2">Required</label><span class="checkbox-container">
-			<input id="radio_2" type="radio" name="radio_2" value="val1" data-vv-validations="required" />
-			<input type="radio" name="radio_2" value="val2" data-vv-validations="required" />
-			<input type="radio" name="radio_2" value="val3" data-vv-validations="required" />
-		</span></div>
 	<div>
 		<input type="submit" name="submit_2" value="Submit" />
 		<input type="reset" name="reset_2" value="Reset" />
-	</div>
-</form>
-<h1>This is the second form:</h1>
-<form id="form1" class="form-wrapper" action="#ex1" method="post">
-	<div>
-		<label for="default_1">Placeholder</label>
-		<input id="default_1" type="text" name="default_1" value="" size="24" placeholder="Default value" />
-	</div>
-	<div>
-		<label for="req_1">Required</label>
-		<input id="req_1" class="required" type="text" name="req_1" value="" size="24" required="required" />
-	</div>
-	<div>
-		<label for="number_1">Number</label>
-		<input id="number_1" class="number" name="number_1" value="" />
-	</div>
-	<div>
-		<label for="email_1">E-mail</label>
-		<input id="email_1" type="email" name="email_1" value="" />
-	</div>
-	<div>
-		<label for="url_1">Url</label>
-		<input id="url_1" type="url" name="url_1" value="" />
-	</div>
-	<div>
-		<label for="select_1">Select</label>
-		<select id="select_1" class="placeholder" name="select_1" size="1">
-			<option value="">Default value</option>
-			<option value="val2">Second value</option>
-			<option value="val3">Third value</option>
-			<option value="val4">Fourth value</option>
-		</select>
-	</div>
-	<div>
-		<label for="check_1">Required</label><span class="checkbox-container">
-			<input id="check_1" type="checkbox" name="check1_1" value="yes" data-vv-requiredgroup="group_1" />
-			<input type="checkbox" name="check2_1" value="yes" data-vv-requiredgroup="group_1" />
-			<input type="checkbox" name="check3_1" value="yes" data-vv-requiredgroup="group_1" />
-		</span></div>
-	<div>
-		<label for="radio_1">Required</label><span class="checkbox-container">
-			<input id="radio_1" type="radio" name="radio_1" value="val1" data-vv-validations="required" />
-			<input type="radio" name="radio_1" value="val2" data-vv-validations="required" />
-			<input type="radio" name="radio_1" value="val3" data-vv-validations="required" />
-		</span></div>
-	<div>
-		<input type="submit" name="submit_1" value="Submit" />
-		<input type="reset" name="reset_1" value="Reset" />
 	</div>
 </form>

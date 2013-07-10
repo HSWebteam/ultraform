@@ -30,13 +30,6 @@
         // create a model
         that.model = new Ultraform.FormModel({id: 33}, {urlRoot: $base_url+'client_testing/mocks'});
 
-        var MyView = Ultraform.FormView.extend({
-            model: that.model, // associate the view with the model
-            el: $("#form2").get(), // reference the view to the form allready in the DOM
-        });
-
-        // create a view and connect it to the model
-        that.view = new MyView();
     });
 
     </script>

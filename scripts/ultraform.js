@@ -41,43 +41,41 @@ Ultraform.FormModel = Backbone.Model.extend({
     // load the model from the server
     this.fetch({
       success: function() {
-        Backbone.FormModelOnReady.apply(model);
+        model.onLoadForm.apply(model);
       },
       error: function() {
         console.error('the model '+this.cid+' could not be loaded');
       }
     });
 
+  },
+
+  // perform after the form model was loaded
+  onLoadForm: function() {
+    var that = this;
+
+    console.dir({attrs:this.attributes});
+
+    // generate the models for the elements
+    // every attribute is an element
+    $.each(this.attributes, function(index, value) {
+
+      // create model for the element
+      if (! isNaN(parseInt(index, 10))) {
+        that.elementModels[value.name] = new Ultraform.ElementModel({
+          name: value.name,
+          type: value.type,
+          rules: value.rules,
+          id: 'ufo-' + that.id + '-' + value.name
+        }, {
+          parent: that
+        });
+      }
+
+    });
   }
 
 });
-
-// load all element models of the form model
-Backbone.FormModelOnReady = function() {
-
-  var that = this;
-
-  // generate the models for the elements
-  // every attribute is an element
-  $.each(this.attributes, function(index, value) {
-
-    // create model for the element
-    that.elementModels[value.name] = new Ultraform.ElementModel({
-      name: value.name,
-      type: value.type,
-      rules: value.rules
-    }, {
-      parent: that
-    });
-
-  });
-
-  // bind the change event after the initialization fetch was performed
-  this.on('change', function() {
-    console.log('MODEL -- model "' + this.cid + '" has been changed');
-    console.dir({'model-attributes':this.attributes});
-  });
-};
 
 /**
 ***************************************
@@ -90,27 +88,46 @@ Ultraform.ElementModel = Backbone.Model.extend({
 
   initialize: function() {
     console.log('initializing ElementModel '+this.attributes.name);
+
+    var view = new Ultraform.ElementView({
+      model: this,
+      el: $('#' + this.id)
+    });
   },
 
   // keep the validate function in the model small
   // the real work is done in Backbone.Validate
-  validate: function(changedAttributes) {
-    this.validationError = Backbone.Validate(this);
-    if (!_.isEmpty(this.validationError)) {
-      return this.validationError;
+  validate: function(attributes) {
+
+    var rules = this.get('rules').split(' ');
+    var error = '';
+
+    var model = this;
+    var result = false;
+
+    $.each(rules, function(index, rule){
+      var ruleParts = rule.split(':');
+      var ruleName = ruleParts[0];
+      var ruleArgs = ruleParts.splice(1);
+
+      if (ruleName in model.validations) {
+        // execute the validation
+        result = model.validations[ruleName](attributes.value, ruleArgs);
+
+        // break when an error was encountered
+        if (result) return false;
+      }
+    });
+
+    if (result) return result;
+  },
+
+  validations: {
+    required: function(value, args){
+      return (value === '') ? 'Dit veld is verplicht' : false;
     }
   }
 
-});
-
-/**
-***************************************
-* The Ultraform Collection
-***************************************
-*/
-
-Ultraform.Collection = Backbone.Collection.extend({
-  model: Ultraform.FormModel
 });
 
 /**
@@ -122,25 +139,7 @@ Ultraform.Collection = Backbone.Collection.extend({
 Ultraform.FormView = Backbone.View.extend({
 
   initialize: function() {
-  },
-
-  events: {
-    "blur input" : "validate",
-    "change select": "validate"
-  },
-
-  validate: function(event) {
-  },
-
-  // get the model property name that corresponds with the DOM element
-  getFieldName: function(DomElement) {
-    // get the element id
-    var id = $(DomElement).attr('id');
-
-    // do something with it ????
-
-    // return the result
-    return id;
+    console.log('initializing FormView');
   }
 
 });
@@ -154,34 +153,48 @@ Ultraform.FormView = Backbone.View.extend({
 Ultraform.ElementView = Backbone.View.extend({
 
   initialize: function() {
+    console.log('initializing ElementView '+this.$el.prop('id'));
   },
 
   events: {
-    "blur input" : "validate",
-    "change select": "validate"
+    "blur input" : "updateModel",
+    "change select": "updateModel"
   },
 
-  validate: function(event) {
+  updateModel: function(event) {
+
+    var currentValidationError = this.model.validationError;
+    this.model.set('value', $(event.target).val(), {validate: true});
+
+    // check if view needs to update because validation feedback changed
+    if (currentValidationError != this.model.validationError) {
+      // something has changed in the model validation state --> re-render
+      this.render();
+    }
   },
 
-  // get the model property name that corresponds with the DOM element
-  getFieldName: function(DomElement) {
-    // get the element id
-    var id = $(DomElement).attr('id');
+  render: function() {
+    if (this.model.validationError==='')
+    {
+      this.hideValidation();
+    }
+    else
+    {
+      this.showValidation( this.model.validationError );
+    }
+  },
 
-    // do something with it ????
+  // hide the validationerror from the DOM
+  hideValidation: function() {
+    this.$el.find('.validationError').fadeOut();
+    this.$el.removeClass('error');
+  },
 
-    // return the result
-    return id;
+  // show the validationerror in the DOM
+  showValidation: function(html) {
+    this.$el.find('.validationError').html(html).fadeIn();
+    this.$el.addClass('error');
   }
 
 });
 
-/**
-***************************************
-* Validation
-***************************************
-*/
-
-Backbone.Validate = function(model, changedAttributes) {
-};

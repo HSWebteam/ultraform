@@ -38,7 +38,7 @@ class Client_Testing extends CI_Controller {
 		{
 			// return the models for page $pagename
 			$obj = array(
-				array('name' => 'placeholder', 'type' => 'text',   'value' => 'Hendrik Jan van Meerveld', 'rules' => 'required max:20'),
+				array('name' => 'name', 'type' => 'text',   'value' => 'Hendrik Jan van Meerveld', 'rules' => 'required max:20'),
 				array('name' => 'age',  'type' => 'number', 'value' => 37, 'rules' => 'integer min:16 max:100'),
 				array('name' => 'cursus', 'type' => 'text',   'value' => 'Object georienteerd programmeren in Javascript', 'rules' => 'required max:20'),
 				array('name' => 'duration',  'type' => 'number', 'value' => 4, 'rules' => 'integer min:1 max:14'),
