@@ -38,11 +38,51 @@ class Client_Testing extends CI_Controller {
 		{
 			// return the models for page $pagename
 			$obj = array(
-				array('name' => 'name', 'type' => 'text',   'value' => 'Hendrik Jan van Meerveld', 'rules' => 'required max:20'),
-				array('name' => 'age',  'type' => 'number', 'value' => 37, 'rules' => 'integer min:16 max:100'),
-				array('name' => 'cursus', 'type' => 'text',   'value' => 'Object georienteerd programmeren in Javascript', 'rules' => 'required max:20'),
-				array('name' => 'duration',  'type' => 'number', 'value' => 4, 'rules' => 'integer min:1 max:14'),
-				array('name' => 'price',    'type' => 'number', 'value'=> 2500.0, 'rules' => 'number max:3000')
+				'elements' => array(
+					array(
+						'field' => 'name',
+						'label' => 'Naam',
+						'value' => 'Hendrik Jan van Meerveld',
+						'rules' => 'required|max_length[30]'),
+					array(
+						'field' => 'regexp',
+						'label' => 'RegExp',
+						'value' => 'abcabcabc',
+						'rules' => 'regexp_match[/^[abc,]+$/i]'),
+					array(
+						'field' => 'matches',
+						'label' => 'Matches Name',
+						'value' => 'Hendrik Jan van Meerveld',
+						'rules' => 'matches[name]'),
+					array(
+						'field' => 'age',
+						'label' => 'Leeftijd',
+						'value' => 37,
+						'rules' => 'integer|greater_than[15]|less_than[100]'),
+					array(
+						'field' => 'cursus',
+						'label' => 'Cursus',
+						'value' => 'Object georienteerd programmeren in Javascript',
+						'rules' => 'required|max_length[21]'),
+					array(
+						'field' => 'duration',
+						'label' => 'Cursusduur in dagen',
+						'value' => 4,
+						'rules' => 'integer|greater_than[1]|less_than[14]'),
+					array(
+						'field' => 'price',
+						'label' => 'Kosten',
+						'value'=> 2500.0,
+						'rules' => 'numeric|less_than[3000]')
+				),
+				'messages' => array(
+					'required' => 'Het %s veld mag niet leeg blijven.',
+					'regexp_match' => 'Het %s veld moet aan de regular expression %0 voldoen',
+					'max_length' => 'Het %s veld mag niet meer dan %0 tekens bevatten.',
+					'greater_than' => 'De waarde in %s moet groter zijn dan %0.',
+					'less_than' => 'De waarde in %s moet kleiner zijn dan %0.',
+					'matches' => 'Het %s veld moet gelijk zijn aan het %0 veld'
+				)
 			);
 
             // return a json representation of the result

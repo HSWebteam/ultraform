@@ -156,7 +156,7 @@ code {
 
 label {
 	padding: 3px 0 0 20px;
-	width: 100px;
+	width: 130px;
 	display: block;
 	float: left;
 }
@@ -236,7 +236,17 @@ input[type='text'].required, textarea.required {
 <form id="ufo-33" class="form-wrapper" action="#ex2" method="post">
 	<div id="ufo-33-name">
 		<label for="name">Name</label>
-		<input id="name" type="text" name="default_2" value="" size="24" placeholder="Default value" />
+		<input id="name" type="text" name="name" value="" size="24" placeholder="Default value" />
+		<span class="validationError"></span>
+	</div>
+	<div id="ufo-33-regexp">
+		<label for="regexp">RegExp (^[abc,]+$)</label>
+		<input id="regexp" type="text" name="regexp" value="" size="24" />
+		<span class="validationError"></span>
+	</div>
+	<div id="ufo-33-matches">
+		<label for="matches">Matches Name</label>
+		<input id="matches" type="text" name="matches" value="" size="24" />
 		<span class="validationError"></span>
 	</div>
 	<div id="ufo-33-age">
