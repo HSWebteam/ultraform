@@ -27,8 +27,8 @@
     var that = this;
     fix.load($base_url+'client_testing/form1', function() {
 
-        // create a model
-        that.model = new Ultraform.FormModel({id: 33}, {urlRoot: $base_url+'client_testing/mocks'});
+        // initialize
+        Ultraform.initialize( $base_url+'client_testing' );
 
     });
 

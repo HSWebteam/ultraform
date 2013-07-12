@@ -23,6 +23,42 @@ var Ultraform = {};
 
 /**
 ***************************************
+* The Ultraform Initialization
+***************************************
+*/
+
+
+Ultraform.initialize = function(baseUrl){
+
+  // initialize the FormModels
+  $(document).ready(function(){
+
+    // for every ufo-* form in the document
+    $('form[id^="ufo-"]').each(function(index, value){
+
+      var idParts = this.id.split('-');
+
+      // craete the form model for this form
+      var model = new Ultraform.FormModel(
+        {
+          id: idParts[2]
+        },
+        {
+          urlRoot: baseUrl + '/api/' + idParts[1]
+        }
+      );
+
+      // set the url for validations
+      model.validateUrl = baseUrl + '/validate/' + idParts[1] + '/' + idParts[2];
+      model.name = idParts[1];
+
+    });
+  });
+
+};
+
+/**
+***************************************
 * MODEL: FormModel
 * The Ultraform Model for a <form>
 ***************************************
@@ -30,7 +66,7 @@ var Ultraform = {};
 
 Ultraform.FormModel = Backbone.Model.extend({
 
-  initialize: function() {
+  initialize: function(options) {
 
     console.log('initializing FormModel');
 
@@ -40,8 +76,6 @@ Ultraform.FormModel = Backbone.Model.extend({
         console.error('the model '+this.cid+' could not be loaded');
       }
     });
-
-    console.dir({after:this});
 
   },
 
@@ -65,7 +99,9 @@ Ultraform.FormModel = Backbone.Model.extend({
         label: value.label,
         rules: value.rules,
         value: value.value,
-        id: 'ufo-' + model.id + '-' + value.field
+        id: 'ufo-' + model.name + '-' + model.id + '-' + value.field
+      }, {
+        url: model.validateUrl
       });
 
       // set the parent model
@@ -97,6 +133,32 @@ Ultraform.ElementModel = Backbone.Model.extend({
     });
   },
 
+  // first set the value, then validate
+  // (this differs from set('value',value,{validate:true})) in that
+  // the an invalid validation will not prevent setting the value
+  setValueAndValidate: function(value) {
+
+    // set the value, regardless of the validation results
+    this.set('value', value);
+
+    // do the validation
+    this.validate(this.attributes);
+  },
+
+  // state after the last validation, can be valid, invalid or pending
+  validationState: 'valid',
+
+  // pending validations
+  pendingValidations: $.when(''),
+
+  // pending validations array
+  _pendingValidations: [],
+
+  // check if the current validation state is valid
+  isValid: function() {
+    return this.validationState === 'valid';
+  },
+
   // keep the validate function in the model small
   // the real work is done in Backbone.Validate
   validate: function(attributes) {
@@ -111,6 +173,12 @@ Ultraform.ElementModel = Backbone.Model.extend({
     var model = this;
     var error = '';
 
+    var oldState = this.validationState;
+    var oldError = this.validationError;
+
+    var _pendingValidations = [];
+
+    // loop through all rules and perform all validations
     $.each(rules, function(index, rule){
 
       // name of the rule
@@ -122,22 +190,81 @@ Ultraform.ElementModel = Backbone.Model.extend({
       // string containing the arguments
       var ruleArgs = (argsStart==-1) ? [] : rule.slice(argsStart+1, argsEnd).split(SPLIT_ARGS_AT);
 
-      console.log('NAME: '+ruleName+' ARGS: '+ruleArgs.join('|')+' argsStart: '+argsStart+' argsEnd: '+argsEnd+' rule: '+rule );
-
       if (ruleName in model.validations) {
 
         // execute the validation
-        if (! model.validations[ruleName].call(model, attributes.value, ruleArgs)) {
-          // not valid, set message and break the loop
+        var validationResult = model.validations[ruleName].call(model, attributes.value, ruleArgs);
+
+        if (validationResult === false) {
+          // inValid
+
+          // set validation error message
           var message = model.parent.attributes.messages[ruleName];
-          error = model.processMessage(message, attributes.label, ruleArgs);
-          return false; // break
+          var validationError = model.processMessage(message, attributes.label, ruleArgs);
+
+          // create a resolved validation (resolved with a validation error)
+          _pendingValidations.push( $.Deferred().resolve(validationError) );
+
+          // break the loop
+          //return false; // break
+        }
+        else if (validationResult === true) {
+          // Valid
+          // create a resolved validation (resolved with no validation error)
+          _pendingValidations.push( $.Deferred().resolve('') );
+        }
+        else {
+          // result is a deferred
+          // create a pending validation
+          _pendingValidations.push( validationResult );
+
+          // if state changes, trigger an event
+          if (model.validationState!=='pending') {
+            model.trigger('validate:pending');
+            model.validationState = 'pending';
+          }
         }
 
       }
     });
 
-    if (error !== '') return error;
+    // reject all old pending validations
+    $.each(this._pendingValidations, function(index, deferred){
+      deferred.reject();
+    });
+
+    // create a new Deferred for the new validation results
+    this._pendingValidations = _pendingValidations;
+    this.pendingValidations = $.when.apply(this, this._pendingValidations);
+
+    // trigger an event if the validation state or errors change
+    this.pendingValidations.then(function(){
+
+      // translate the arguments to a regular array
+      var data = Array.prototype.slice.call(arguments, 0);
+
+      // get the first error
+      var firstError = '';
+      $.each(data, function(index, value){
+        if (value !== '') {
+          firstError = value;
+          return false;
+        }
+      });
+
+      // if no validation errors were found: set validation state to valid
+      var oldState = model.validationState;
+      var oldError = model.validationError;
+      model.validationState = (firstError==='') ? 'valid' : 'invalid';
+      model.validationError = firstError;
+
+      // if state or error changed, trigger an event
+      if (oldState !== model.validationState || oldError !== model.validationError) {
+        model.trigger('validate:'+model.validationState, model.validationError);
+      }
+
+    });
+
   },
 
   // validation return true for valid values
@@ -202,7 +329,26 @@ Ultraform.ElementModel = Backbone.Model.extend({
       return (value === matchWithValue);
     },
     is_unique: function(value, args){
+      var data = {
+        action: 'is_unique',
+        args: args,
+        value: value
+      };
 
+      // prepare the result
+      var deferred = new $.Deferred();
+
+      // execute the ajax call
+      $.ajax({
+        url: this.url,
+        type: 'POST',
+        dataType: 'json',
+        data: JSON.stringify(data)
+      }).done(function(result){
+        deferred.resolve( result.error );
+      });
+
+      return deferred;
     },
     min_length: function(value, args){
       return (value.length >= args[0]);
@@ -298,6 +444,7 @@ Ultraform.ElementView = Backbone.View.extend({
   initialize: function() {
     console.log('initializing ElementView '+this.$el.prop('id'));
 
+    // *** UPDATE THE MODEL OR THE UI IF NEEDED ***
     // compare the value in the DOM with the value that we got from the model
     var modelValue = this.model.attributes.value;
     var DOMValue = this.$el.find('input, select').val();
@@ -315,6 +462,10 @@ Ultraform.ElementView = Backbone.View.extend({
       console.error(this.el.id + ': The DOM and the API show a different initial value!!');
     }
 
+    // *** ATTACH TO SOME MODEL EVENTS ***
+    this.listenTo(this.model, 'validate:valid', this.onValid);
+    this.listenTo(this.model, 'validate:invalid', this.onInvalid);
+    this.listenTo(this.model, 'validate:pending', this.onValidationPending);
   },
 
   events: {
@@ -322,39 +473,25 @@ Ultraform.ElementView = Backbone.View.extend({
     "change select": "updateModel"
   },
 
+  // sync the model with the UI
   updateModel: function(event) {
-
-    var currentValidationError = this.model.validationError;
-    this.model.set('value', $(event.target).val(), {validate: true});
-
-    // check if view needs to update because validation feedback changed
-    if (currentValidationError != this.model.validationError) {
-      // something has changed in the model validation state --> re-render
-      this.render();
-    }
-  },
-
-  render: function() {
-    if (this.model.validationError==='')
-    {
-      this.hideValidationError();
-    }
-    else
-    {
-      this.showValidationError( this.model.validationError );
-    }
+    this.model.setValueAndValidate( $(event.target).val() );
   },
 
   // hide the validationerror from the DOM
-  hideValidationError: function() {
+  onValid: function() {
     this.$el.find('.validationError').fadeOut();
     this.$el.removeClass('error');
   },
 
   // show the validationerror in the DOM
-  showValidationError: function(html) {
-    this.$el.find('.validationError').html(html).fadeIn();
+  onInvalid: function(error) {
+    this.$el.find('.validationError').html(error).fadeIn();
     this.$el.addClass('error');
+  },
+
+  onValidationPending: function() {
+    // actions to perform while waiting for validation
   }
 
 });

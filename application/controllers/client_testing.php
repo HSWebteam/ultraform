@@ -26,15 +26,56 @@ class Client_Testing extends CI_Controller {
 		$this->load->view('client_testing/form1');
 	}
 
+	/**
+	* testobjects -- Mocks the server validation
+	*/
+	public function validate($forms_name='', $one=null)
+	{
+
+		$input_data = json_decode(trim(file_get_contents('php://input')), true);
+		$action = $input_data['action'];
+		$args   = $input_data['args'];
+		$value  = $input_data['value'];
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST' AND $forms_name=='forms' AND !is_null($one))
+		{
+
+			$result = array(
+				'result' => 'invalid',
+				'error'  => 'the function '.$action.' was not found'
+			);
+
+			if ($action==='is_unique' AND $args[0]!=null) {
+				$not_unique = array('HJ', 'Rik', 'Simon');
+
+				$valid = (array_search($value, $not_unique)===FALSE);
+
+				$result = array(
+					'result' => $valid ? 'valid' : 'invalid',
+					'error'  => $valid ? '' : 'The value '.$value.' allready exists in the column '.$args[0]
+				);
+			}
+
+            // return a json representation of the result
+            $this->output->set_content_type('application/json');
+
+            // return the result
+            $this->output->enable_profiler(FALSE);
+            $this->output->set_output(json_encode($result));
+            return;
+
+		}
+
+	}
 
 	/**
 	* testobjects -- Mocks the API
 	*/
-	public function mocks($one=null)
+	public function api($forms_name='', $one=null)
 	{
 		// for: model.fetch
 		// GET /mocks/33
-		if ($_SERVER['REQUEST_METHOD'] === 'GET' AND !is_null($one))
+		if ($_SERVER['REQUEST_METHOD'] === 'GET' AND $forms_name=='forms' AND !is_null($one))
 		{
 			// return the models for page $pagename
 			$obj = array(
@@ -54,6 +95,11 @@ class Client_Testing extends CI_Controller {
 						'label' => 'Matches Name',
 						'value' => 'Hendrik Jan van Meerveld',
 						'rules' => 'matches[name]'),
+					array(
+						'field' => 'is_unique',
+						'label' => 'Is Unique',
+						'value' => 'Rik',
+						'rules' => 'is_unique[users.username]'),
 					array(
 						'field' => 'age',
 						'label' => 'Leeftijd',
@@ -79,6 +125,7 @@ class Client_Testing extends CI_Controller {
 					'required' => 'Het %s veld mag niet leeg blijven.',
 					'regexp_match' => 'Het %s veld moet aan de regular expression %0 voldoen',
 					'max_length' => 'Het %s veld mag niet meer dan %0 tekens bevatten.',
+					'min_length' => 'Het %s veld moet meer dan %0 tekens bevatten.',
 					'greater_than' => 'De waarde in %s moet groter zijn dan %0.',
 					'less_than' => 'De waarde in %s moet kleiner zijn dan %0.',
 					'matches' => 'Het %s veld moet gelijk zijn aan het %0 veld'

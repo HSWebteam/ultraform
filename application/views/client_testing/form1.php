@@ -229,41 +229,61 @@ input[type='text'].inactive, textarea.inactive, select.inactive, option.inactive
 input[type='text'].required, textarea.required {
 	background: url(../images/required-input.png) right 5px no-repeat;
 }
+.red {
+	color:lightgray;
+	font-style:italic;
+}
+.error .red {
+	display:none;
+}
+.validationError {
+	font-weight:bold;
+}
 </style>
 
 <h1>A test form:</h1>
 <p><b>See firebug console for some extra feedback</b></p>
-<form id="ufo-33" class="form-wrapper" action="#ex2" method="post">
-	<div id="ufo-33-name">
+<form id="ufo-forms-33" class="form-wrapper" action="#ex2" method="post">
+	<div id="ufo-forms-33-name">
 		<label for="name">Name</label>
 		<input id="name" type="text" name="name" value="" size="24" placeholder="Default value" />
 		<span class="validationError"></span>
+		<span class="red">(is required AND may not be longer than 30 characters)</span>
 	</div>
-	<div id="ufo-33-regexp">
+	<div id="ufo-forms-33-regexp">
 		<label for="regexp">RegExp (^[abc,]+$)</label>
 		<input id="regexp" type="text" name="regexp" value="" size="24" />
 		<span class="validationError"></span>
+		<span class="red">(regexp /^[abc,]+$/i must match)</span>
 	</div>
-	<div id="ufo-33-matches">
+	<div id="ufo-forms-33-matches">
 		<label for="matches">Matches Name</label>
 		<input id="matches" type="text" name="matches" value="" size="24" />
 		<span class="validationError"></span>
+		<span class="red">(must be the same as "Name")</span>
 	</div>
-	<div id="ufo-33-age">
+	<div id="ufo-forms-33-is_unique">
+		<label for="is_unique">Is Unique</label>
+		<input id="is_unique" type="text" name="is_unique" value="" size="24" />
+		<span class="validationError"></span>
+		<span class="red">(AJAX: must not be "HJ", "Rik" or "Simon")</span>
+	</div>
+	<div id="ufo-forms-33-age">
 		<label for="age">Age</label>
 		<input id="age" class="required" type="text" name="age" value="" size="24" required="required" />
+		<span class="validationError"></span>
 	</div>
-	<div id="ufo-33-cursus">
+	<div id="ufo-forms-33-cursus">
 		<label for="cursus">Cursus</label>
 		<input id="cursus" class="number" name="cursus" value="" />
 		<span class="validationError"></span>
 	</div>
-	<div id="ufo-33-duration">
+	<div id="ufo-forms-33-duration">
 		<label for="duration">Duration</label>
 		<input id="duration" type="email" name="duration" value="" />
 		<span class="validationError"></span>
 	</div>
-	<div id="ufo-33-price">
+	<div id="ufo-forms-33-price">
 		<label for="price">Url</label>
 		<input id="price" type="url" name="price" value="" />
 		<span class="validationError"></span>
