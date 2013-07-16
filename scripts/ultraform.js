@@ -10,7 +10,7 @@
  * - jQuery.js
  */
 
-console.log('loading ultraform');
+//console.log('loading ultraform');
 
 
 /**
@@ -68,7 +68,7 @@ Ultraform.FormModel = Backbone.Model.extend({
 
   initialize: function(options) {
 
-    console.log('initializing FormModel');
+    //console.log('initializing FormModel');
 
     // load the model from the server
     this.fetch({
@@ -125,7 +125,7 @@ Ultraform.FormModel = Backbone.Model.extend({
 Ultraform.ElementModel = Backbone.Model.extend({
 
   initialize: function() {
-    console.log('initializing ElementModel '+this.attributes.name);
+    //console.log('initializing ElementModel '+this.attributes.name);
 
     var view = new Ultraform.ElementView({
       model: this,
@@ -271,7 +271,7 @@ Ultraform.ElementModel = Backbone.Model.extend({
   validations: {
 
     required: function(value, args){
-      return (value !== '');
+      return ($.trim(value) !== '');
     },
 
     // MARK: this is not a pure function, the "args" argument can be changed
@@ -366,40 +366,46 @@ Ultraform.ElementModel = Backbone.Model.extend({
       return ((! isNaN(value)) && Number(value) < Number(args[0]));
     },
     alpha: function(value, args){
-
+      return (/^[a-zA-Z]+$/).test(value);
     },
     alpha_numeric: function(value, args){
-
+      return (/^[a-zA-Z0-9]+$/).test(value);
     },
     alpha_dash: function(value, args){
-
+      return (/^[a-zA-Z0-9_-]+$/).test(value);
     },
     numeric: function(value, args){
-
+      return (/^[\-+]?[0-9]*\.?[0-9]+$/).test(value);
+    },
+    is_numeric: function(value, args){
+      return (! isNaN(value));
     },
     integer: function(value, args){
-
+      return (/^[\-+]?[0-9]+$/).test(value);
     },
     decimal: function(value, args){
-
+      return (/^[\-+]?[0-9]+\.[0-9]+$/).test(value);
     },
     is_natural: function(value, args){
-
+      return (/^[0-9]+$/).test(value);
     },
     is_natural_no_zero: function(value, args){
-
+      return parseInt(value,10)===0 ? false : (/^[0-9]+$/).test(value);
     },
     valid_email: function(value, args){
-
+      return (/^([a-zA-Z0-9\+_\-]+)(\.[a-zA-Z0-9\+_\-]+)*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,6}$/).test($.trim(value));
     },
     valid_emails: function(value, args){
-
-    },
-    valid_ip: function(value, args){
-
-    },
-    valid_base64: function(value, args){
-
+      elementmodel = this;
+      var emails = value.split(',');
+      var result = true;
+      $.each(emails, function(i, v){
+        if (! elementmodel.validations.valid_email($.trim(v))) {
+          result = false;
+          return false;
+        }
+      });
+      return result;
     }
   },
 
@@ -428,7 +434,7 @@ Ultraform.ElementModel = Backbone.Model.extend({
 Ultraform.FormView = Backbone.View.extend({
 
   initialize: function() {
-    console.log('initializing FormView');
+    //console.log('initializing FormView');
   }
 
 });
@@ -442,7 +448,7 @@ Ultraform.FormView = Backbone.View.extend({
 Ultraform.ElementView = Backbone.View.extend({
 
   initialize: function() {
-    console.log('initializing ElementView '+this.$el.prop('id'));
+    //console.log('initializing ElementView '+this.$el.prop('id'));
 
     // *** UPDATE THE MODEL OR THE UI IF NEEDED ***
     // compare the value in the DOM with the value that we got from the model

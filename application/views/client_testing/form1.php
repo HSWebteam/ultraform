@@ -268,35 +268,71 @@ input[type='text'].required, textarea.required {
 		<span class="validationError"></span>
 		<span class="red">(AJAX: must not be "HJ", "Rik" or "Simon")</span>
 	</div>
+	<div id="ufo-forms-33-alpha">
+		<label for="alpha">Alpha</label>
+		<input id="alpha" type="text" name="alpha" value="" size="24" />
+		<span class="validationError"></span>
+		<span class="red">(only alphabetic characters)</span>
+	</div>
+	<div id="ufo-forms-33-alphanumeric">
+		<label for="alphanumeric">Alphanumeriek</label>
+		<input id="alphanumeric" type="text" name="alphanumeric" value="" size="24" />
+		<span class="validationError"></span>
+		<span class="red">(only alphabetic and numeric characters)</span>
+	</div>
+	<div id="ufo-forms-33-alphadash">
+		<label for="alphadash">Alph, Number, -,_</label>
+		<input id="alphadash" type="text" name="alphadash" value="" size="24" />
+		<span class="validationError"></span>
+		<span class="red">(only alphabetic, numeric and - and _)</span>
+	</div>
+	<div id="ufo-forms-33-numeric">
+		<label for="numeric">Numeric</label>
+		<input id="numeric" type="text" name="numeric" value="" size="24" />
+		<span class="validationError"></span>
+		<span class="red">(only Codeigniter-type numeric)</span>
+	</div>
+	<div id="ufo-forms-33-is_numeric">
+		<label for="is_numeric">Is_numeric</label>
+		<input id="is_numeric" type="text" name="is_numeric" value="" size="24" />
+		<span class="validationError"></span>
+		<span class="red">(only PHP is_numeric values)</span>
+	</div>
 	<div id="ufo-forms-33-age">
-		<label for="age">Age</label>
-		<input id="age" class="required" type="text" name="age" value="" size="24" required="required" />
+		<label for="age">Leeftijd</label>
+		<input id="age" type="text" name="age" value="" size="24" />
 		<span class="validationError"></span>
+		<span class="red">(integer, &gt; 15, &lt; 100)</span>
 	</div>
-	<div id="ufo-forms-33-cursus">
-		<label for="cursus">Cursus</label>
-		<input id="cursus" class="number" name="cursus" value="" />
+	<div id="ufo-forms-33-decimal">
+		<label for="decimal">Decimaal</label>
+		<input id="decimal" type="text" name="decimal" value="" />
 		<span class="validationError"></span>
+		<span class="red">(decimal, at least one number after the point)</span>
 	</div>
-	<div id="ufo-forms-33-duration">
-		<label for="duration">Duration</label>
-		<input id="duration" type="email" name="duration" value="" />
+	<div id="ufo-forms-33-is_natural">
+		<label for="is_natural">Natuurlijk</label>
+		<input id="is_natural" type="text" name="is_natural" value="" />
 		<span class="validationError"></span>
+		<span class="red">(natural number)</span>
 	</div>
-	<div id="ufo-forms-33-price">
-		<label for="price">Url</label>
-		<input id="price" type="url" name="price" value="" />
+	<div id="ufo-forms-33-is_natural_no_zero">
+		<label for="is_natural_no_zero">Natuurlijk &gt; 0</label>
+		<input id="is_natural_no_zero" type="text" name="is_natural_no_zero" value="" />
 		<span class="validationError"></span>
+		<span class="red">(natural number, non-zero)</span>
 	</div>
-	<div>
-		<label for="select_2">Select</label>
-		<select id="select_2" class="placeholder" name="select_2" size="1">
-			<option value="">Default value</option>
-			<option value="val2">Second value</option>
-			<option value="val3">Third value</option>
-			<option value="val4">Fourth value</option>
-		</select>
+	<div id="ufo-forms-33-email">
+		<label for="email">Email</label>
+		<input id="email" type="text" name="email" value="" />
 		<span class="validationError"></span>
+		<span class="red">(valid email address)</span>
+	</div>
+	<div id="ufo-forms-33-emails">
+		<label for="emails">Emails</label>
+		<input id="emails" type="text" name="emails" value="" />
+		<span class="validationError"></span>
+		<span class="red">(valid email addresses)</span>
 	</div>
 	<div>
 		<input type="submit" name="submit_2" value="Submit" />

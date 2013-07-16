@@ -101,25 +101,60 @@ class Client_Testing extends CI_Controller {
 						'value' => 'Rik',
 						'rules' => 'is_unique[users.username]'),
 					array(
+						'field' => 'alpha',
+						'label' => 'Alpha',
+						'value' => 'abc',
+						'rules' => 'alpha'),
+					array(
+						'field' => 'alphanumeric',
+						'label' => 'Alphanumeric',
+						'value' => 'abc123',
+						'rules' => 'alpha_numeric'),
+					array(
+						'field' => 'alphadash',
+						'label' => 'Alphadash',
+						'value' => '_abc-123',
+						'rules' => 'alpha_dash'),
+					array(
+						'field' => 'numeric',
+						'label' => 'Numeric',
+						'value' => '12.50',
+						'rules' => 'numeric'),
+					array(
+						'field' => 'is_numeric',
+						'label' => 'Is Numeric',
+						'value' => '12.50e-10',
+						'rules' => 'is_numeric'),
+					array(
 						'field' => 'age',
 						'label' => 'Leeftijd',
 						'value' => 37,
 						'rules' => 'integer|greater_than[15]|less_than[100]'),
 					array(
-						'field' => 'cursus',
-						'label' => 'Cursus',
-						'value' => 'Object georienteerd programmeren in Javascript',
-						'rules' => 'required|max_length[21]'),
+						'field' => 'decimal',
+						'label' => 'Decimaal',
+						'value' => '10.1',
+						'rules' => 'decimal'),
 					array(
-						'field' => 'duration',
-						'label' => 'Cursusduur in dagen',
-						'value' => 4,
-						'rules' => 'integer|greater_than[1]|less_than[14]'),
+						'field' => 'is_natural',
+						'label' => 'Natuurlijk',
+						'value' => '13',
+						'rules' => 'is_natural'),
 					array(
-						'field' => 'price',
-						'label' => 'Kosten',
-						'value'=> 2500.0,
-						'rules' => 'numeric|less_than[3000]')
+						'field' => 'is_natural_no_zero',
+						'label' => 'Natuurlijk &gt; 0',
+						'value' => '14',
+						'rules' => 'is_natural_no_zero'),
+					array(
+						'field' => 'email',
+						'label' => 'Email',
+						'value' => 'h.j.vanmeerveld@uu.nl',
+						'rules' => 'valid_email'),
+					array(
+						'field' => 'emails',
+						'label' => 'Emails',
+						'value' => 'h.j.vanmeerveld@uu.nl, s.kort@uu.nl',
+						'rules' => 'valid_emails')
 				),
 				'messages' => array(
 					'required' => 'Het %s veld mag niet leeg blijven.',
@@ -128,7 +163,18 @@ class Client_Testing extends CI_Controller {
 					'min_length' => 'Het %s veld moet meer dan %0 tekens bevatten.',
 					'greater_than' => 'De waarde in %s moet groter zijn dan %0.',
 					'less_than' => 'De waarde in %s moet kleiner zijn dan %0.',
-					'matches' => 'Het %s veld moet gelijk zijn aan het %0 veld'
+					'matches' => 'Het %s veld moet gelijk zijn aan het %0 veld',
+					'alpha' => 'Het %s veld mag alleen letters bevatten',
+					'alpha_numeric' => 'Het %s veld mag alleen letters en cijfers bevatten',
+					'alpha_dash' => '%s mag alleen letters, cijfers, minteken en underscore bevatten',
+					'numeric' => '%s mag alleen getallen bevatten (Codeigniter type numbers)',
+					'is_numeric' => '%s mag alleen getallen bevatten (PHP type numbers)',
+					'integer' => 'Het %s veld mag alleen integers bevatten',
+					'decimal' => 'Het %s veld moet een decimale waarde bevatten',
+					'is_natural' => 'Het %s veld moet een natuurlijk getal bevatten',
+					'is_natural_no_zero' => 'Het %s veld moet een natuurlijk getal boven nul bevatten',
+					'valid_email' => 'Het %s veld moet een geldig email adres bevatten',
+					'valid_emails' => '%s veld moet geldige emailadressen bevatten, gescheiden door komma\'s'
 				)
 			);
 
