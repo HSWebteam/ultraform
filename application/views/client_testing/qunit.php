@@ -19,7 +19,7 @@
     <!-- Your application -->
     <script src="<?php echo base_url('scripts/ultraform.js'); ?>"></script>
     <!-- Your tests -->
-    <script src="<?php echo base_url('scripts/tests.js'); ?>"></script>
+    <script src="<?php echo base_url('scripts/client_tests.js'); ?>"></script>
 </head>
 <body>
     <h1 id="qunit-header">QUnit Test Suite</h1>

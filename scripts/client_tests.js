@@ -3,7 +3,10 @@
 // Test the Ultraform model
 module('Ultraform model sanity check', {
 	setup: function() {
-		this.model = new UltraformModel({name: 'myUltraform', id:'myId', count:33});
+		this.model = new Ultraform.FormModel([
+			{name: 'name', type:'text',   value:'Hendrik Jan van Meerveld', rules:'required'},
+			{name: 'age',  type:'number', value:'37', rules:''}
+		]);
 	},
 	teardown: function() {
 		delete this.model;
@@ -29,10 +32,10 @@ test('model properties are set correctly', function() {
 // Test the UltraformList collection
 module('UltraformList collection check', {
 	setup: function() {
-		this.collection = new UltraformList();
-		this.collection.add(new UltraformModel({name: 'ultraform3'}));
-		this.collection.add(new UltraformModel({name: 'ultraform1'}));
-		this.collection.add(new UltraformModel({name: 'ultraform2'}));
+		this.collection = new Ultraform.Collection();
+		this.collection.add(new Ultraform.Model({name: 'ultraform3'}));
+		this.collection.add(new Ultraform.Model({name: 'ultraform1'}));
+		this.collection.add(new Ultraform.Model({name: 'ultraform2'}));
 	},
 	teardown: function() {
 		delete window.errors;
@@ -54,10 +57,10 @@ test('UltraformList collection is set correctly', function() {
 
 module('API Calls test', {
 	setup: function() {
-		this.model1 = new UltraformModel({name: 'ultraform1', id:33}, {urlRoot: '/mocks'});
-		this.model2 = new UltraformModel({name: 'ultraform2'}, {urlRoot: '/mocks'});
-		this.model3 = new UltraformModel({name: 'ultraform3', id:35}, {urlRoot: '/mocks'});
-		this.collection = new UltraformList([this.model1, this.model2, this.model3], {
+		this.model1 = new Ultraform.Model({name: 'ultraform1', id:33}, {urlRoot: '/mocks'});
+		this.model2 = new Ultraform.Model({name: 'ultraform2'}, {urlRoot: '/mocks'});
+		this.model3 = new Ultraform.Model({name: 'ultraform3', id:35}, {urlRoot: '/mocks'});
+		this.collection = new Ultraform.Collection([this.model1, this.model2, this.model3], {
 			url: '/mocks'
 		});
 	},
@@ -73,7 +76,7 @@ module('API Calls test', {
 // test correct id was given to model
 test('copying the id from attribute hash to object', function() {
 	expect(1);
-	this.model = new UltraformModel({name: 'UFO', id:33});
+	this.model = new Ultraform.Model({name: 'UFO', id:33});
 	equal(this.model.id, 33, 'confirm id set to 33');
 });
 
@@ -81,7 +84,7 @@ test('copying the id from attribute hash to object', function() {
 test('fireing custom evenst on change', function() {
 	expect(1);
 	var spy = this.spy();
-	this.model = new UltraformModel({name: 'UFO'});
+	this.model = new Ultraform.Model({name: 'UFO'});
 	this.model.bind('change', spy);
 	this.model.set({done: "changing model"});
 	ok(spy.calledOnce, 'a change event was correctly fired once');
@@ -90,7 +93,7 @@ test('fireing custom evenst on change', function() {
 // fireing validate event on state change
 test('fireing validate event on change', function() {
 	expect(1);
-	this.model = new UltraformModel({name: 'UFO', id:33});
+	this.model = new Ultraform.Model({name: 'UFO', id:33});
 	var stub = this.stub(this.model, 'validate');
 	this.model.set({done: "changing model"}, {validate: true});
 	ok(stub.called, 'validate fired when model changed');
@@ -100,7 +103,7 @@ test('fireing validate event on change', function() {
 test('saving an existing object', function() {
 	expect(5);
 	var stub = this.stub(jQuery, 'ajax');
-	this.model = new UltraformModel({name: 'UFO', id:33}, {urlRoot: '/mocks'});
+	this.model = new Ultraform.Model({name: 'UFO', id:33}, {urlRoot: '/mocks'});
 	this.model.set({done: "changing model"});
 	this.model.save();
 
@@ -115,7 +118,7 @@ test('saving an existing object', function() {
 test('saving a new object', function() {
 	expect(5);
 	var stub = this.stub(jQuery, 'ajax');
-	this.model = new UltraformModel({name: 'UFO'}, {urlRoot: '/mocks'});
+	this.model = new Ultraform.Model({name: 'UFO'}, {urlRoot: '/mocks'});
 	this.model.save(); // model2 has no id
 
 	ok(this.model.isNew(), 'the model is considered \'new\' because it does not have an id');
@@ -129,7 +132,7 @@ test('saving a new object', function() {
 test('deleting an object', function() {
 	expect(5);
 	var stub = this.stub(jQuery, 'ajax');
-	this.model = new UltraformModel({name: 'UFO', id:33}, {urlRoot: '/mocks'});
+	this.model = new Ultraform.Model({name: 'UFO', id:33}, {urlRoot: '/mocks'});
 	this.model.destroy(); // model1 has an id
 
 	ok(! this.model.isNew(), 'the model is considered \'not new\' because it has an id');
@@ -143,7 +146,7 @@ test('deleting an object', function() {
 test('getting an object', function() {
 	expect(4);
 	var stub = this.stub(jQuery, 'ajax');
-	this.model = new UltraformModel({id: 33}, {urlRoot:'/mocks'});
+	this.model = new Ultraform.Model({id: 33}, {urlRoot:'/mocks'});
 	this.model.fetch();
 
 	ok(stub.calledOnce, 'URL called once');
@@ -170,20 +173,20 @@ test('getting an object', function() {
 
 /****** TEST VALIDATION ******/
 
-module('Validation with validVal', {
+module('Validation', {
 	setup: function() {
 		// Generate a validating form in #qunit-fixture
 		var fix = $('#qunit-fixture');
 		var that = this;
 		stop();
-		fix.load($base_url+'testing/form1', function() {
+		fix.load($base_url+'client_testing/form1', function() {
 
 			// create a model
-			that.model = new UltraformModel();
+			that.model = new Ultraform.Model();
 
 			// create a view and connect it to the model
-			that.view = new UltraformView({
-				model: this.model, // associate the view with the model
+			that.view = new Ultraform.View({
+				model: that.model, // associate the view with the model
 				el: $("#form2").eq(0) // reference the view to the form allready in the DOM
 			});
 
@@ -198,84 +201,4 @@ module('Validation with validVal', {
 // check form loading
 test('loading testform', function() {
 	equal($("#form1").length, 1, 'the form is loaded');
-});
-
-// $().trigger("validate.vv") is called when we call Backbone.model.validate()
-test('Backbone.model.validate() -> $().trigger("validate.vv")', function() {
-
-	// register $("#form1").trigger() to monitor calls to $("#form1").trigger("validval.vv")
-	var stub1 = this.stub($("#form1"), 'trigger', function() {});
-	var stub2 = this.stub($("#form2"), 'trigger', function() {});
-
-	// call validate() on the model
-	this.model.validate();
-
-	expect(3);
-	ok(! stub1.called, '$("#form1").trigger() not triggered');
-	ok(stub2.calledOnce, '$("#form2").trigger() called once');
-	equal(stub2.getCall(0) && stub2.getCall(0).args[0], 'validval.vv', 'trigger calls validval.vv');
-});
-
-// jquery.validVal.validate() is called once when we try to update the model
-test('validVal.validate() is called once when we try to change the view associated with the form', function() {
-
-	// SET VALUE
-	// focus
-	$('#req_2').focus();
-	// input some text
-	$('#req_2').val('some value');
-	// blurr
-	$('#req_2').blur();
-
-	// register $("#form1").trigger() to monitor calls to $("#form1").trigger("validval.vv")
-	var spy1 = this.spy($("#form1"), 'trigger');
-	var spy2 = this.spy($("#form2"), 'trigger');
-
-	expect(8);
-	ok(! spy1.called, '$("#form1").trigger() not triggered');
-	ok(spy2.calledOnce, '$("#form2").trigger() called once');
-	equal(spy2.getCall(0) && spy2.getCall(0).args[0], 'validval.vv', 'trigger calls validval.vv');
-	equal(this.model.get('req_2'), 'some value', 'model gets updated when input is changed');
-
-	// TRY TO REMOVE VALUE ON REQUIRED FIELD
-	// focus
-	$('#req_2').focus();
-	// input some text
-	$('#req_2').val(''); // set required field to ""
-	// blurr
-	$('#req_2').blur();
-
-	ok(spy2.calledOnce, '$("#form2").trigger() called once');
-	equal(spy2.getCall(0) && spy2.getCall(0).args[0], 'validval.vv', 'trigger calls validval.vv');
-	equal(this.model.get('req_2'), 'some value', 'model is NOT updated when illegal value entered');
-	ok($('#req_2').hasClass('invalid'));
-
-});
-
-// model does not save to the database when validation fails
-
-// check validation shows up
-test('onblur on required empty field adds required class', function() {
-	expect(2);
-	ok(! $('#req_1').hasClass('invalid'), 'when opening the form the required input has no \'invalid\' class');
-
-	// focus and unfocus
-	$('#req_1').focus();
-	$('#req_1').blur();
-
-	ok($('#req_1').hasClass('invalid'), 'after blurring the input, the class \'invalid\' is added');
-});
-
-// check validation does not show up
-test('onblur on required non-empty field does not add required class', function() {
-	expect(2);
-	ok(! $('#req_1').hasClass('invalid'), 'when opening the form the required input has no \'invalid\' class');
-
-	// focus and unfocus
-	// add text to the input
-	$('#req_1').focus();
-	$('#req_1').val('add some text');
-	$('#req_1').blur();
-
-	ok(! $('#req_1').hasClass('invalid'), 'after adding text and blurring, the class \'invalid\' is not added');
 });

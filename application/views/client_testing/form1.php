@@ -156,7 +156,7 @@ code {
 
 label {
 	padding: 3px 0 0 20px;
-	width: 100px;
+	width: 130px;
 	display: block;
 	float: left;
 }
@@ -229,102 +229,113 @@ input[type='text'].inactive, textarea.inactive, select.inactive, option.inactive
 input[type='text'].required, textarea.required {
 	background: url(../images/required-input.png) right 5px no-repeat;
 }
+.red {
+	color:lightgray;
+	font-style:italic;
+}
+.error .red {
+	display:none;
+}
+.validationError {
+	font-weight:bold;
+}
 </style>
 
-<h1>This form IS connected to Backbone and jQuery.validVal:</h1>
+<h1>A test form:</h1>
 <p><b>See firebug console for some extra feedback</b></p>
-<form id="form2" class="form-wrapper" action="#ex2" method="post">
-	<div>
-		<label for="default_2">Placeholder</label>
-		<input id="default_2" type="text" name="default_2" value="" size="24" placeholder="Default value" />
+<form id="ufo-forms-33" class="form-wrapper" action="#ex2" method="post">
+	<div id="ufo-forms-33-name">
+		<label for="name">Name</label>
+		<input id="name" type="text" name="name" value="" size="24" placeholder="Default value" />
+		<span class="validationError"></span>
+		<span class="red">(is required AND may not be longer than 30 characters)</span>
 	</div>
-	<div>
-		<label for="req_2">Required</label>
-		<input id="req_2" class="required" type="text" name="req_2" value="" size="24" required="required" />
+	<div id="ufo-forms-33-regexp">
+		<label for="regexp">RegExp (^[abc,]+$)</label>
+		<input id="regexp" type="text" name="regexp" value="" size="24" />
+		<span class="validationError"></span>
+		<span class="red">(regexp /^[abc,]+$/i must match)</span>
 	</div>
-	<div>
-		<label for="number_2">Number</label>
-		<input id="number_2" class="number" name="number_2" value="" />
+	<div id="ufo-forms-33-matches">
+		<label for="matches">Matches Name</label>
+		<input id="matches" type="text" name="matches" value="" size="24" />
+		<span class="validationError"></span>
+		<span class="red">(must be the same as "Name")</span>
 	</div>
-	<div>
-		<label for="email_2">E-mail</label>
-		<input id="email_2" type="email" name="email_2" value="" />
+	<div id="ufo-forms-33-is_unique">
+		<label for="is_unique">Is Unique</label>
+		<input id="is_unique" type="text" name="is_unique" value="" size="24" />
+		<span class="validationError"></span>
+		<span class="red">(AJAX: must not be "HJ", "Rik" or "Simon")</span>
 	</div>
-	<div>
-		<label for="url_2">Url</label>
-		<input id="url_2" type="url" name="url_2" value="" />
+	<div id="ufo-forms-33-alpha">
+		<label for="alpha">Alpha</label>
+		<input id="alpha" type="text" name="alpha" value="" size="24" />
+		<span class="validationError"></span>
+		<span class="red">(only alphabetic characters)</span>
 	</div>
-	<div>
-		<label for="select_2">Select</label>
-		<select id="select_2" class="placeholder" name="select_2" size="1">
-			<option value="">Default value</option>
-			<option value="val2">Second value</option>
-			<option value="val3">Third value</option>
-			<option value="val4">Fourth value</option>
-		</select>
+	<div id="ufo-forms-33-alphanumeric">
+		<label for="alphanumeric">Alphanumeriek</label>
+		<input id="alphanumeric" type="text" name="alphanumeric" value="" size="24" />
+		<span class="validationError"></span>
+		<span class="red">(only alphabetic and numeric characters)</span>
 	</div>
-	<div>
-		<label for="check_2">Required</label><span class="checkbox-container">
-			<input id="check_2" type="checkbox" name="check1_1" value="yes" data-vv-requiredgroup="group_1" />
-			<input type="checkbox" name="check2_1" value="yes" data-vv-requiredgroup="group_1" />
-			<input type="checkbox" name="check3_1" value="yes" data-vv-requiredgroup="group_1" />
-		</span></div>
-	<div>
-		<label for="radio_2">Required</label><span class="checkbox-container">
-			<input id="radio_2" type="radio" name="radio_2" value="val1" data-vv-validations="required" />
-			<input type="radio" name="radio_2" value="val2" data-vv-validations="required" />
-			<input type="radio" name="radio_2" value="val3" data-vv-validations="required" />
-		</span></div>
+	<div id="ufo-forms-33-alphadash">
+		<label for="alphadash">Alph, Number, -,_</label>
+		<input id="alphadash" type="text" name="alphadash" value="" size="24" />
+		<span class="validationError"></span>
+		<span class="red">(only alphabetic, numeric and - and _)</span>
+	</div>
+	<div id="ufo-forms-33-numeric">
+		<label for="numeric">Numeric</label>
+		<input id="numeric" type="text" name="numeric" value="" size="24" />
+		<span class="validationError"></span>
+		<span class="red">(only Codeigniter-type numeric)</span>
+	</div>
+	<div id="ufo-forms-33-is_numeric">
+		<label for="is_numeric">Is_numeric</label>
+		<input id="is_numeric" type="text" name="is_numeric" value="" size="24" />
+		<span class="validationError"></span>
+		<span class="red">(only PHP is_numeric values)</span>
+	</div>
+	<div id="ufo-forms-33-age">
+		<label for="age">Leeftijd</label>
+		<input id="age" type="text" name="age" value="" size="24" />
+		<span class="validationError"></span>
+		<span class="red">(integer, &gt; 15, &lt; 100)</span>
+	</div>
+	<div id="ufo-forms-33-decimal">
+		<label for="decimal">Decimaal</label>
+		<input id="decimal" type="text" name="decimal" value="" />
+		<span class="validationError"></span>
+		<span class="red">(decimal, at least one number after the point)</span>
+	</div>
+	<div id="ufo-forms-33-is_natural">
+		<label for="is_natural">Natuurlijk</label>
+		<input id="is_natural" type="text" name="is_natural" value="" />
+		<span class="validationError"></span>
+		<span class="red">(natural number)</span>
+	</div>
+	<div id="ufo-forms-33-is_natural_no_zero">
+		<label for="is_natural_no_zero">Natuurlijk &gt; 0</label>
+		<input id="is_natural_no_zero" type="text" name="is_natural_no_zero" value="" />
+		<span class="validationError"></span>
+		<span class="red">(natural number, non-zero)</span>
+	</div>
+	<div id="ufo-forms-33-email">
+		<label for="email">Email</label>
+		<input id="email" type="text" name="email" value="" />
+		<span class="validationError"></span>
+		<span class="red">(valid email address)</span>
+	</div>
+	<div id="ufo-forms-33-emails">
+		<label for="emails">Emails</label>
+		<input id="emails" type="text" name="emails" value="" />
+		<span class="validationError"></span>
+		<span class="red">(valid email addresses)</span>
+	</div>
 	<div>
 		<input type="submit" name="submit_2" value="Submit" />
 		<input type="reset" name="reset_2" value="Reset" />
-	</div>
-</form>
-<h1>This form is NOT connected to Backbone:</h1>
-<form id="form1" class="form-wrapper" action="#ex1" method="post">
-	<div>
-		<label for="default_1">Placeholder</label>
-		<input id="default_1" type="text" name="default_1" value="" size="24" placeholder="Default value" />
-	</div>
-	<div>
-		<label for="req_1">Required</label>
-		<input id="req_1" class="required" type="text" name="req_1" value="" size="24" required="required" />
-	</div>
-	<div>
-		<label for="number_1">Number</label>
-		<input id="number_1" class="number" name="number_1" value="" />
-	</div>
-	<div>
-		<label for="email_1">E-mail</label>
-		<input id="email_1" type="email" name="email_1" value="" />
-	</div>
-	<div>
-		<label for="url_1">Url</label>
-		<input id="url_1" type="url" name="url_1" value="" />
-	</div>
-	<div>
-		<label for="select_1">Select</label>
-		<select id="select_1" class="placeholder" name="select_1" size="1">
-			<option value="">Default value</option>
-			<option value="val2">Second value</option>
-			<option value="val3">Third value</option>
-			<option value="val4">Fourth value</option>
-		</select>
-	</div>
-	<div>
-		<label for="check_1">Required</label><span class="checkbox-container">
-			<input id="check_1" type="checkbox" name="check1_1" value="yes" data-vv-requiredgroup="group_1" />
-			<input type="checkbox" name="check2_1" value="yes" data-vv-requiredgroup="group_1" />
-			<input type="checkbox" name="check3_1" value="yes" data-vv-requiredgroup="group_1" />
-		</span></div>
-	<div>
-		<label for="radio_1">Required</label><span class="checkbox-container">
-			<input id="radio_1" type="radio" name="radio_1" value="val1" data-vv-validations="required" />
-			<input type="radio" name="radio_1" value="val2" data-vv-validations="required" />
-			<input type="radio" name="radio_1" value="val3" data-vv-validations="required" />
-		</span></div>
-	<div>
-		<input type="submit" name="submit_1" value="Submit" />
-		<input type="reset" name="reset_1" value="Reset" />
 	</div>
 </form>
