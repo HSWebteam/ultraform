@@ -159,16 +159,44 @@ Ultraform.ElementModel = Backbone.Model.extend({
     return this.validationState === 'valid';
   },
 
-  // keep the validate function in the model small
-  // the real work is done in Backbone.Validate
-  validate: function(attributes) {
-
+  // return the current rules of the model as an array
+  getRules: function() {
     var SPLIT_RULE_AT = '|';
     var START_ARGS_AT = '[';
     var SPLIT_ARGS_AT = ',';
     var END_ARGS_AT = ']';
 
     var rules = this.get('rules').split(SPLIT_RULE_AT);
+
+    // array with the rules
+    var result = [];
+
+    // loop through all rules and perform all validations
+    return $.map(rules, function(rule){
+
+      // name of the rule
+      var ruleName = rule.split(START_ARGS_AT)[0];
+
+      // find start and end of arguments
+      var argsStart = rule.indexOf(START_ARGS_AT);
+      var argsEnd = rule.lastIndexOf(END_ARGS_AT);
+      // string containing the arguments
+      var ruleArgs = (argsStart==-1) ? [] : rule.slice(argsStart+1, argsEnd).split(SPLIT_ARGS_AT);
+
+      // save the rule in the results
+      return {
+        name: ruleName,
+        args: ruleArgs
+      };
+    });
+
+  },
+
+  // keep the validate function in the model small
+  // the real work is done in Backbone.Validate
+  validate: function(attributes) {
+
+    var rules = this.getRules();
 
     var model = this;
     var error = '';
@@ -181,26 +209,17 @@ Ultraform.ElementModel = Backbone.Model.extend({
     // loop through all rules and perform all validations
     $.each(rules, function(index, rule){
 
-      // name of the rule
-      var ruleName = rule.split(START_ARGS_AT)[0];
-
-      // find start and end of arguments
-      var argsStart = rule.indexOf(START_ARGS_AT);
-      var argsEnd = rule.lastIndexOf(END_ARGS_AT);
-      // string containing the arguments
-      var ruleArgs = (argsStart==-1) ? [] : rule.slice(argsStart+1, argsEnd).split(SPLIT_ARGS_AT);
-
-      if (ruleName in model.validations) {
+      if (rule.name in model.validations) {
 
         // execute the validation
-        var validationResult = model.validations[ruleName].call(model, attributes.value, ruleArgs);
+        var validationResult = model.validations[rule.name].call(model, attributes.value, rule.args);
 
         if (validationResult === false) {
           // inValid
 
           // set validation error message
-          var message = model.parent.attributes.messages[ruleName];
-          var validationError = model.processMessage(message, attributes.label, ruleArgs);
+          var message = model.parent.attributes.messages[rule.name];
+          var validationError = model.processMessage(message, attributes.label, rule.args);
 
           // create a resolved validation (resolved with a validation error)
           _pendingValidations.push( $.Deferred().resolve(validationError) );
@@ -264,6 +283,37 @@ Ultraform.ElementModel = Backbone.Model.extend({
       }
 
     });
+
+  },
+
+  // prevalidations modify a value to conform to some validation rule
+  // for instance, if a string with max_length becomes to long, the string will be truncated
+  // type is the type of event (onChange or onKey)
+  // the modified value is returned
+  preValidations: {
+
+    // prevent typing longer strings
+    max_length: function(value, args, type) {
+      return (value.length > args[0]) ? value.slice(0, args[0]) : value;
+    },
+
+    // change comma (,) to point (.)
+    numeric: function(value, args, type) {
+      if (type !== 'change') return;
+      return value.replace(/\,/g, '.');
+    },
+
+    // change comma (,) to point (.)
+    is_numeric: function(value, args, type) {
+      if (type !== 'change') return;
+      return value.replace(/\,/g, '.');
+    },
+
+    // change comma (,) to point (.)
+    decimal: function(value, args, type) {
+      if (type !== 'change') return;
+      return value.replace(/\,/g, '.');
+    }
 
   },
 
@@ -468,6 +518,10 @@ Ultraform.ElementView = Backbone.View.extend({
       console.error(this.el.id + ': The DOM and the API show a different initial value!!');
     }
 
+    // Set the $input to the input element
+    this.$input = this.$el.find('input, select');
+    this.input = this.$input.get(0);
+
     // *** ATTACH TO SOME MODEL EVENTS ***
     this.listenTo(this.model, 'validate:valid', this.onValid);
     this.listenTo(this.model, 'validate:invalid', this.onInvalid);
@@ -476,7 +530,78 @@ Ultraform.ElementView = Backbone.View.extend({
 
   events: {
     "blur input" : "updateModel",
-    "change select": "updateModel"
+    "change select": "updateModel",
+    "keypress input" : "handleKey"
+  },
+
+  // change the resulting character when typing, depending on the rules
+  // the keypresses may not even be visible for a split second, so we cannot use the model.validate
+  // we must therefore resort to handling the keypress before the result becomes visible
+  // and preventDefault() when we want to alter the result
+  handleKey: function(event) {
+    var rules = this.model.getRules();
+    var view = this;
+    var value = $(event.target).val();
+
+    // loop through all rules and perform all handlers
+    $.each(rules, function(index, rule){
+
+      if (rule.name in view.keyHandlers) {
+        var result = view.keyHandlers[rule.name](value, rule.args, event);
+
+        if (result !== true) {
+          // the input key was not valid, insert the alternative key that was given
+          event.preventDefault();
+          view.insertTextAtCursor(result);
+        }
+      }
+
+    });
+
+  },
+
+  // keyHandlers return true for a valid input, otherwise the alternative string to insert at the cursor
+  keyHandlers: {
+    max_length: function(value, args, e) {
+      return (value.length < args[0]) || (e.which < 32) || ''; // e.which==0 for non-character keys
+    },
+
+    numeric: function(value, args, e) {
+      return (String.fromCharCode(e.which) !== ',') || '.';
+    },
+
+    is_numeric: function(value, args, e) {
+      return (String.fromCharCode(e.which) !== ',') || '.';
+    },
+
+    decimal: function(value, args, e) {
+      return (String.fromCharCode(e.which) !== ',') || '.';
+    }
+
+  },
+
+  insertTextAtCursor: function(valueString){
+
+    //IE support
+    if (document.selection) {
+        this.$input.focus();
+        sel = document.selection.createRange();
+        sel.text = valueString;
+    }
+    //MOZILLA/NETSCAPE support
+    else if (this.input.selectionStart || this.input.selectionStart == '0') {
+        var startPos = this.input.selectionStart;
+        var endPos = this.input.selectionEnd;
+        this.input.value = this.input.value.substring(0, startPos) +
+        valueString +
+        this.input.value.substring(endPos, this.input.value.length);
+        this.input.selectionStart = startPos + valueString.length;
+        this.input.selectionEnd = startPos + valueString.length;
+    }
+    else{
+        this.$input.value += valueString;
+    }
+
   },
 
   // sync the model with the UI
