@@ -1,0 +1,28 @@
+{
+    "elements": {
+        "open": {
+        	"name": "open",
+        	"type": "open"
+        },
+        "username": {
+        	"name": "username",
+        	"type": "input"
+        },
+        "password": {
+        	"name": "password",
+        	"type": "password"
+        },
+        "remember_me": {
+        	"name": "remember_me",
+        	"type": "checkbox"
+        },
+        "submit": {
+        	"name": "submit",
+        	"type": "submit"
+        },
+        "close": {
+        	"name": "close",
+        	"type": "close"
+        }
+    }
+}

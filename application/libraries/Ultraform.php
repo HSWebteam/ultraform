@@ -24,8 +24,8 @@ class Ultraform {
 	{
 		// Get the CI instance
 		$this->CI =& get_instance();
-		$this->CI->load->helper('form');
 		
+		// Load the config
 		$this->config();
 	}
 	
@@ -36,12 +36,35 @@ class Ultraform {
 	 */
 	private function config()
 	{
-		// Load the ultraform helper
-		$this->CI->load->helper('ultraform');
+		$this->CI->load->helper('form');
 		
 		// Set the ultraform config
 		$this->CI->config->load('ultraform', TRUE);
 		$this->config = $this->CI->config->item('ultraform');
+	}
+	
+	/**
+	 * Load a form from a JSON file in the forms directory.
+	 * 
+	 * @param String form The name of the form template to load.
+	 */
+	public function load($form)
+	{
+		// Get the location of the forms dir
+		$forms_dir = APPPATH . 'forms/';
+		
+		// Load the form data
+		$data = file_get_contents($forms_dir . $form . '.json');
+		
+		// Decode the JSON, return objects
+		$data = json_decode($data);
+		
+		// Build elements from data objects
+		foreach($data->elements as $element)
+		{
+			// Add element to elements
+			$this->add(get_object_vars($element));
+		}
 	}
 	
 	/**
@@ -66,6 +89,15 @@ class Ultraform {
 	public function get_elements()
 	{
 		return $this->elements;
+	}
+	
+	public function __toString()
+	{
+		echo '<pre>';
+		print_r($this->elements);
+		echo '</pre>';
+		
+		return "TODO";
 	}
 }
 
