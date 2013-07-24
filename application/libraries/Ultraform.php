@@ -152,13 +152,14 @@ class Ultraform {
 		
 		if(!empty($post))
 		{
+			echo 'sup';
 			// Load CI form validation library
 			$this->CI->load->library('form_validation');
 			
 			// Set validation rules for all elements
 			foreach($this->elements as $element)
 			{
-				$this->CI->form_validation->set_rules($element->name, $element->name, $element->validation);
+				$this->CI->form_validation->set_rules($element->name, $element->name, $element->rules);
 			}
 			
 			// Run validation
@@ -177,7 +178,7 @@ class Ultraform {
 					{
 						// Repopulate the form
 						$element->value = $post[$element->name];
-						//TODO: Don't do this if this is a password field
+						//TODO: Don't do this if this is a password name
 						//TODO: Checkboxes, radio buttons
 						
 						$error = form_error($element->name, $this->error_open, $this->error_close);
@@ -210,12 +211,13 @@ class Element {
 	
 	public $id;
 	
-	// The type of the field
+	// The type of the name
 	// Valid options: open|close|hidden|submit|text|password
 	public $type;
 	
 	public $value;
-	public $validation;
+	public $rules;
+	public $placeholder;
 	
 	public $error = FALSE;
 	public $error_text;

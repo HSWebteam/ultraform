@@ -8,7 +8,7 @@ class Server_Testing extends CI_Controller {
 	public function index()
 	{	
 		// Load profiler
-		$this->output->enable_profiler(TRUE);
+		//$this->output->enable_profiler(TRUE);
 		
 		$this->load->library('ultraform');
 

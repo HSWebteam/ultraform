@@ -7,7 +7,7 @@
 		<h1>Contact form</h1>
 		
 		<p>If you would like to contact us, please fill out the following form.</p>
-		
+
 		<div id="contact_form">
 			<?php echo $contact_form->render('open');?>
 			Please leave your username and password for contacting.
