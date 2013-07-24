@@ -17,6 +17,13 @@ class Ultraform {
 	// The set of elements in the form
 	private $elements = array();
 	
+	// Is the form considered valid
+	public $valid = FALSE;
+	
+	// Error delimiters
+	public $error_open;
+	public $error_close;
+	
 	/**
 	 * Constructor
 	 */
@@ -41,6 +48,10 @@ class Ultraform {
 		// Set the ultraform config
 		$this->CI->config->load('ultraform', TRUE);
 		$this->config = $this->CI->config->item('ultraform');
+		
+		// Set the error delimiters
+		$this->error_open = $this->config['error_open'];
+		$this->error_close = $this->config['error_close'];
 	}
 	
 	/**
@@ -50,11 +61,8 @@ class Ultraform {
 	 */
 	public function load($form)
 	{
-		// Get the location of the forms dir
-		$forms_dir = APPPATH . 'forms/';
-		
-		// Load the form data
-		$data = file_get_contents($forms_dir . $form . '.json');
+		// Load the form data using forms_dir and forms_ext from the config
+		$data = file_get_contents($this->config['forms_dir'] . $form . $this->config['forms_ext']);
 		
 		// Decode the JSON, return objects
 		$data = json_decode($data);
@@ -65,6 +73,11 @@ class Ultraform {
 			// Add element to elements
 			$this->add(get_object_vars($element));
 		}
+		
+		// See if validation is needed, if so do it
+		$this->validate();
+		
+		return $this;
 	}
 	
 	/**
@@ -75,9 +88,12 @@ class Ultraform {
 	public function add($data)
 	{
 		$element = new Element();
-		$element->name = $data['name'];
-		$element->id = $data['name'];
-		$element->type = $data['type'];
+		
+		foreach($data as $key => $value)
+		{
+			$element->$key = $value;
+		}
+
 		$this->elements[] = $element;
 	}
 	
@@ -91,13 +107,91 @@ class Ultraform {
 		return $this->elements;
 	}
 	
-	public function __toString()
-	{
-		echo '<pre>';
-		print_r($this->elements);
-		echo '</pre>';
+	/**
+	 * Renders a specific element or the entire form.
+	 * 
+	 * @param string $name Name of the element
+	 */
+	public function render($name = NULL)
+	{	
 		
-		return "TODO";
+		if($name === NULL)
+		{
+			$html = '';
+			
+			// Render the entire form
+			foreach($this->elements as $element)
+			{
+				$html .= $element->render();
+			}
+			
+			return $html;
+		}
+		else
+		{
+			// Render just the one element
+			foreach($this->elements as $element)
+			{
+				if($element->name === $name)
+				{
+					return $element->render();
+				}
+			}
+			
+			return 'No element with that name';
+		}
+	}
+	
+	/**
+	 * Validates a submitted form
+	 */
+	public function validate()
+	{
+		//TODO: IF POST
+		$post = $this->CI->input->post();
+		
+		if(!empty($post))
+		{
+			// Load CI form validation library
+			$this->CI->load->library('form_validation');
+			
+			// Set validation rules for all elements
+			foreach($this->elements as $element)
+			{
+				$this->CI->form_validation->set_rules($element->name, $element->name, $element->validation);
+			}
+			
+			// Run validation
+			if ($this->CI->form_validation->run() == FALSE)
+			{
+				// The form did not pass validation
+				$this->valid = FALSE;
+				
+				// Repopulate the form
+				//$this->repopulate();
+				
+				foreach($this->elements as $element)
+				{
+					// If the POST had this element
+					if(array_key_exists($element->name, $post))
+					{
+						// Repopulate the form
+						$element->value = $post[$element->name];
+						//TODO: Don't do this if this is a password field
+						//TODO: Checkboxes, radio buttons
+						
+						$error = form_error($element->name, $this->error_open, $this->error_close);
+						//TODO: Add open/close error tags
+						
+						if ($error)
+						{
+							$element->error = TRUE;
+							$element->error_text = $error;
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -109,6 +203,9 @@ class Ultraform {
  */
 class Element {
 	
+	// CI object
+	public $CI;	
+	
 	public $name;
 	
 	public $id;
@@ -117,9 +214,42 @@ class Element {
 	// Valid options: open|close|hidden|submit|text|password
 	public $type;
 	
+	public $value;
+	public $validation;
+	
+	public $error = FALSE;
+	public $error_text;
+	
+	/**
+	 * Constructor
+	 */
 	public function __construct()
 	{
+		// Get the CI instance
+		$this->CI =& get_instance();
+	}
+	
+	/**
+	 * Renders element.
+	 */
+	public function render()
+	{
+		// Load the template data
+		$template_dir = 'ultraform_templates/';
 		
+		//$html = file_get_contents($template_dir . $this->type . '.php');
+		
+		// View data
+		$data = (array)$this;
+		
+		$html = $this->CI->load->view($template_dir . $this->type . '.php', $data);
+		
+		return $html;
+	}
+	
+	public function __toString()
+	{
+		return $this->render();
 	}
 }
 
