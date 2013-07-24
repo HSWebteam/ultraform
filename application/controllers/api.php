@@ -13,11 +13,6 @@ class Api extends CI_Controller {
 		$this->load->library('ultraform');
 		
 		echo 'This is the API speaking<br><br>';
-		
-		echo 'Loading form<br>';
-		$form = $this->ultraform->load('contact');
-		
-		echo $this->ultraform;
 	}
 }
 
