@@ -256,8 +256,6 @@ class Element {
 	public $form;
 	public $label;
 	
-	public $id;
-	
 	// The type of the name
 	// Valid options: open|close|hidden|submit|text|password
 	public $type;
@@ -297,6 +295,7 @@ class Element {
 		// Get translated values
 		$data['label'] = $this->form->lang($this->name);
 		$data['placeholder'] = $this->form->lang($this->name . '_placeholder');
+		$data['id'] = 'ufo-forms-' . $this->form->name . '-' . $this->name;
 		
 		$html = $this->CI->load->view($template_dir . $this->type . '.php', $data);
 		
