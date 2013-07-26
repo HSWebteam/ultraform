@@ -286,6 +286,34 @@ Ultraform.ElementModel = Backbone.Model.extend({
 
   },
 
+  // some validations need initialization
+  // for instance the matching rule needs to listen to changes in the matching model
+  // this needs to be called after all element models are created
+  initializeValidations: function() {
+    var rules = this.getRules();
+    var model = this;
+
+    // loop through all rules and perform all validations
+    $.each(rules, function(index, rule){
+
+      if (rule.name in model.validationInitializations) {
+        // initialize the validation
+        model.initializeValidations[rule.name].call(model, rule.args);
+      }
+    });
+
+  },
+
+  // list of rules with initialization functions
+  validationInitializations: {
+    matches: function(args) {
+
+      var matchWithModel = this.parent.attributes.elements[args[0]];
+      this.listenTo(matchWithModel, 'change', this.validate);
+
+    }
+  },
+
   // prevalidations modify a value to conform to some validation rule
   // for instance, if a string with max_length becomes to long, the string will be truncated
   // type is the type of event (onChange or onKey)
