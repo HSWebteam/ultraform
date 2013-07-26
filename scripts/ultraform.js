@@ -218,7 +218,13 @@ Ultraform.ElementModel = Backbone.Model.extend({
           // inValid
 
           // set validation error message
-          var message = model.parent.attributes.messages[rule.name];
+          var message;
+          if (typeof model.parent.attributes.messages !== 'undefined') {
+            message = model.parent.attributes.messages[rule.name];
+          }
+          else {
+            message = 'ERROR';
+          }
           var validationError = model.processMessage(message, attributes.label, rule.args);
 
           // create a resolved validation (resolved with a validation error)

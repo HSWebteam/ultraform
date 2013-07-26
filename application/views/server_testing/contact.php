@@ -2,6 +2,11 @@
 <html>
 	<head>
 		<title>Contact form test</title>
+		<style>
+		input.error {
+			border: 1px solid red;
+		}
+		</style>
 	</head>
 	<body>
 		<h1>Contact form</h1>
