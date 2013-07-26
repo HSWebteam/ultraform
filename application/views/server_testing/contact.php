@@ -28,7 +28,7 @@
         <script>
 
             // initialize
-            Ultraform.initialize( $base_url+'server_testing' );
+            Ultraform.initialize( "<?php echo base_url();?>" );
 
         </script>
 
