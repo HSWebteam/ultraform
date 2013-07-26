@@ -223,6 +223,22 @@ class Ultraform {
 			return '';
 		}
 	}
+	
+	/**
+	 * Export the form for external client validating.
+	 */
+	public function export()
+	{
+		$export = array();
+		
+		$export['elements'] = array();
+		foreach($this->elements as $element)
+		{
+			$export['elements'][$element->name] = $element->export();
+		}
+		
+		return json_encode($export);
+	}	
 }
 
 /**
@@ -238,6 +254,7 @@ class Element {
 	
 	public $name;
 	public $form;
+	public $label;
 	
 	public $id;
 	
@@ -284,6 +301,23 @@ class Element {
 		$html = $this->CI->load->view($template_dir . $this->type . '.php', $data);
 		
 		return $html;
+	}
+	
+	/**
+	 * Exports the element for external use.
+	 * 
+	 * Example: For use in client side validating.
+	 */
+	public function export()
+	{
+		$export = array();
+		
+		$export['name'] = $this->name;
+		$export['label'] = $this->form->lang($this->name);;
+		$export['value'] = $this->value;
+		$export['rules'] = $this->rules;
+
+		return $export;
 	}
 	
 	public function __toString()
