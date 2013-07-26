@@ -7,8 +7,7 @@
         "username": {
         	"name": "username",
         	"type": "text",
-        	"rules": "required|min_length[5]|max_length[12]",
-        	"placeholder": "Vul iets in"
+        	"rules": "required|min_length[5]|max_length[12]"
         },
         "password": {
         	"name": "password",
