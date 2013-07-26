@@ -1,1 +1,1 @@
-<?php echo form_open(); ?>
+<?php echo form_open('', array('id' => 'ufo-' . $form->name)); ?>
