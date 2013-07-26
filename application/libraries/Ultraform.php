@@ -234,7 +234,10 @@ class Ultraform {
 		$export['elements'] = array();
 		foreach($this->elements as $element)
 		{
-			$export['elements'][$element->name] = $element->export();
+			if($element->type !== 'open' && $element->type !== 'close')
+			{
+				$export['elements'][$element->name] = $element->export();
+			}
 		}
 		
 		return json_encode($export);
