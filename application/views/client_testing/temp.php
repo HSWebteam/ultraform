@@ -26,7 +26,7 @@
     fix.load($base_url+'client_testing/form1', function() {
 
         // initialize
-        Ultraform.initialize( $base_url+'client_testing' );
+        Ultraform.initialize( $base_url+'client_testing/' );
 
     });
 
