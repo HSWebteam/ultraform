@@ -81,77 +81,77 @@ class Client_Testing extends CI_Controller {
 			$obj = array(
 				'elements' => array(
 					array(
-						'field' => 'name',
+						'name'  => 'name',
 						'label' => 'Naam',
 						'value' => 'Hendrik Jan van Meerveld',
 						'rules' => 'required|max_length[30]'),
 					array(
-						'field' => 'regexp',
+						'name'  => 'regexp',
 						'label' => 'RegExp',
 						'value' => 'abcabcabc',
 						'rules' => 'regexp_match[/^[abc,]+$/i]'),
 					array(
-						'field' => 'matches',
+						'name'  => 'matches',
 						'label' => 'Matches Name',
 						'value' => 'Hendrik Jan van Meerveld',
 						'rules' => 'matches[name]'),
 					array(
-						'field' => 'is_unique',
+						'name'  => 'is_unique',
 						'label' => 'Is Unique',
 						'value' => 'Rik',
 						'rules' => 'is_unique[users.username]'),
 					array(
-						'field' => 'alpha',
+						'name'  => 'alpha',
 						'label' => 'Alpha',
 						'value' => 'abc',
 						'rules' => 'alpha'),
 					array(
-						'field' => 'alphanumeric',
+						'name'  => 'alphanumeric',
 						'label' => 'Alphanumeric',
 						'value' => 'abc123',
 						'rules' => 'alpha_numeric'),
 					array(
-						'field' => 'alphadash',
+						'name'  => 'alphadash',
 						'label' => 'Alphadash',
 						'value' => '_abc-123',
 						'rules' => 'alpha_dash'),
 					array(
-						'field' => 'numeric',
+						'name'  => 'numeric',
 						'label' => 'Numeric',
 						'value' => '12.50',
 						'rules' => 'numeric'),
 					array(
-						'field' => 'is_numeric',
+						'name'  => 'is_numeric',
 						'label' => 'Is Numeric',
 						'value' => '12.50e-10',
 						'rules' => 'is_numeric'),
 					array(
-						'field' => 'age',
+						'name'  => 'age',
 						'label' => 'Leeftijd',
 						'value' => 37,
 						'rules' => 'integer|greater_than[15]|less_than[100]'),
 					array(
-						'field' => 'decimal',
+						'name'  => 'decimal',
 						'label' => 'Decimaal',
 						'value' => '10.1',
 						'rules' => 'decimal'),
 					array(
-						'field' => 'is_natural',
+						'name'  => 'is_natural',
 						'label' => 'Natuurlijk',
 						'value' => '13',
 						'rules' => 'is_natural'),
 					array(
-						'field' => 'is_natural_no_zero',
+						'name'  => 'is_natural_no_zero',
 						'label' => 'Natuurlijk &gt; 0',
 						'value' => '14',
 						'rules' => 'is_natural_no_zero'),
 					array(
-						'field' => 'email',
+						'name'  => 'email',
 						'label' => 'Email',
 						'value' => 'h.j.vanmeerveld@uu.nl',
 						'rules' => 'valid_email'),
 					array(
-						'field' => 'emails',
+						'name'  => 'emails',
 						'label' => 'Emails',
 						'value' => 'h.j.vanmeerveld@uu.nl, s.kort@uu.nl',
 						'rules' => 'valid_emails')
