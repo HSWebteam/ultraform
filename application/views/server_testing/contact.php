@@ -20,7 +20,6 @@
 		</div>
 
         <script>var $base_url = "<?php echo base_url(); ?>"</script>
-        <!-- For testing -->
         <script src="<?php echo base_url('scripts/jquery-1.8.3.min.js'); ?>"></script>
         <script src="<?php echo base_url('scripts/underscore.js'); ?>"></script>
         <script src="<?php echo base_url('scripts/backbone.js'); ?>"></script>
