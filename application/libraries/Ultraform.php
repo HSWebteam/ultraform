@@ -14,6 +14,9 @@ class Ultraform {
 	// Config loaded from ultraform.php in config dir
 	public $config = array();
 	
+	// Name of the form
+	public $name = NULL;
+	
 	// The set of elements in the form
 	private $elements = array();
 	
@@ -43,6 +46,7 @@ class Ultraform {
 	 */
 	private function config()
 	{
+		// Load form helper
 		$this->CI->load->helper('form');
 		
 		// Set the ultraform config
@@ -74,6 +78,12 @@ class Ultraform {
 			$this->add(get_object_vars($element));
 		}
 		
+		// Load language for this form
+		$this->lang = $this->CI->lang->load('ufo_' . $form, '' , TRUE);
+		
+		// Set name of the form
+		$this->name = $form;
+		
 		// See if validation is needed, if so do it
 		$this->validate();
 		
@@ -87,7 +97,7 @@ class Ultraform {
 	 */
 	public function add($data)
 	{
-		$element = new Element();
+		$element = new Element($this);
 		
 		foreach($data as $key => $value)
 		{
@@ -152,7 +162,6 @@ class Ultraform {
 		
 		if(!empty($post))
 		{
-			echo 'sup';
 			// Load CI form validation library
 			$this->CI->load->library('form_validation');
 			
@@ -194,6 +203,42 @@ class Ultraform {
 			}
 		}
 	}
+	
+	/**
+	 * Returns a translation
+	 * 
+	 * @param string $line Translation key
+	 */
+	public function lang($line)
+	{
+		// Check if translation key exists
+		if(array_key_exists($line, $this->lang))
+		{
+			// Exists
+			return $this->lang[$line];
+		}
+		else
+		{
+			// Does not exist
+			return '';
+		}
+	}
+	
+	/**
+	 * Export the form for external client validating.
+	 */
+	public function export()
+	{
+		$export = array();
+		
+		$export['elements'] = array();
+		foreach($this->elements as $element)
+		{
+			$export['elements'][$element->name] = $element->export();
+		}
+		
+		return json_encode($export);
+	}	
 }
 
 /**
@@ -208,6 +253,8 @@ class Element {
 	public $CI;	
 	
 	public $name;
+	public $form;
+	public $label;
 	
 	public $id;
 	
@@ -225,10 +272,13 @@ class Element {
 	/**
 	 * Constructor
 	 */
-	public function __construct()
+	public function __construct($form)
 	{
 		// Get the CI instance
 		$this->CI =& get_instance();
+		
+		// Assign parent form
+		$this->form = $form;
 	}
 	
 	/**
@@ -244,9 +294,30 @@ class Element {
 		// View data
 		$data = (array)$this;
 		
+		// Get translated values
+		$data['label'] = $this->form->lang($this->name);
+		$data['placeholder'] = $this->form->lang($this->name . '_placeholder');
+		
 		$html = $this->CI->load->view($template_dir . $this->type . '.php', $data);
 		
 		return $html;
+	}
+	
+	/**
+	 * Exports the element for external use.
+	 * 
+	 * Example: For use in client side validating.
+	 */
+	public function export()
+	{
+		$export = array();
+		
+		$export['name'] = $this->name;
+		$export['label'] = $this->form->lang($this->name);;
+		$export['value'] = $this->value;
+		$export['rules'] = $this->rules;
+
+		return $export;
 	}
 	
 	public function __toString()
