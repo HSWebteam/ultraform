@@ -44,12 +44,12 @@ Ultraform.initialize = function(baseUrl){
           id: idParts[2]
         },
         {
-          urlRoot: baseUrl + '/api/' + idParts[1]
+          urlRoot: baseUrl + 'api/' + idParts[1]
         }
       );
 
       // set the url for validations
-      model.validateUrl = baseUrl + '/validate/' + idParts[1] + '/' + idParts[2];
+      model.validateUrl = baseUrl + 'validate/' + idParts[1] + '/' + idParts[2];
       model.name = idParts[1];
 
     });
@@ -218,7 +218,13 @@ Ultraform.ElementModel = Backbone.Model.extend({
           // inValid
 
           // set validation error message
-          var message = model.parent.attributes.messages[rule.name];
+          var message;
+          if (typeof model.parent.attributes.messages !== 'undefined') {
+            message = model.parent.attributes.messages[rule.name];
+          }
+          else {
+            message = 'ERROR';
+          }
           var validationError = model.processMessage(message, attributes.label, rule.args);
 
           // create a resolved validation (resolved with a validation error)
@@ -531,23 +537,22 @@ Ultraform.ElementView = Backbone.View.extend({
     // *** UPDATE THE MODEL OR THE UI IF NEEDED ***
     // compare the value in the DOM with the value that we got from the model
     var modelValue = this.model.attributes.value;
-    var DOMValue = this.$el.find('input, select').val();
-
-    if (typeof modelValue == 'undefined') {
+    var DOMValue = this.$el_find('input, select').val();
+    if (modelValue === null || typeof modelValue == 'undefined') {
       // the model did not give a value
       // fill the model with the values from the DOM
       this.model.set('value', DOMValue);
     }
     else if (DOMValue === '') {
       // the DOM seems empty, set the model value to the DOM value
-      this.$el.find('input, select').val(modelValue);
+      this.$el_find('input, select').val(modelValue);
     }
     else if (modelValue !== DOMValue) {
       console.error(this.el.id + ': The DOM and the API show a different initial value!!');
     }
 
     // Set the $input to the input element
-    this.$input = this.$el.find('input, select');
+    this.$input = this.$el_find('input, select');
     this.input = this.$input.get(0);
 
     // *** ATTACH TO SOME MODEL EVENTS ***
@@ -558,8 +563,11 @@ Ultraform.ElementView = Backbone.View.extend({
 
   events: {
     "blur input" : "updateModel",
+    "blur" : "updateModel",
     "change select": "updateModel",
-    "keypress input" : "handleKey"
+    "change": "updateModel",
+    "keypress input" : "handleKey",
+    "keypress" : "handleKey"
   },
 
   // change the resulting character when typing, depending on the rules
@@ -651,6 +659,11 @@ Ultraform.ElementView = Backbone.View.extend({
 
   onValidationPending: function() {
     // actions to perform while waiting for validation
+  },
+
+  // like $().find, but also checks the element itself for a match
+  $el_find: function(selector) {
+    return this.$el.is(selector) ? this.$el : this.$el.find(selector);
   }
 
 });
