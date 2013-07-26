@@ -94,18 +94,18 @@ Ultraform.FormModel = Backbone.Model.extend({
     $.each(response.elements, function(index, value) {
 
       // create model for the element
-      elementModels[value.field] = new Ultraform.ElementModel({
-        name: value.field,
+      elementModels[value.name] = new Ultraform.ElementModel({
+        name: value.name,
         label: value.label,
         rules: value.rules,
         value: value.value,
-        id: 'ufo-' + model.name + '-' + model.id + '-' + value.field
+        id: 'ufo-' + model.name + '-' + model.id + '-' + value.name
       }, {
         url: model.validateUrl
       });
 
       // set the parent model
-      elementModels[value.field].parent = model;
+      elementModels[value.name].parent = model;
 
     });
 
