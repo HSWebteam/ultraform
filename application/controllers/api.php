@@ -9,10 +9,23 @@ class Api extends CI_Controller {
 
 	public function index()
 	{
+
+	}
+	
+	/**
+	 * Get a form in JSON format
+	 */
+	public function forms($name)
+	{
 		// Load ultraform
 		$this->load->library('ultraform');
 		
-		echo 'This is the API speaking<br><br>';
+		$form = new Ultraform();
+		
+		// Load the requested form
+		$form->load($name);
+		
+		echo $form->export();
 	}
 }
 
