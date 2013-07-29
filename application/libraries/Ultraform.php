@@ -292,14 +292,22 @@ class Element {
 		$data['placeholder'] = $this->form->lang($this->name . '_placeholder');
 		$data['id'] = 'ufo-forms-' . $this->form->name . '-' . $this->name;
 		
-		// Step 1: Check to see if the element itself has a unique template
-		// TODO
-		
-		// Step 2: Check to see if the element has a template in this specific form
-		// TODO		
-		
-		// Step 3: If step 1 and 2 are FALSE then we use the default element template
-		$html = $this->CI->load->view($template_dir . $this->type . '.php', $data);
+		// Determine what template to use for this element
+		if(file_exists(APPPATH . '/views' . $template_dir . '_' . $this->name . '.php'))
+		{
+			// Step 1: Check to see if the element itself has a unique template
+			$html = $this->CI->load->view($template_dir . '_' . $this->name, $data);
+		}
+		elseif(file_exists(APPPATH . '/views' . $template_dir . '/' . $this->form->name . '/' . $this->type . '.php'))
+		{
+			// Step 2: Check to see if the element has a template in this specific form
+			$html = $this->CI->load->view($template_dir . '/' . $this->form->name . '/' . $this->type, $data);		
+		}
+		else
+		{
+			// Step 3: If step 1 and 2 are FALSE then we use the default element template
+			$html = $this->CI->load->view($template_dir . $this->type, $data);
+		}
 		
 		return $html;
 	}

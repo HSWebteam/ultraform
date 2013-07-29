@@ -18,6 +18,7 @@
 			Please leave your username and password for contacting.
 			<?php echo $contact_form->render('username');?>
 			<?php echo $contact_form->render('password');?>
+			<?php echo $contact_form->render('address');?>
 			Now would you like to be remembered?
 			<?php echo $contact_form->render('remember_me');?>
 			Do you have any remarks you want us to know about?

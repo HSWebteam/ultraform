@@ -33,6 +33,7 @@ $lang['username_placeholder'] = "Vul iets in";
 // error if override
 
 $lang['password'] = "Password";
+$lang['address'] = "Home address";
 $lang['remember_me'] = "Remember me";
 $lang['remarks'] = "Remarks";
 
