@@ -18,6 +18,10 @@
         	"name": "remember_me",
         	"type": "checkbox"
         },
+        "remarks": {
+        	"name": "remarks",
+        	"type": "textarea"
+        },
         "submit": {
         	"name": "submit",
         	"type": "submit"
