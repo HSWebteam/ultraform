@@ -9,6 +9,10 @@
         	"type": "text",
         	"rules": "required|min_length[5]|max_length[12]"
         },
+        "address": {
+        	"name": "address",
+        	"type": "text"
+        },        
         "password": {
         	"name": "password",
         	"type": "password",
@@ -17,6 +21,10 @@
         "remember_me": {
         	"name": "remember_me",
         	"type": "checkbox"
+        },
+        "remarks": {
+        	"name": "remarks",
+        	"type": "textarea"
         },
         "submit": {
         	"name": "submit",
