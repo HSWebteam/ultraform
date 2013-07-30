@@ -223,6 +223,7 @@ class Ultraform {
 	{
 		$export = array();
 		
+		// Export elements
 		$export['elements'] = array();
 		foreach($this->elements as $element)
 		{
@@ -231,6 +232,10 @@ class Ultraform {
 				$export['elements'][$element->name] = $element->export();
 			}
 		}
+		
+		// Export messages
+		$messages = $this->CI->lang->load('form_validation', '' , TRUE);
+		$export['messages'] = $messages;
 		
 		return json_encode($export);
 	}	
@@ -282,8 +287,6 @@ class Element {
 		// Load the template data
 		$template_dir = $this->form->config['template_dir'];
 		
-		//$html = file_get_contents($template_dir . $this->type . '.php');
-		
 		// View data
 		$data = (array)$this;
 		
@@ -301,7 +304,7 @@ class Element {
 		elseif(file_exists(APPPATH . '/views' . $template_dir . '/' . $this->form->name . '/' . $this->type . '.php'))
 		{
 			// Step 2: Check to see if the element has a template in this specific form
-			$html = $this->CI->load->view($template_dir . '/' . $this->form->name . '/' . $this->type, $data);		
+			$html = $this->CI->load->view($template_dir . '/' . $this->form->name . '/' . $this->type, $data);
 		}
 		else
 		{
