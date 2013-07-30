@@ -166,7 +166,8 @@ Ultraform.ElementModel = Backbone.Model.extend({
     var SPLIT_ARGS_AT = ',';
     var END_ARGS_AT = ']';
 
-    var rules = this.get('rules').split(SPLIT_RULE_AT);
+    var _rules = this.get('rules');
+    var rules = (_rules===null ? [''] : _rules.split(SPLIT_RULE_AT));
 
     // array with the rules
     var result = [];
@@ -555,6 +556,10 @@ Ultraform.ElementView = Backbone.View.extend({
     this.$input = this.$el_find('input, select');
     this.input = this.$input.get(0);
 
+    // set the error element
+    this.$err = $('#' + this.$el.prop('id') + '_error');
+    this.err = this.$err.get(0);
+
     // *** ATTACH TO SOME MODEL EVENTS ***
     this.listenTo(this.model, 'validate:valid', this.onValid);
     this.listenTo(this.model, 'validate:invalid', this.onInvalid);
@@ -647,14 +652,14 @@ Ultraform.ElementView = Backbone.View.extend({
 
   // hide the validationerror from the DOM
   onValid: function() {
-    this.$el.find('.validationError').fadeOut();
-    this.$el.removeClass('error');
+    this.$err.fadeOut();
+    this.$err.removeClass('error');
   },
 
   // show the validationerror in the DOM
   onInvalid: function(error) {
-    this.$el.find('.validationError').html(error).fadeIn();
-    this.$el.addClass('error');
+    this.$err.html(error).fadeIn();
+    this.$err.addClass('error');
   },
 
   onValidationPending: function() {
