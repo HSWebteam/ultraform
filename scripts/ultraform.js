@@ -10,9 +10,6 @@
  * - jQuery.js
  */
 
-//console.log('loading ultraform');
-
-
 /**
 ***************************************
 * The Ultraform Namespace
@@ -66,9 +63,9 @@ Ultraform.initialize = function(baseUrl){
 
 Ultraform.FormModel = Backbone.Model.extend({
 
-  initialize: function(options) {
 
-    //console.log('initializing FormModel');
+
+  initialize: function(options) {
 
     // load the model from the server
     this.fetch({
@@ -89,23 +86,41 @@ Ultraform.FormModel = Backbone.Model.extend({
     // list of models for the elements
     var elementModels = {};
 
+    // first add promises for the elements
+    // so that if an element needs to reference
+    // another element that is not yet initialized
+    // we still can go ahead
+    $.each(response.elements, function(index, value) {
+      elementModels[value.name] = $.Deferred();
+    });
+
+    // add to the model
+    model.set('elements', elementModels);
+
     // generate the models for the elements
     // every attribute is an element
     $.each(response.elements, function(index, value) {
 
       // create model for the element
-      elementModels[value.name] = new Ultraform.ElementModel({
+      elementModel = new Ultraform.ElementModel({
         name: value.name,
         label: value.label,
         rules: value.rules,
         value: value.value,
         id: 'ufo-' + model.name + '-' + model.id + '-' + value.name
       }, {
-        url: model.validateUrl
+        url: model.validateUrl,
+        parent: model
       });
 
-      // set the parent model
-      elementModels[value.name].parent = model;
+      // get the deferred
+      var deferred = model.get('elements')[value.name];
+
+      // resolve
+      deferred.resolve(elementModel);
+
+      // replace the defered
+      elementModels[value.name] = elementModel;
 
     });
 
@@ -124,14 +139,27 @@ Ultraform.FormModel = Backbone.Model.extend({
 
 Ultraform.ElementModel = Backbone.Model.extend({
 
+  // extend the constructor
+  constructor: function(attributes, options) {
+
+    // set the parent model
+    this.parent = options.parent;
+
+    // call the default constructor
+    Backbone.Model.apply( this, arguments );
+  },
+
   initialize: function() {
-    //console.log('initializing ElementModel '+this.attributes.name);
 
     var view = new Ultraform.ElementView({
       model: this,
       el: $('#' + this.id)
     });
+
+    this.initializeValidations.call(this);
   },
+
+  parent: null, // the parent model
 
   // first set the value, then validate
   // (this differs from set('value',value,{validate:true})) in that
@@ -201,7 +229,7 @@ Ultraform.ElementModel = Backbone.Model.extend({
 
     var model = this;
     var error = '';
-
+console.dir({odel:model});
     var oldState = this.validationState;
     var oldError = this.validationError;
 
@@ -302,10 +330,9 @@ Ultraform.ElementModel = Backbone.Model.extend({
 
     // loop through all rules and perform all validations
     $.each(rules, function(index, rule){
-
       if (rule.name in model.validationInitializations) {
         // initialize the validation
-        model.initializeValidations[rule.name].call(model, rule.args);
+        model.validationInitializations[rule.name].call(model, rule.args);
       }
     });
 
@@ -314,9 +341,17 @@ Ultraform.ElementModel = Backbone.Model.extend({
   // list of rules with initialization functions
   validationInitializations: {
     matches: function(args) {
+      var model = this;
 
+      // get the model that this element matches with
+      // the result can be a promise
       var matchWithModel = this.parent.attributes.elements[args[0]];
-      this.listenTo(matchWithModel, 'change', this.validate);
+
+      $.when(matchWithModel).then(function(){
+        model.listenTo(matchWithModel, 'change', function(){
+          model.validate(model.attributes);
+        });
+      });
 
     }
   },
@@ -405,6 +440,7 @@ Ultraform.ElementModel = Backbone.Model.extend({
 
     // MARK: this is not a pure function, the "args" argument can be changed
     matches: function(value, args){
+console.dir({matches_this:this});
       var matchWithModel = this.parent.attributes.elements[args[0]];
       var matchWithValue = matchWithModel.attributes.value;
 
@@ -496,13 +532,13 @@ Ultraform.ElementModel = Backbone.Model.extend({
 
   // replace variables in messages
   processMessage: function(message, label, args){
-    // replace %0, %1 with the corresponding arguments and %s with the label.
-    $.each(args, function(index, value){
-      message = message.replace('%'+index, value);
-    });
-
     // replace %s with the label
     message = message.replace('%s', label);
+
+    // replace all following %s with the arguments
+    $.each(args, function(index, value){
+      message = message.replace('%s', value);
+    });
 
     // return the result
     return message;
@@ -519,7 +555,6 @@ Ultraform.ElementModel = Backbone.Model.extend({
 Ultraform.FormView = Backbone.View.extend({
 
   initialize: function() {
-    //console.log('initializing FormView');
   }
 
 });
@@ -533,7 +568,6 @@ Ultraform.FormView = Backbone.View.extend({
 Ultraform.ElementView = Backbone.View.extend({
 
   initialize: function() {
-    //console.log('initializing ElementView '+this.$el.prop('id'));
 
     // *** UPDATE THE MODEL OR THE UI IF NEEDED ***
     // compare the value in the DOM with the value that we got from the model
