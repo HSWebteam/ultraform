@@ -18,11 +18,11 @@
 | -------------------------------------------------------------------
 | Prototype:
 |
-|  $lang['formname_fieldname'] = "Human readable text";
+|  $lang['fieldname'] = "Human readable text";
 |
 | Example 'contact' form with field 'email':
 |
-|  $lang['contact_email'] = "E-mail";
+|  $lang['email'] = "E-mail";
 |
 | Note: Suffix the lang variable name with "_placeholder" to set
 | placeholder text. Leave not defined if there is no placeholder.
@@ -33,7 +33,9 @@ $lang['username_placeholder'] = "Vul iets in";
 // error if override
 
 $lang['password'] = "Password";
+$lang['address'] = "Home address";
 $lang['remember_me'] = "Remember me";
+$lang['remarks'] = "Remarks";
 
 /* End of file ufo_contact_lang.php */
 /* Location: ./system/language/english/ufo_contact_lang.php */

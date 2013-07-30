@@ -23,10 +23,6 @@ class Ultraform {
 	// Is the form considered valid
 	public $valid = FALSE;
 	
-	// Error delimiters
-	public $error_open;
-	public $error_close;
-	
 	/**
 	 * Constructor
 	 */
@@ -52,10 +48,6 @@ class Ultraform {
 		// Set the ultraform config
 		$this->CI->config->load('ultraform', TRUE);
 		$this->config = $this->CI->config->item('ultraform');
-		
-		// Set the error delimiters
-		$this->error_open = $this->config['error_open'];
-		$this->error_close = $this->config['error_close'];
 	}
 	
 	/**
@@ -190,7 +182,7 @@ class Ultraform {
 						//TODO: Don't do this if this is a password name
 						//TODO: Checkboxes, radio buttons
 						
-						$error = form_error($element->name, $this->error_open, $this->error_close);
+						$error = form_error($element->name, '', '');
 						//TODO: Add open/close error tags
 						
 						if ($error)
@@ -231,6 +223,7 @@ class Ultraform {
 	{
 		$export = array();
 		
+		// Export elements
 		$export['elements'] = array();
 		foreach($this->elements as $element)
 		{
@@ -239,6 +232,10 @@ class Ultraform {
 				$export['elements'][$element->name] = $element->export();
 			}
 		}
+		
+		// Export messages
+		$messages = $this->CI->lang->load('form_validation', '' , TRUE);
+		$export['messages'] = $messages;
 		
 		return json_encode($export);
 	}	
@@ -288,19 +285,32 @@ class Element {
 	public function render()
 	{
 		// Load the template data
-		$template_dir = 'ultraform_templates/';
-		
-		//$html = file_get_contents($template_dir . $this->type . '.php');
+		$template_dir = $this->form->config['template_dir'];
 		
 		// View data
 		$data = (array)$this;
 		
-		// Get translated values
+		// Get translated values & derivative values
 		$data['label'] = $this->form->lang($this->name);
 		$data['placeholder'] = $this->form->lang($this->name . '_placeholder');
 		$data['id'] = 'ufo-forms-' . $this->form->name . '-' . $this->name;
 		
-		$html = $this->CI->load->view($template_dir . $this->type . '.php', $data);
+		// Determine what template to use for this element
+		if(file_exists(APPPATH . '/views' . $template_dir . '_' . $this->name . '.php'))
+		{
+			// Step 1: Check to see if the element itself has a unique template
+			$html = $this->CI->load->view($template_dir . '_' . $this->name, $data);
+		}
+		elseif(file_exists(APPPATH . '/views' . $template_dir . '/' . $this->form->name . '/' . $this->type . '.php'))
+		{
+			// Step 2: Check to see if the element has a template in this specific form
+			$html = $this->CI->load->view($template_dir . '/' . $this->form->name . '/' . $this->type, $data);
+		}
+		else
+		{
+			// Step 3: If step 1 and 2 are FALSE then we use the default element template
+			$html = $this->CI->load->view($template_dir . $this->type, $data);
+		}
 		
 		return $html;
 	}
