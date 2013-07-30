@@ -32,10 +32,9 @@ class Client_Testing extends CI_Controller {
 	public function validate($forms_name='', $one=null)
 	{
 
-		$input_data = json_decode(trim(file_get_contents('php://input')), true);
-		$action = $input_data['action'];
-		$args   = $input_data['args'];
-		$value  = $input_data['value'];
+		$action = $this->input->post('action');
+		$args   = $this->input->post('args');
+		$value  = $this->input->post('value');
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST' AND $forms_name=='forms' AND !is_null($one))
 		{
