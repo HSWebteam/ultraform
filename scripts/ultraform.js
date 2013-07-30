@@ -463,8 +463,7 @@ console.dir({matches_this:this});
       $.ajax({
         url: this.url,
         type: 'POST',
-        dataType: 'json',
-        data: JSON.stringify(data)
+        data: data
       }).done(function(result){
         deferred.resolve( result.error );
       });
