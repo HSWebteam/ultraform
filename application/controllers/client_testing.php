@@ -29,14 +29,14 @@ class Client_Testing extends CI_Controller {
 	/**
 	* testobjects -- Mocks the server validation
 	*/
-	public function validate($forms_name='', $one=null)
+	public function validate()
 	{
 
 		$action = $this->input->post('rule');
 		$args   = $this->input->post('args');
 		$value  = $this->input->post('value');
 
-		if ($_SERVER['REQUEST_METHOD'] === 'POST' AND $forms_name=='forms' AND !is_null($one))
+		if ($_SERVER['REQUEST_METHOD'] === 'POST')
 		{
 
 			$result = array(
