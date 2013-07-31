@@ -32,10 +32,9 @@ class Client_Testing extends CI_Controller {
 	public function validate($forms_name='', $one=null)
 	{
 
-		$input_data = json_decode(trim(file_get_contents('php://input')), true);
-		$action = $input_data['action'];
-		$args   = $input_data['args'];
-		$value  = $input_data['value'];
+		$action = $this->input->post('rule');
+		$args   = $this->input->post('args');
+		$value  = $this->input->post('value');
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST' AND $forms_name=='forms' AND !is_null($one))
 		{
@@ -55,6 +54,15 @@ class Client_Testing extends CI_Controller {
 					'error'  => $valid ? '' : 'The value '.$value.' allready exists in the column '.$args[0]
 				);
 			}
+			else if ($action==='callback_sushi') {
+				$valid = strpos(strtoupper($value), strtoupper($args[0]))!==FALSE;
+
+				$result = array(
+					'result' => $valid ? 'valid' : 'invalid',
+					'error'  => $valid ? '' : 'You cannot get Sushi without '.$args[0]
+				);
+			}
+
 
             // return a json representation of the result
             $this->output->set_content_type('application/json');
@@ -154,7 +162,12 @@ class Client_Testing extends CI_Controller {
 						'name'  => 'emails',
 						'label' => 'Emails',
 						'value' => 'h.j.vanmeerveld@uu.nl, s.kort@uu.nl',
-						'rules' => 'valid_emails')
+						'rules' => 'valid_emails'),
+					array(
+						'name'  => 'sushi',
+						'label' => 'Sushi',
+						'value' => 'Has Wasabi',
+						'rules' => 'callback_sushi[wasabi]')
 				),
 				'messages' => array(
 					'required' => 'Het %s veld mag niet leeg blijven.',
