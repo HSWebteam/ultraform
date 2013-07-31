@@ -229,7 +229,6 @@ Ultraform.ElementModel = Backbone.Model.extend({
 
     var model = this;
     var error = '';
-console.dir({odel:model});
     var oldState = this.validationState;
     var oldError = this.validationError;
 
@@ -241,7 +240,7 @@ console.dir({odel:model});
       if (rule.name in model.validations) {
 
         // execute the validation
-        var validationResult = model.validations[rule.name].call(model, attributes.value, rule.args);
+        var validationResult = model.validations[rule.name].call(model, attributes.value, rule.args, model);
 
         if (validationResult === false) {
           // inValid
@@ -277,6 +276,40 @@ console.dir({odel:model});
             model.trigger('validate:pending');
             model.validationState = 'pending';
           }
+        }
+
+      }
+      else if (rule.name.slice(0, 'callback_'.length)==='callback_') {
+
+        // this is a callback function, send the validation request to the server
+        var data = {
+          rule: rule.name,
+          args: rule.args,
+          value: attributes.value,
+          name: model.get('name'),
+          label: model.get('label')
+        };
+
+        // prepare the result
+        var deferred = new $.Deferred();
+
+        // execute the ajax call
+        $.ajax({
+          url: model.url,
+          type: 'POST',
+          data: data
+        }).done(function(result){
+          deferred.resolve( result.error );
+        });
+
+        // result is a deferred
+        // create a pending validation
+        _pendingValidations.push( deferred );
+
+        // if state changes, trigger an event
+        if (model.validationState!=='pending') {
+          model.trigger('validate:pending');
+          model.validationState = 'pending';
         }
 
       }
@@ -440,7 +473,7 @@ console.dir({odel:model});
 
     // MARK: this is not a pure function, the "args" argument can be changed
     matches: function(value, args){
-console.dir({matches_this:this});
+
       var matchWithModel = this.parent.attributes.elements[args[0]];
       var matchWithValue = matchWithModel.attributes.value;
 
@@ -449,11 +482,13 @@ console.dir({matches_this:this});
 
       return (value === matchWithValue);
     },
-    is_unique: function(value, args){
+    is_unique: function(value, args, model){
       var data = {
-        action: 'is_unique',
+        rule: 'is_unique',
         args: args,
-        value: value
+        value: value,
+        name: model.get('name'),
+        label: model.get('label')
       };
 
       // prepare the result
