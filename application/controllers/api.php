@@ -46,7 +46,7 @@ class Api extends MY_Controller {
 		$this->load->library('ultraform');
 		
 		// Validate the request
-		$this->ultraform->validate_callback();
+		echo $this->ultraform->validate_callback();
 	}
 }
 

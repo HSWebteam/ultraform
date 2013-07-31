@@ -202,7 +202,7 @@ class Ultraform {
 	public function validate_callback()
 	{
 		// Load the form validation library
-		$this->load->library('form_validation');
+		$this->CI->load->library('form_validation');
 		
 		// Only if the request method is POST
 		if($this->CI->input->server('REQUEST_METHOD') === 'POST')
@@ -211,13 +211,13 @@ class Ultraform {
 			$post = $this->CI->input->post();
 				
 			// Create validation rules for this request
-			$this->form_validation->set_rules($post['name'], $post['label'], $post['rule']);
+			$this->CI->form_validation->set_rules($post['name'], $post['label'], $post['rule']);
 				
 			// Create proper POST value for the field to validate
 			$_POST[$post['name']] = $post['value'];
 				
 			// Validate
-			if($this->form_validation->run() == FALSE)
+			if($this->CI->form_validation->run() == FALSE)
 			{
 				// Return error message
 				return form_error($post['name']);

@@ -14,9 +14,9 @@ class MY_Controller extends CI_Controller {
 	
 	public function sushi($str)
 	{
-		if(1 == 1)
+		if(!strstr($str, 'sushi'))
 		{
-			$this->form_validation->set_message('sushi', 'The %s field must contain at least five sushi!');
+			$this->form_validation->set_message('sushi', 'The %s field must contain the word "sushi"!');
 			return FALSE;
 		}
 
