@@ -334,6 +334,12 @@ input[type='text'].required, textarea.required {
 		<span id="ufo-forms-33-emails_error" class="validationError"></span>
 		<span class="red">(valid email addresses)</span>
 	</div>
+	<div id="ufo-forms-33-sushi">
+		<label for="sushi">Sushi</label>
+		<input id="sushi" type="text" name="sushi" value="" />
+		<span id="ufo-forms-33-sushi_error" class="validationError"></span>
+		<span class="red">(please state your sushi needs!)</span>
+	</div>
 	<div>
 		<input type="submit" name="submit_2" value="Submit" />
 		<input type="reset" name="reset_2" value="Reset" />
