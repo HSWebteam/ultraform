@@ -32,7 +32,8 @@ class Client_Testing extends CI_Controller {
 	public function validate()
 	{
 
-		$action = $this->input->post('rule');
+		$rule = $this->input->post('rule');
+		$action = $this->input->post('action');
 		$args   = $this->input->post('args');
 		$value  = $this->input->post('value');
 
@@ -44,7 +45,7 @@ class Client_Testing extends CI_Controller {
 				'error'  => 'the function '.$action.' was not found'
 			);
 
-			if ($action==='is_unique' AND $args[0]!=null) {
+			if ($action==='is_unique') {
 				$not_unique = array('HJ', 'Rik', 'Simon');
 
 				$valid = (array_search($value, $not_unique)===FALSE);
@@ -55,6 +56,7 @@ class Client_Testing extends CI_Controller {
 				);
 			}
 			else if ($action==='callback_sushi') {
+
 				$valid = strpos(strtoupper($value), strtoupper($args[0]))!==FALSE;
 
 				$result = array(

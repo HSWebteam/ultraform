@@ -215,7 +215,8 @@ Ultraform.ElementModel = Backbone.Model.extend({
       // save the rule in the results
       return {
         name: ruleName,
-        args: ruleArgs
+        args: ruleArgs,
+        rule: rule
       };
     });
 
@@ -240,7 +241,7 @@ Ultraform.ElementModel = Backbone.Model.extend({
       if (rule.name in model.validations) {
 
         // execute the validation
-        var validationResult = model.validations[rule.name].call(model, attributes.value, rule.args, model);
+        var validationResult = model.validations[rule.name].call(model, attributes.value, rule, model);
 
         if (validationResult === false) {
           // inValid
@@ -283,7 +284,8 @@ Ultraform.ElementModel = Backbone.Model.extend({
 
         // this is a callback function, send the validation request to the server
         var data = {
-          rule: rule.name,
+          rule: rule.rule,
+          action: rule.name,
           args: rule.args,
           value: attributes.value,
           name: model.get('name'),
@@ -423,19 +425,19 @@ Ultraform.ElementModel = Backbone.Model.extend({
   // validation return true for valid values
   validations: {
 
-    required: function(value, args){
+    required: function(value){
       return ($.trim(value) !== '');
     },
 
     // MARK: this is not a pure function, the "args" argument can be changed
-    regexp_match: function(value, args){
+    regexp_match: function(value, rule){
 
       // change args to a single argument
       // if the regexp contains a comma (,) the args would have become split, revert the splitting
-      args[0] = args.join(',');
+      rule.args[0] = rule.args.join(',');
 
       // the PHP version of the regex
-      var preg = args[0];
+      var preg = rule.args[0];
       var modifiers = '';
 
       // character that starts end ends the regexp (example: regexp '/^def/' has delimiter '/')
@@ -472,20 +474,21 @@ Ultraform.ElementModel = Backbone.Model.extend({
     },
 
     // MARK: this is not a pure function, the "args" argument can be changed
-    matches: function(value, args){
+    matches: function(value, rule){
 
-      var matchWithModel = this.parent.attributes.elements[args[0]];
+      var matchWithModel = this.parent.attributes.elements[rule.args[0]];
       var matchWithValue = matchWithModel.attributes.value;
 
       // change the args[0] to the label of the field, for when the message gets generated
-      args[0] = matchWithModel.attributes.label;
+      rule.args[0] = matchWithModel.attributes.label;
 
       return (value === matchWithValue);
     },
-    is_unique: function(value, args, model){
+    is_unique: function(value, rule, model){
       var data = {
-        rule: 'is_unique',
-        args: args,
+        rule: rule.rule,
+        action: rule.name,
+        args: rule.args,
         value: value,
         name: model.get('name'),
         label: model.get('label')
@@ -505,52 +508,52 @@ Ultraform.ElementModel = Backbone.Model.extend({
 
       return deferred;
     },
-    min_length: function(value, args){
-      return (value.length >= args[0]);
+    min_length: function(value, rule){
+      return (value.length >= rule.args[0]);
     },
-    max_length: function(value, args){
-      return (value.length <= args[0]);
+    max_length: function(value, rule){
+      return (value.length <= rule.args[0]);
     },
-    exact_length: function(value, args){
-      return (value.length === args[0]);
+    exact_length: function(value, rule){
+      return (value.length === rule.args[0]);
     },
-    greater_than: function(value, args){
-      return ((! isNaN(value)) && Number(value) > Number(args[0]));
+    greater_than: function(value, rule){
+      return ((! isNaN(value)) && Number(value) > Number(rule.args[0]));
     },
-    less_than: function(value, args){
-      return ((! isNaN(value)) && Number(value) < Number(args[0]));
+    less_than: function(value, rule){
+      return ((! isNaN(value)) && Number(value) < Number(rule.args[0]));
     },
-    alpha: function(value, args){
+    alpha: function(value){
       return (/^[a-zA-Z]+$/).test(value);
     },
-    alpha_numeric: function(value, args){
+    alpha_numeric: function(value){
       return (/^[a-zA-Z0-9]+$/).test(value);
     },
-    alpha_dash: function(value, args){
+    alpha_dash: function(value){
       return (/^[a-zA-Z0-9_-]+$/).test(value);
     },
-    numeric: function(value, args){
+    numeric: function(value){
       return (/^[\-+]?[0-9]*\.?[0-9]+$/).test(value);
     },
-    is_numeric: function(value, args){
+    is_numeric: function(value){
       return (! isNaN(value));
     },
-    integer: function(value, args){
+    integer: function(value){
       return (/^[\-+]?[0-9]+$/).test(value);
     },
-    decimal: function(value, args){
+    decimal: function(value){
       return (/^[\-+]?[0-9]+\.[0-9]+$/).test(value);
     },
-    is_natural: function(value, args){
+    is_natural: function(value){
       return (/^[0-9]+$/).test(value);
     },
-    is_natural_no_zero: function(value, args){
+    is_natural_no_zero: function(value){
       return parseInt(value,10)===0 ? false : (/^[0-9]+$/).test(value);
     },
-    valid_email: function(value, args){
+    valid_email: function(value){
       return (/^([a-zA-Z0-9\+_\-]+)(\.[a-zA-Z0-9\+_\-]+)*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,6}$/).test($.trim(value));
     },
-    valid_emails: function(value, args){
+    valid_emails: function(value){
       elementmodel = this;
       var emails = value.split(',');
       var result = true;
