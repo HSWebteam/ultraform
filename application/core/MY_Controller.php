@@ -12,11 +12,11 @@ class MY_Controller extends CI_Controller {
 		}
 	}
 	
-	public function sushi($str)
+	public function sushi($str, $amount)
 	{
-		if(!strstr($str, 'sushi'))
+		if(substr_count($str, 'sushi') < $amount)
 		{
-			$this->form_validation->set_message('sushi', 'The %s field must contain the word "sushi"!');
+			$this->form_validation->set_message('sushi', 'The %s field must contain at least %s times the word "sushi"!');
 			return FALSE;
 		}
 
