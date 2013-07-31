@@ -46,7 +46,7 @@ Ultraform.initialize = function(options){
       );
 
       // set the url for validations
-      model.validateUrl = options.validateUrl + idParts[1] + '/' + idParts[2];
+      model.validateUrl = options.validateUrl;
       model.name = idParts[1];
 
     });
