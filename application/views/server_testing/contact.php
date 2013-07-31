@@ -36,7 +36,10 @@
         <script>
 
             // initialize
-            Ultraform.initialize( "<?php echo base_url();?>" );
+            Ultraform.initialize({
+            	apiUrl: "<?php echo base_url();?>api/",
+            	validateUrl: "<?php echo base_url();?>api/validate/"
+            });
 
         </script>
 
