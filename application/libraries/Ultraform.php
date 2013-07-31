@@ -212,19 +212,19 @@ class Ultraform {
 				
 			// Create validation rules for this request
 			$this->CI->form_validation->set_rules($post['name'], $post['label'], $post['rule']);
-				
+
 			// Create proper POST value for the field to validate
 			$_POST[$post['name']] = $post['value'];
-				
+
 			// Validate
 			if($this->CI->form_validation->run() == FALSE)
 			{
 				// Return error message
-				return form_error($post['name']);
+				return json_encode(array('error', form_error($post['name'])));
 			}
 			else
 			{
-				return TRUE;
+				return json_encode(array('valid', 'valid'));
 			}
 		}
 	}
