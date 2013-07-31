@@ -3,7 +3,7 @@
 /**
  * @author Simon Kort <simon.kort@gmail.com>
  */
-class Server_Testing extends CI_Controller {
+class Server_Testing extends MY_Controller {
 	
 	public function index()
 	{	
