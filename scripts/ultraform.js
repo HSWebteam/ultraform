@@ -25,7 +25,7 @@ var Ultraform = {};
 */
 
 
-Ultraform.initialize = function(baseUrl){
+Ultraform.initialize = function(options){
 
   // initialize the FormModels
   $(document).ready(function(){
@@ -41,12 +41,12 @@ Ultraform.initialize = function(baseUrl){
           id: idParts[2]
         },
         {
-          urlRoot: baseUrl + 'api/' + idParts[1]
+          urlRoot: options.apiUrl + idParts[1]
         }
       );
 
       // set the url for validations
-      model.validateUrl = baseUrl + 'validate/' + idParts[1] + '/' + idParts[2];
+      model.validateUrl = options.validateUrl + idParts[1] + '/' + idParts[2];
       model.name = idParts[1];
 
     });
