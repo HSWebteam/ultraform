@@ -31,7 +31,10 @@ class Client_Testing extends CI_Controller {
 	*/
 	public function validate($forms_name='', $one=null)
 	{
-
+		echo 'test';
+		echo $this->input->post();
+		exit;
+		
 		$input_data = json_decode(trim(file_get_contents('php://input')), true);
 		$action = $input_data['action'];
 		$args   = $input_data['args'];

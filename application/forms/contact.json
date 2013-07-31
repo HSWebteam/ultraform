@@ -24,7 +24,8 @@
         },
         "remarks": {
         	"name": "remarks",
-        	"type": "textarea"
+        	"type": "textarea",
+        	"rules": "callback_sushi"
         },
         "submit": {
         	"name": "submit",
