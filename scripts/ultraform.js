@@ -257,7 +257,7 @@ Ultraform.ElementModel = Backbone.Model.extend({
           var validationError = model.processMessage(message, attributes.label, rule.args);
 
           // create a resolved validation (resolved with a validation error)
-          _pendingValidations.push( $.Deferred().resolve(validationError) );
+          _pendingValidations.push( $.Deferred().resolve({valid:false , error:validationError}) );
 
           // break the loop
           //return false; // break
@@ -265,7 +265,7 @@ Ultraform.ElementModel = Backbone.Model.extend({
         else if (validationResult === true) {
           // Valid
           // create a resolved validation (resolved with no validation error)
-          _pendingValidations.push( $.Deferred().resolve('') );
+          _pendingValidations.push( $.Deferred().resolve({valid:true}) );
         }
         else {
           // result is a deferred
@@ -301,7 +301,7 @@ Ultraform.ElementModel = Backbone.Model.extend({
           type: 'POST',
           data: data
         }).done(function(result){
-          deferred.resolve( result.error );
+          deferred.resolve( result );
         });
 
         // result is a deferred
@@ -333,10 +333,12 @@ Ultraform.ElementModel = Backbone.Model.extend({
       var data = Array.prototype.slice.call(arguments, 0);
 
       // get the first error
+      var isValid = true;
       var firstError = '';
       $.each(data, function(index, value){
-        if (value !== '') {
-          firstError = value;
+        if (! value.valid) {
+          isValid = false;
+          firstError = value.error;
           return false;
         }
       });
@@ -344,7 +346,7 @@ Ultraform.ElementModel = Backbone.Model.extend({
       // if no validation errors were found: set validation state to valid
       var oldState = model.validationState;
       var oldError = model.validationError;
-      model.validationState = (firstError==='') ? 'valid' : 'invalid';
+      model.validationState = isValid ? 'valid' : 'invalid';
       model.validationError = firstError;
 
       // if state or error changed, trigger an event
@@ -503,7 +505,7 @@ Ultraform.ElementModel = Backbone.Model.extend({
         type: 'POST',
         data: data
       }).done(function(result){
-        deferred.resolve( result.error );
+        deferred.resolve( result );
       });
 
       return deferred;
@@ -617,14 +619,14 @@ Ultraform.ElementView = Backbone.View.extend({
     }
     else if (DOMValue === '') {
       // the DOM seems empty, set the model value to the DOM value
-      this.$el_find('input, select').val(modelValue);
+      this.$el_find('input, select, textarea').val(modelValue);
     }
     else if (modelValue !== DOMValue) {
       console.error(this.el.id + ': The DOM and the API show a different initial value!!');
     }
 
     // Set the $input to the input element
-    this.$input = this.$el_find('input, select');
+    this.$input = this.$el_find('input, select, textarea');
     this.input = this.$input.get(0);
 
     // set the error element
@@ -635,15 +637,30 @@ Ultraform.ElementView = Backbone.View.extend({
     this.listenTo(this.model, 'validate:valid', this.onValid);
     this.listenTo(this.model, 'validate:invalid', this.onInvalid);
     this.listenTo(this.model, 'validate:pending', this.onValidationPending);
+
+    // Set events depending on the root element
+    if (this.input === this.el) {
+      // root element is the input, select or textarea element
+      this.events = {
+        "blur" : "updateModel",
+        "keypress" : "handleKey"
+      };
+    }
+    else {
+      // root element is not the same as the input elemnent
+      this.events = {
+        "blur input,select,textarea" : "updateModel",
+        "keypress input,select,textarea" : "handleKey"
+      };
+    }
+
+    // activate the event handlers
+    this.delegateEvents();
   },
 
   events: {
-    "blur input" : "updateModel",
-    "blur" : "updateModel",
-    "change select": "updateModel",
-    "change": "updateModel",
-    "keypress input" : "handleKey",
-    "keypress" : "handleKey"
+    // no events here, they are initialized in the initialize method and may differ
+    // slightly depending on which element was found
   },
 
   // change the resulting character when typing, depending on the rules
