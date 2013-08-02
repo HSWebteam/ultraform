@@ -216,7 +216,7 @@ class Ultraform {
 			// Create proper POST value for the field to validate
 			$_POST[$post['name']] = $post['value'];
 
-			// set output type to json
+			// Set output type to json
 			$this->CI->output->set_content_type('application/json');
 
 			// Validate
@@ -269,6 +269,9 @@ class Ultraform {
 			}
 		}
 
+		// Set output type to json
+		$this->CI->output->set_content_type('application/json');
+		
 		// Export messages
 		$messages = $this->CI->lang->load('form_validation', '' , TRUE);
 		$export['messages'] = $messages;
