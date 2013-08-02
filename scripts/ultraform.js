@@ -27,16 +27,6 @@ var Ultraform = function(options) {
 
   var FormModel = Backbone.Model.extend({
 
-    // alternative url() function.
-    // for a form named "ufo-forms-33" and a collection apiUrl "http://mysite.com/api"
-    // the resulting url will be "http://mysite.com/api/forms/"
-    url: function() {
-      var url = _.result(this.collection, 'apiUrl');
-      var base = url + (url.charAt(url.length - 1) === '/' ? '' : '/') + this.get('name');
-      if (this.isNew()) return base;
-      return base + (base.charAt(base.length - 1) === '/' ? '' : '/') + encodeURIComponent(this.id);
-    },
-
     initialize: function(initoptions) {
 
       // load the model from the server
@@ -46,6 +36,16 @@ var Ultraform = function(options) {
         }
       });
 
+    },
+
+    // alternative url() function.
+    // for a form named "ufo-forms-33" and a collection apiUrl "http://mysite.com/api"
+    // the resulting url will be "http://mysite.com/api/forms/"
+    url: function() {
+      var url = _.result(this.collection, 'apiUrl');
+      var base = url + (url.charAt(url.length - 1) === '/' ? '' : '/') + this.get('name');
+      if (this.isNew()) return base;
+      return base + (base.charAt(base.length - 1) === '/' ? '' : '/') + encodeURIComponent(this.id);
     },
 
     // perform when the data is returned by the server,
@@ -94,10 +94,31 @@ var Ultraform = function(options) {
         // replace the defered
         elementModels[value.name] = elementModel;
 
+        // listen to validation changes in the elements
+        model.listenTo(elementModel, 'validate', model.updateValidation);
+
       });
 
       // return the result
       return {elements:elementModels, messages:response.messages};
+    },
+
+    invalidElementModels: {}, // element models that are invalid
+
+    updateValidation: function(elementModel){
+      console.log('update validation', elementModel);
+      console.log('goto: http://backbonetutorials.com/organizing-backbone-using-modules/');
+      if (elementModel.validationState==='invalid') {
+        // add to the invalids
+        this.invalidElementModels[elementModel.get('name')] = elementModel;
+      }
+      else {
+        // remove from the invalids
+        delete this.invalidElementModels[elementModel.get('name')];
+      }
+
+      console.log(this.invalidElementModels);
+
     }
 
   });
@@ -262,8 +283,8 @@ var Ultraform = function(options) {
 
             // if state changes, trigger an event
             if (model.validationState!=='pending') {
-              model.trigger('validate:pending');
               model.validationState = 'pending';
+              model.trigger('validate', model);
             }
           }
 
@@ -298,8 +319,8 @@ var Ultraform = function(options) {
 
           // if state changes, trigger an event
           if (model.validationState!=='pending') {
-            model.trigger('validate:pending');
             model.validationState = 'pending';
+            model.trigger('validate:pending', model);
           }
 
         }
@@ -339,7 +360,7 @@ var Ultraform = function(options) {
 
         // if state or error changed, trigger an event
         if (oldState !== model.validationState || oldError !== model.validationError) {
-          model.trigger('validate:'+model.validationState, model.validationError);
+          model.trigger('validate', model);
         }
 
       });
@@ -622,9 +643,7 @@ var Ultraform = function(options) {
       this.err = this.$err.get(0);
 
       // *** ATTACH TO SOME MODEL EVENTS ***
-      this.listenTo(this.model, 'validate:valid', this.onValid);
-      this.listenTo(this.model, 'validate:invalid', this.onInvalid);
-      this.listenTo(this.model, 'validate:pending', this.onValidationPending);
+      this.listenTo(this.model, 'validate', this.onValidation);
 
       // Set events depending on the root element
       if (this.input === this.el) {
@@ -726,19 +745,32 @@ var Ultraform = function(options) {
       this.model.setValueAndValidate( $(event.target).val() );
     },
 
+    // to be run when validation was performed
+    onValidation: function(model) {
+      if (model.validationState==='valid') {
+        this.onValid(model);
+      }
+      else if (model.validationState==='invalid') {
+        this.onInvalid(model);
+      }
+      else if (model.validationState==='pending') {
+        this.onValidationPending(model);
+      }
+    },
+
     // hide the validationerror from the DOM
-    onValid: function() {
+    onValid: function(model) {
       this.$err.fadeOut();
       this.$err.removeClass('error');
     },
 
     // show the validationerror in the DOM
-    onInvalid: function(error) {
-      this.$err.html(error).fadeIn();
+    onInvalid: function(model) {
+      this.$err.html(model.validationError).fadeIn();
       this.$err.addClass('error');
     },
 
-    onValidationPending: function() {
+    onValidationPending: function(model) {
       // actions to perform while waiting for validation
     },
 
