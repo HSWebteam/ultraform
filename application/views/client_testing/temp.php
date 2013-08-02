@@ -20,13 +20,14 @@
     <!-- Your application -->
     <script src="<?php echo base_url('scripts/ultraform.js'); ?>"></script>
     <script>
-
+    
     var fix = $('#qunit-tests');
     var that = this;
+    var ultraform;
     fix.load($base_url+'client_testing/form1', function() {
-
+    
         // initialize
-        Ultraform.initialize({
+        ultraform = new Ultraform({
             apiUrl: $base_url+'client_testing/api/',
             validateUrl: $base_url+'client_testing/validate/'
         });
