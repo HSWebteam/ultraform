@@ -51,7 +51,7 @@ class Client_Testing extends CI_Controller {
 				$valid = (array_search($value, $not_unique)===FALSE);
 
 				$result = array(
-					'result' => $valid ? 'valid' : 'invalid',
+					'valid' => $valid,
 					'error'  => $valid ? '' : 'The value '.$value.' allready exists in the column '.$args[0]
 				);
 			}
@@ -60,7 +60,7 @@ class Client_Testing extends CI_Controller {
 				$valid = strpos(strtoupper($value), strtoupper($args[0]))!==FALSE;
 
 				$result = array(
-					'result' => $valid ? 'valid' : 'invalid',
+					'valid' => $valid,
 					'error'  => $valid ? '' : 'You cannot get Sushi without '.$args[0]
 				);
 			}

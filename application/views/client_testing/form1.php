@@ -250,9 +250,9 @@ input[type='text'].required, textarea.required {
 		<span id="ufo-forms-33-name_error" class="validationError"></span>
 		<span class="red">(is required AND may not be longer than 30 characters)</span>
 	</div>
-	<div id="ufo-forms-33-regexp">
+	<div>
 		<label for="regexp">RegExp (^[abc,]+$)</label>
-		<input id="regexp" type="text" name="regexp" value="" size="24" />
+		<input  id="ufo-forms-33-regexp" type="text" name="regexp" value="" size="24" />
 		<span id="ufo-forms-33-regexp_error" class="validationError"></span>
 		<span class="red">(regexp /^[abc,]+$/i must match)</span>
 	</div>
