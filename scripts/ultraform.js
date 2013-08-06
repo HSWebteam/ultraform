@@ -16,278 +16,599 @@
 ***************************************
 */
 
-var Ultraform = {};
+var Ultraform = function(options) {
 
-/**
-***************************************
-* The Ultraform Initialization
-***************************************
-*/
+  /**
+  ***************************************
+  * MODEL: FormModel
+  * The Ultraform Model for a <form>
+  ***************************************
+  */
 
+  var FormModel = Backbone.Model.extend({
 
-Ultraform.initialize = function(options){
+    initialize: function(initoptions) {
 
-  // initialize the FormModels
-  $(document).ready(function(){
-
-    // for every ufo-* form in the document
-    $('form[id^="ufo-"]').each(function(index, value){
-
-      var idParts = this.id.split('-');
-
-      // craete the form model for this form
-      var model = new Ultraform.FormModel(
-        {
-          id: idParts[2]
-        },
-        {
-          urlRoot: options.apiUrl + idParts[1]
-        }
-      );
-
-      // set the url for validations
-      model.validateUrl = options.validateUrl;
-      model.name = idParts[1];
-
-    });
-  });
-
-};
-
-/**
-***************************************
-* MODEL: FormModel
-* The Ultraform Model for a <form>
-***************************************
-*/
-
-Ultraform.FormModel = Backbone.Model.extend({
-
-
-
-  initialize: function(options) {
-
-    // load the model from the server
-    this.fetch({
-      error: function() {
-        console.error('the model '+this.cid+' could not be loaded');
-      }
-    });
-
-  },
-
-  // perform when the data is returned by the server,
-  // make submodels for every element in the returned object,
-  // return the new attributes property for the model
-  parse: function(response, options) {
-
-    var model = this;
-
-    // list of models for the elements
-    var elementModels = {};
-
-    // first add promises for the elements
-    // so that if an element needs to reference
-    // another element that is not yet initialized
-    // we still can go ahead
-    $.each(response.elements, function(index, value) {
-      elementModels[value.name] = $.Deferred();
-    });
-
-    // add to the model
-    model.set('elements', elementModels);
-
-    // generate the models for the elements
-    // every attribute is an element
-    $.each(response.elements, function(index, value) {
-
-      // create model for the element
-      elementModel = new Ultraform.ElementModel({
-        name: value.name,
-        label: value.label,
-        rules: value.rules,
-        value: value.value,
-        id: 'ufo-' + model.name + '-' + model.id + '-' + value.name
-      }, {
-        url: model.validateUrl,
-        parent: model
+      var view = new FormView({
+        model: this,
+        el: $('#ufo-' + initoptions.name + '-' + initoptions.id)
       });
 
-      // get the deferred
-      var deferred = model.get('elements')[value.name];
-
-      // resolve
-      deferred.resolve(elementModel);
-
-      // replace the defered
-      elementModels[value.name] = elementModel;
-
-    });
-
-    // return the result
-    return {elements:elementModels, messages:response.messages};
-  }
-
-});
-
-/**
-***************************************
-* MODEL: ElementModel
-* The Ultraform Model for a DOM element
-***************************************
-*/
-
-Ultraform.ElementModel = Backbone.Model.extend({
-
-  // extend the constructor
-  constructor: function(attributes, options) {
-
-    // set the parent model
-    this.parent = options.parent;
-
-    // call the default constructor
-    Backbone.Model.apply( this, arguments );
-  },
-
-  initialize: function() {
-
-    var view = new Ultraform.ElementView({
-      model: this,
-      el: $('#' + this.id)
-    });
-
-    this.initializeValidations.call(this);
-  },
-
-  parent: null, // the parent model
-
-  // first set the value, then validate
-  // (this differs from set('value',value,{validate:true})) in that
-  // the an invalid validation will not prevent setting the value
-  setValueAndValidate: function(value) {
-
-    // set the value, regardless of the validation results
-    this.set('value', value);
-
-    // do the validation
-    this.validate(this.attributes);
-  },
-
-  // state after the last validation, can be valid, invalid or pending
-  validationState: 'valid',
-
-  // pending validations
-  pendingValidations: $.when(''),
-
-  // pending validations array
-  _pendingValidations: [],
-
-  // check if the current validation state is valid
-  isValid: function() {
-    return this.validationState === 'valid';
-  },
-
-  // return the current rules of the model as an array
-  getRules: function() {
-    var SPLIT_RULE_AT = '|';
-    var START_ARGS_AT = '[';
-    var SPLIT_ARGS_AT = ',';
-    var END_ARGS_AT = ']';
-
-    var _rules = this.get('rules');
-    var rules = (_rules===null ? [''] : _rules.split(SPLIT_RULE_AT));
-
-    // array with the rules
-    var result = [];
-
-    // loop through all rules and perform all validations
-    return $.map(rules, function(rule){
-
-      // name of the rule
-      var ruleName = rule.split(START_ARGS_AT)[0];
-
-      // find start and end of arguments
-      var argsStart = rule.indexOf(START_ARGS_AT);
-      var argsEnd = rule.lastIndexOf(END_ARGS_AT);
-      // string containing the arguments
-      var ruleArgs = (argsStart==-1) ? [] : rule.slice(argsStart+1, argsEnd).split(SPLIT_ARGS_AT);
-
-      // save the rule in the results
-      return {
-        name: ruleName,
-        args: ruleArgs,
-        rule: rule
-      };
-    });
-
-  },
-
-  // keep the validate function in the model small
-  // the real work is done in Backbone.Validate
-  validate: function(attributes) {
-
-    var rules = this.getRules();
-
-    var model = this;
-    var error = '';
-    var oldState = this.validationState;
-    var oldError = this.validationError;
-
-    var _pendingValidations = [];
-
-    // loop through all rules and perform all validations
-    $.each(rules, function(index, rule){
-
-      if (rule.name in model.validations) {
-
-        // execute the validation
-        var validationResult = model.validations[rule.name].call(model, attributes.value, rule, model);
-
-        if (validationResult === false) {
-          // inValid
-
-          // set validation error message
-          var message;
-          if (typeof model.parent.attributes.messages !== 'undefined') {
-            message = model.parent.attributes.messages[rule.name];
-          }
-          else {
-            message = 'ERROR';
-          }
-          var validationError = model.processMessage(message, attributes.label, rule.args);
-
-          // create a resolved validation (resolved with a validation error)
-          _pendingValidations.push( $.Deferred().resolve({valid:false , error:validationError}) );
-
-          // break the loop
-          //return false; // break
+      // load the model from the server
+      this.fetch({
+        error: function() {
+          console.error('the model '+this.cid+' could not be loaded');
         }
-        else if (validationResult === true) {
-          // Valid
-          // create a resolved validation (resolved with no validation error)
-          _pendingValidations.push( $.Deferred().resolve({valid:true}) );
+      });
+
+    },
+
+    // alternative url() function.
+    // for a form named "ufo-forms-33" and a collection apiUrl "http://mysite.com/api"
+    // the resulting url will be "http://mysite.com/api/forms/"
+    url: function() {
+      var url = _.result(this.collection, 'apiUrl');
+      var base = url + (url.charAt(url.length - 1) === '/' ? '' : '/') + this.get('name');
+      if (this.isNew()) return base;
+      return base + (base.charAt(base.length - 1) === '/' ? '' : '/') + encodeURIComponent(this.id);
+    },
+
+    // perform when the data is returned by the server,
+    // make submodels for every element in the returned object,
+    // return the new attributes property for the model
+    parse: function(response, options) {
+
+      var model = this;
+
+      // list of models for the elements
+      var elementModels = {};
+
+      // first add promises for the elements
+      // so that if an element needs to reference
+      // another element that is not yet initialized
+      // we still can go ahead
+      $.each(response.elements, function(index, value) {
+        elementModels[value.name] = $.Deferred();
+      });
+
+      // add to the model
+      model.set('elements', elementModels);
+
+      // generate the models for the elements
+      // every attribute is an element
+      $.each(response.elements, function(index, value) {
+
+        // create model for the element
+        elementModel = new ElementModel({
+          name: value.name,
+          label: value.label,
+          rules: value.rules,
+          value: value.value,
+          id: 'ufo-' + model.get('name') + '-' + model.id + '-' + value.name
+        }, {
+          validateUrl: model.collection.validateUrl,
+          parent: model
+        });
+
+        // get the deferred
+        var deferred = model.get('elements')[value.name];
+
+        // resolve
+        deferred.resolve(elementModel);
+
+        // replace the defered
+        elementModels[value.name] = elementModel;
+
+        // listen to validation changes in the elements
+        model.listenTo(elementModel, 'validate', model.updateValidation);
+
+      });
+
+      // return the result
+      return {elements:elementModels, messages:response.messages};
+    },
+
+    invalidElements: {}, // element models that are invalid
+
+    updateValidation: function(elementModel){
+      if (elementModel.validationState !== 'pending') {
+        this.trigger('updateValidation', elementModel);
+      }
+
+    }
+
+  });
+
+  /**
+  ***************************************
+  * COLLECTION: FormCollection
+  * The Collection of FormModels
+  ***************************************
+  */
+
+  var FormCollection = Backbone.Collection.extend({
+    model: FormModel,
+    apiUrl: options.apiUrl,
+    validateUrl: options.validateUrl
+  });
+
+  /**
+  ***************************************
+  * VIEW: FormView
+  * The View for a form
+  ***************************************
+  */
+
+  var FormView = Backbone.View.extend({
+
+    initialize: function(){
+
+      // find the validation error block (if it exists)
+      this.$err = $('#' + this.$el.prop('id') + '_error');
+      this.err = this.$err.get(0);
+      // hide the error block because we have no errors yet
+      this.$err.hide();
+
+      // find the ul element inside the error block
+      this.$errul = this.$err.find('ul');
+      this.errul = this.$errul.get(0);
+
+      // listen to model validation changes
+      this.listenTo(this.model, 'updateValidation', this.updateValidation);
+
+      this.invalidElements = {};
+      this.invalidElementsCount = 0;
+
+    },
+
+    updateValidation: function(elementModel){
+
+      var $err;
+
+      if (this.$err.length === 0) return;
+
+      if (elementModel.validationState==='invalid') {
+        if (! (elementModel.get('name') in this.invalidElements)) {
+          // if this is the first messages, show the message element this.$err
+          if (++this.invalidElementsCount === 1) {
+            this.$err.stop().fadeIn().slideDown();
+          }
+          // error is new, add a message
+          $err = this.addMessage(elementModel);
+          // add to the invalids
+          this.invalidElements[elementModel.get('name')] = {model: elementModel, $err: $err};
         }
         else {
+          // error has changed
+          $err = this.updateMessage(elementModel, this.invalidElements[elementModel.get('name')].$err);
+          // replace the element
+          this.invalidElements[elementModel.get('name')].$err = $err;
+        }
+      }
+      else {
+        if (elementModel.get('name') in this.invalidElements) {
+          // if this was the last message, hide the message element this.$err
+          if (--this.invalidElementsCount === 0) {
+            this.$err.stop().slideUp().fadeOut();
+          }
+          // error has been removed
+          this.removeMessage(this.invalidElements[elementModel.get('name')].$err);
+          // remove from the invalids
+          delete this.invalidElements[elementModel.get('name')];
+        }
+      }
+    },
+
+    // add an error message for the given model, return the added DOM element
+    addMessage: function(elementModel){
+
+      var $err;
+
+      if (this.$errul.length > 0) {
+        // there is an ul element in the errorblock, add the error to the ul
+        $err = $('<li>'+elementModel.validationError+'</li>');
+        // append to the <ul> element
+        $err.css('display', 'none').appendTo(this.$errul).slideDown();
+      }
+      else {
+        $err = $('<div>' + elementModel.validationError + '</div><br>');
+        // append to the error element
+        $err.css('display', 'none').appendTo(this.$err).slideDown();
+      }
+
+      return $err;
+    },
+
+    removeMessage: function($err){
+
+      $err.slideUp(function(){
+        $err.remove();
+      });
+    },
+
+    updateMessage: function(elementModel, $olderr){
+
+      var $err;
+
+      if (this.$errul.length > 0) {
+        // there is an ul element in the errorblock, add the error to the ul
+        $err = $('<li>'+elementModel.validationError+'</li>');
+      }
+      else {
+        $err = $('<span>' + elementModel.validationError + '</span><br>');
+      }
+
+      $olderr.replaceWith($err);
+
+      return $err;
+    }
+
+  });
+
+  /**
+  ***************************************
+  * MODEL: ElementModel
+  * The Ultraform Model for a DOM element
+  ***************************************
+  */
+
+  var ElementModel = Backbone.Model.extend({
+
+    // extend the constructor
+    constructor: function(attributes, options) {
+
+      // set the parent model
+      this.parent = options.parent;
+      // set the validation url
+      this.validateUrl = options.validateUrl;
+
+      // call the default constructor
+      Backbone.Model.apply( this, arguments );
+    },
+
+    initialize: function() {
+
+      var view = new ElementView({
+        model: this,
+        el: $('#' + this.id)
+      });
+
+      this.initializeValidations.call(this);
+    },
+
+    parent: null, // the parent model
+
+    // first set the value, then validate
+    // (this differs from set('value',value,{validate:true})) in that
+    // the an invalid validation will not prevent setting the value
+    setValueAndValidate: function(value) {
+
+      // set the value, regardless of the validation results
+      this.set('value', value);
+
+      // do the validation
+      this.validate(this.attributes);
+    },
+
+    // state after the last validation, can be valid, invalid or pending
+    validationState: 'valid',
+
+    // pending validations
+    pendingValidations: $.when(''),
+
+    // pending validations array
+    _pendingValidations: [],
+
+    // check if the current validation state is valid
+    isValid: function() {
+      return this.validationState === 'valid';
+    },
+
+    // return the current rules of the model as an array
+    getRules: function() {
+      var SPLIT_RULE_AT = '|';
+      var START_ARGS_AT = '[';
+      var SPLIT_ARGS_AT = ',';
+      var END_ARGS_AT = ']';
+
+      var _rules = this.get('rules');
+      var rules = (_rules===null ? [''] : _rules.split(SPLIT_RULE_AT));
+
+      // array with the rules
+      var result = [];
+
+      // loop through all rules and perform all validations
+      return $.map(rules, function(rule){
+
+        // name of the rule
+        var ruleName = rule.split(START_ARGS_AT)[0];
+
+        // find start and end of arguments
+        var argsStart = rule.indexOf(START_ARGS_AT);
+        var argsEnd = rule.lastIndexOf(END_ARGS_AT);
+        // string containing the arguments
+        var ruleArgs = (argsStart==-1) ? [] : rule.slice(argsStart+1, argsEnd).split(SPLIT_ARGS_AT);
+
+        // save the rule in the results
+        return {
+          name: ruleName,
+          args: ruleArgs,
+          rule: rule
+        };
+      });
+
+    },
+
+    // keep the validate function in the model small
+    // the real work is done in Backbone.Validate
+    validate: function(attributes) {
+
+      var rules = this.getRules();
+
+      var model = this;
+      var error = '';
+      var oldState = this.validationState;
+      var oldError = this.validationError;
+
+      var _pendingValidations = [];
+
+      // loop through all rules and perform all validations
+      $.each(rules, function(index, rule){
+
+        if (rule.name in model.validations) {
+
+          // execute the validation
+          var validationResult = model.validations[rule.name].call(model, attributes.value, rule, model);
+
+          if (validationResult === false) {
+            // inValid
+
+            // set validation error message
+            var message;
+            if (typeof model.parent.attributes.messages !== 'undefined') {
+              message = model.parent.attributes.messages[rule.name];
+            }
+            else {
+              message = 'ERROR';
+            }
+            var validationError = model.processMessage(message, attributes.label, rule.args);
+
+            // create a resolved validation (resolved with a validation error)
+            _pendingValidations.push( $.Deferred().resolve({valid:false , error:validationError}) );
+
+            // break the loop
+            //return false; // break
+          }
+          else if (validationResult === true) {
+            // Valid
+            // create a resolved validation (resolved with no validation error)
+            _pendingValidations.push( $.Deferred().resolve({valid:true}) );
+          }
+          else {
+            // result is a deferred
+            // create a pending validation
+            _pendingValidations.push( validationResult );
+
+            // if state changes, trigger an event
+            if (model.validationState!=='pending') {
+              model.validationState = 'pending';
+              model.trigger('validate', model);
+            }
+          }
+
+        }
+        else if (rule.name.slice(0, 'callback_'.length)==='callback_') {
+
+          // this is a callback function, send the validation request to the server
+          var data = {
+            rule: rule.rule,
+            //action: rule.name,
+            //args: rule.args,
+            value: attributes.value,
+            name: model.get('name'),
+            label: model.get('label')
+          };
+
+          // prepare the result
+          var deferred = new $.Deferred();
+
+          // execute the ajax call
+          $.ajax({
+            url: model.validateUrl,
+            type: 'POST',
+            data: data
+          }).done(function(result){
+            deferred.resolve( result );
+          });
+
           // result is a deferred
           // create a pending validation
-          _pendingValidations.push( validationResult );
+          _pendingValidations.push( deferred );
 
           // if state changes, trigger an event
           if (model.validationState!=='pending') {
-            model.trigger('validate:pending');
             model.validationState = 'pending';
+            model.trigger('validate:pending', model);
+          }
+
+        }
+      });
+
+      // reject all old pending validations
+      $.each(this._pendingValidations, function(index, deferred){
+        deferred.reject();
+      });
+
+      // create a new Deferred for the new validation results
+      this._pendingValidations = _pendingValidations;
+      this.pendingValidations = $.when.apply(this, this._pendingValidations);
+
+      // trigger an event if the validation state or errors change
+      this.pendingValidations.then(function(){
+
+        // translate the arguments to a regular array
+        var data = Array.prototype.slice.call(arguments, 0);
+
+        // get the first error
+        var isValid = true;
+        var firstError = '';
+        $.each(data, function(index, value){
+          if (! value.valid) {
+            isValid = false;
+            firstError = value.error;
+            return false;
+          }
+        });
+
+        // if no validation errors were found: set validation state to valid
+        var oldState = model.validationState;
+        var oldError = model.validationError;
+        model.validationState = isValid ? 'valid' : 'invalid';
+        model.validationError = firstError;
+
+        // if state or error changed, trigger an event
+        if (oldState !== model.validationState || oldError !== model.validationError) {
+          model.trigger('validate', model);
+        }
+
+      });
+
+    },
+
+    // some validations need initialization
+    // for instance the matching rule needs to listen to changes in the matching model
+    // this needs to be called after all element models are created
+    initializeValidations: function() {
+      var rules = this.getRules();
+      var model = this;
+
+      // loop through all rules and perform all validations
+      $.each(rules, function(index, rule){
+        if (rule.name in model.validationInitializations) {
+          // initialize the validation
+          model.validationInitializations[rule.name].call(model, rule.args);
+        }
+      });
+
+    },
+
+    // list of rules with initialization functions
+    validationInitializations: {
+      matches: function(args) {
+        var model = this;
+
+        // get the model that this element matches with
+        // the result can be a promise
+        var matchWithModel = this.parent.attributes.elements[args[0]];
+
+        $.when(matchWithModel).then(function(){
+          model.listenTo(matchWithModel, 'change', function(){
+            model.validate(model.attributes);
+          });
+        });
+
+      }
+    },
+
+    // prevalidations modify a value to conform to some validation rule
+    // for instance, if a string with max_length becomes to long, the string will be truncated
+    // type is the type of event (onChange or onKey)
+    // the modified value is returned
+    preValidations: {
+
+      // prevent typing longer strings
+      max_length: function(value, args, type) {
+        return (value.length > args[0]) ? value.slice(0, args[0]) : value;
+      },
+
+      // change comma (,) to point (.)
+      numeric: function(value, args, type) {
+        if (type !== 'change') return;
+        return value.replace(/\,/g, '.');
+      },
+
+      // change comma (,) to point (.)
+      is_numeric: function(value, args, type) {
+        if (type !== 'change') return;
+        return value.replace(/\,/g, '.');
+      },
+
+      // change comma (,) to point (.)
+      decimal: function(value, args, type) {
+        if (type !== 'change') return;
+        return value.replace(/\,/g, '.');
+      }
+
+    },
+
+    // validation return true for valid values
+    validations: {
+
+      required: function(value){
+        return ($.trim(value) !== '');
+      },
+
+      // MARK: this is not a pure function, the "args" argument can be changed
+      regexp_match: function(value, rule){
+
+        // change args to a single argument
+        // if the regexp contains a comma (,) the args would have become split, revert the splitting
+        rule.args[0] = rule.args.join(',');
+
+        // the PHP version of the regex
+        var preg = rule.args[0];
+        var modifiers = '';
+
+        // character that starts end ends the regexp (example: regexp '/^def/' has delimiter '/')
+        var delimiter = preg.slice(0,1);
+        preg = preg.slice(1); // remove the first delimiter
+
+        // modifiers that are valid in JS and PHP
+        var valid_modifiers = {i:true, m:true};
+
+        // find the end delimiter
+        while (preg.length > 0) {
+          // remove last char from preg
+          var last_char = preg.slice(-1);
+          preg = preg.slice(0,preg.length-1);
+
+          // if last character is not the delimiter, add it to the list of modifiers
+          if (last_char === delimiter) {
+            // break the loop
+            break;
+          }
+          else if (last_char in valid_modifiers) {
+            // add to list of modifiers
+            modifiers += last_char;
+          }
+          else {
+            // warn for invalid modifier (might be valid in PHP but not in JS)
+            alert('Invalid modifier for RegExp, Ultraform does not know what to do with '+last_char);
           }
         }
 
-      }
-      else if (rule.name.slice(0, 'callback_'.length)==='callback_') {
+        var regex = new RegExp(preg, modifiers);
 
-        // this is a callback function, send the validation request to the server
+        return regex.test(value);
+      },
+
+      // MARK: this is not a pure function, the "args" argument can be changed
+      matches: function(value, rule){
+
+        var matchWithModel = this.parent.attributes.elements[rule.args[0]];
+        var matchWithValue = matchWithModel.attributes.value;
+
+        // change the args[0] to the label of the field, for when the message gets generated
+        rule.args[0] = matchWithModel.attributes.label;
+
+        return (value === matchWithValue);
+      },
+      is_unique: function(value, rule, model){
         var data = {
           rule: rule.rule,
-          action: rule.name,
-          args: rule.args,
-          value: attributes.value,
+          //action: rule.name,
+          //args: rule.args,
+          value: value,
           name: model.get('name'),
           label: model.get('label')
         };
@@ -297,467 +618,293 @@ Ultraform.ElementModel = Backbone.Model.extend({
 
         // execute the ajax call
         $.ajax({
-          url: model.url,
+          url: this.validateUrl,
           type: 'POST',
           data: data
         }).done(function(result){
           deferred.resolve( result );
         });
 
-        // result is a deferred
-        // create a pending validation
-        _pendingValidations.push( deferred );
-
-        // if state changes, trigger an event
-        if (model.validationState!=='pending') {
-          model.trigger('validate:pending');
-          model.validationState = 'pending';
-        }
-
-      }
-    });
-
-    // reject all old pending validations
-    $.each(this._pendingValidations, function(index, deferred){
-      deferred.reject();
-    });
-
-    // create a new Deferred for the new validation results
-    this._pendingValidations = _pendingValidations;
-    this.pendingValidations = $.when.apply(this, this._pendingValidations);
-
-    // trigger an event if the validation state or errors change
-    this.pendingValidations.then(function(){
-
-      // translate the arguments to a regular array
-      var data = Array.prototype.slice.call(arguments, 0);
-
-      // get the first error
-      var isValid = true;
-      var firstError = '';
-      $.each(data, function(index, value){
-        if (! value.valid) {
-          isValid = false;
-          firstError = value.error;
-          return false;
-        }
-      });
-
-      // if no validation errors were found: set validation state to valid
-      var oldState = model.validationState;
-      var oldError = model.validationError;
-      model.validationState = isValid ? 'valid' : 'invalid';
-      model.validationError = firstError;
-
-      // if state or error changed, trigger an event
-      if (oldState !== model.validationState || oldError !== model.validationError) {
-        model.trigger('validate:'+model.validationState, model.validationError);
-      }
-
-    });
-
-  },
-
-  // some validations need initialization
-  // for instance the matching rule needs to listen to changes in the matching model
-  // this needs to be called after all element models are created
-  initializeValidations: function() {
-    var rules = this.getRules();
-    var model = this;
-
-    // loop through all rules and perform all validations
-    $.each(rules, function(index, rule){
-      if (rule.name in model.validationInitializations) {
-        // initialize the validation
-        model.validationInitializations[rule.name].call(model, rule.args);
-      }
-    });
-
-  },
-
-  // list of rules with initialization functions
-  validationInitializations: {
-    matches: function(args) {
-      var model = this;
-
-      // get the model that this element matches with
-      // the result can be a promise
-      var matchWithModel = this.parent.attributes.elements[args[0]];
-
-      $.when(matchWithModel).then(function(){
-        model.listenTo(matchWithModel, 'change', function(){
-          model.validate(model.attributes);
+        return deferred;
+      },
+      min_length: function(value, rule){
+        return (value.length >= rule.args[0]);
+      },
+      max_length: function(value, rule){
+        return (value.length <= rule.args[0]);
+      },
+      exact_length: function(value, rule){
+        return (value.length === rule.args[0]);
+      },
+      greater_than: function(value, rule){
+        return ((! isNaN(value)) && Number(value) > Number(rule.args[0]));
+      },
+      less_than: function(value, rule){
+        return ((! isNaN(value)) && Number(value) < Number(rule.args[0]));
+      },
+      alpha: function(value){
+        return (/^[a-zA-Z]+$/).test(value);
+      },
+      alpha_numeric: function(value){
+        return (/^[a-zA-Z0-9]+$/).test(value);
+      },
+      alpha_dash: function(value){
+        return (/^[a-zA-Z0-9_-]+$/).test(value);
+      },
+      numeric: function(value){
+        return (/^[\-+]?[0-9]*\.?[0-9]+$/).test(value);
+      },
+      is_numeric: function(value){
+        return (! isNaN(value));
+      },
+      integer: function(value){
+        return (/^[\-+]?[0-9]+$/).test(value);
+      },
+      decimal: function(value){
+        return (/^[\-+]?[0-9]+\.[0-9]+$/).test(value);
+      },
+      is_natural: function(value){
+        return (/^[0-9]+$/).test(value);
+      },
+      is_natural_no_zero: function(value){
+        return parseInt(value,10)===0 ? false : (/^[0-9]+$/).test(value);
+      },
+      valid_email: function(value){
+        return (/^([a-zA-Z0-9\+_\-]+)(\.[a-zA-Z0-9\+_\-]+)*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,6}$/).test($.trim(value));
+      },
+      valid_emails: function(value){
+        elementmodel = this;
+        var emails = value.split(',');
+        var result = true;
+        $.each(emails, function(i, v){
+          if (! elementmodel.validations.valid_email($.trim(v))) {
+            result = false;
+            return false;
+          }
         });
+        return result;
+      }
+    },
+
+    // replace variables in messages
+    processMessage: function(message, label, args){
+      // replace %s with the label
+      message = message.replace('%s', label);
+
+      // replace all following %s with the arguments
+      $.each(args, function(index, value){
+        message = message.replace('%s', value);
       });
 
-    }
-  },
-
-  // prevalidations modify a value to conform to some validation rule
-  // for instance, if a string with max_length becomes to long, the string will be truncated
-  // type is the type of event (onChange or onKey)
-  // the modified value is returned
-  preValidations: {
-
-    // prevent typing longer strings
-    max_length: function(value, args, type) {
-      return (value.length > args[0]) ? value.slice(0, args[0]) : value;
-    },
-
-    // change comma (,) to point (.)
-    numeric: function(value, args, type) {
-      if (type !== 'change') return;
-      return value.replace(/\,/g, '.');
-    },
-
-    // change comma (,) to point (.)
-    is_numeric: function(value, args, type) {
-      if (type !== 'change') return;
-      return value.replace(/\,/g, '.');
-    },
-
-    // change comma (,) to point (.)
-    decimal: function(value, args, type) {
-      if (type !== 'change') return;
-      return value.replace(/\,/g, '.');
+      // return the result
+      return message;
     }
 
-  },
+  });
 
-  // validation return true for valid values
-  validations: {
+  /**
+  ***************************************
+  * The Ultraform View for an <input>
+  ***************************************
+  */
 
-    required: function(value){
-      return ($.trim(value) !== '');
-    },
+  var ElementView = Backbone.View.extend({
 
-    // MARK: this is not a pure function, the "args" argument can be changed
-    regexp_match: function(value, rule){
+    initialize: function() {
 
-      // change args to a single argument
-      // if the regexp contains a comma (,) the args would have become split, revert the splitting
-      rule.args[0] = rule.args.join(',');
-
-      // the PHP version of the regex
-      var preg = rule.args[0];
-      var modifiers = '';
-
-      // character that starts end ends the regexp (example: regexp '/^def/' has delimiter '/')
-      var delimiter = preg.slice(0,1);
-      preg = preg.slice(1); // remove the first delimiter
-
-      // modifiers that are valid in JS and PHP
-      var valid_modifiers = {i:true, m:true};
-
-      // find the end delimiter
-      while (preg.length > 0) {
-        // remove last char from preg
-        var last_char = preg.slice(-1);
-        preg = preg.slice(0,preg.length-1);
-
-        // if last character is not the delimiter, add it to the list of modifiers
-        if (last_char === delimiter) {
-          // break the loop
-          break;
-        }
-        else if (last_char in valid_modifiers) {
-          // add to list of modifiers
-          modifiers += last_char;
-        }
-        else {
-          // warn for invalid modifier (might be valid in PHP but not in JS)
-          alert('Invalid modifier for RegExp, Ultraform does not know what to do with '+last_char);
-        }
+      // *** UPDATE THE MODEL OR THE UI IF NEEDED ***
+      // compare the value in the DOM with the value that we got from the model
+      var modelValue = this.model.attributes.value;
+      var DOMValue = this.$el_find('input, select').val();
+      if (modelValue === null || typeof modelValue == 'undefined') {
+        // the model did not give a value
+        // fill the model with the values from the DOM
+        this.model.set('value', DOMValue);
+      }
+      else if (DOMValue === '') {
+        // the DOM seems empty, set the model value to the DOM value
+        this.$el_find('input, select, textarea').val(modelValue);
+      }
+      else if (modelValue !== DOMValue) {
+        console.error(this.el.id + ': The DOM and the API show a different initial value!!');
       }
 
-      var regex = new RegExp(preg, modifiers);
+      // Set the $input to the input element
+      this.$input = this.$el_find('input, select, textarea');
+      this.input = this.$input.get(0);
 
-      return regex.test(value);
-    },
+      // set the error element
+      this.$err = $('#' + this.$el.prop('id') + '_error');
+      this.err = this.$err.get(0);
 
-    // MARK: this is not a pure function, the "args" argument can be changed
-    matches: function(value, rule){
+      // *** ATTACH TO SOME MODEL EVENTS ***
+      this.listenTo(this.model, 'validate', this.onValidation);
 
-      var matchWithModel = this.parent.attributes.elements[rule.args[0]];
-      var matchWithValue = matchWithModel.attributes.value;
-
-      // change the args[0] to the label of the field, for when the message gets generated
-      rule.args[0] = matchWithModel.attributes.label;
-
-      return (value === matchWithValue);
-    },
-    is_unique: function(value, rule, model){
-      var data = {
-        rule: rule.rule,
-        action: rule.name,
-        args: rule.args,
-        value: value,
-        name: model.get('name'),
-        label: model.get('label')
-      };
-
-      // prepare the result
-      var deferred = new $.Deferred();
-
-      // execute the ajax call
-      $.ajax({
-        url: this.url,
-        type: 'POST',
-        data: data
-      }).done(function(result){
-        deferred.resolve( result );
-      });
-
-      return deferred;
-    },
-    min_length: function(value, rule){
-      return (value.length >= rule.args[0]);
-    },
-    max_length: function(value, rule){
-      return (value.length <= rule.args[0]);
-    },
-    exact_length: function(value, rule){
-      return (value.length === rule.args[0]);
-    },
-    greater_than: function(value, rule){
-      return ((! isNaN(value)) && Number(value) > Number(rule.args[0]));
-    },
-    less_than: function(value, rule){
-      return ((! isNaN(value)) && Number(value) < Number(rule.args[0]));
-    },
-    alpha: function(value){
-      return (/^[a-zA-Z]+$/).test(value);
-    },
-    alpha_numeric: function(value){
-      return (/^[a-zA-Z0-9]+$/).test(value);
-    },
-    alpha_dash: function(value){
-      return (/^[a-zA-Z0-9_-]+$/).test(value);
-    },
-    numeric: function(value){
-      return (/^[\-+]?[0-9]*\.?[0-9]+$/).test(value);
-    },
-    is_numeric: function(value){
-      return (! isNaN(value));
-    },
-    integer: function(value){
-      return (/^[\-+]?[0-9]+$/).test(value);
-    },
-    decimal: function(value){
-      return (/^[\-+]?[0-9]+\.[0-9]+$/).test(value);
-    },
-    is_natural: function(value){
-      return (/^[0-9]+$/).test(value);
-    },
-    is_natural_no_zero: function(value){
-      return parseInt(value,10)===0 ? false : (/^[0-9]+$/).test(value);
-    },
-    valid_email: function(value){
-      return (/^([a-zA-Z0-9\+_\-]+)(\.[a-zA-Z0-9\+_\-]+)*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,6}$/).test($.trim(value));
-    },
-    valid_emails: function(value){
-      elementmodel = this;
-      var emails = value.split(',');
-      var result = true;
-      $.each(emails, function(i, v){
-        if (! elementmodel.validations.valid_email($.trim(v))) {
-          result = false;
-          return false;
-        }
-      });
-      return result;
-    }
-  },
-
-  // replace variables in messages
-  processMessage: function(message, label, args){
-    // replace %s with the label
-    message = message.replace('%s', label);
-
-    // replace all following %s with the arguments
-    $.each(args, function(index, value){
-      message = message.replace('%s', value);
-    });
-
-    // return the result
-    return message;
-  }
-
-});
-
-/**
-***************************************
-* The Ultraform View for a <form>
-***************************************
-*/
-
-Ultraform.FormView = Backbone.View.extend({
-
-  initialize: function() {
-  }
-
-});
-
-/**
-***************************************
-* The Ultraform View for an <input>
-***************************************
-*/
-
-Ultraform.ElementView = Backbone.View.extend({
-
-  initialize: function() {
-
-    // *** UPDATE THE MODEL OR THE UI IF NEEDED ***
-    // compare the value in the DOM with the value that we got from the model
-    var modelValue = this.model.attributes.value;
-    var DOMValue = this.$el_find('input, select').val();
-    if (modelValue === null || typeof modelValue == 'undefined') {
-      // the model did not give a value
-      // fill the model with the values from the DOM
-      this.model.set('value', DOMValue);
-    }
-    else if (DOMValue === '') {
-      // the DOM seems empty, set the model value to the DOM value
-      this.$el_find('input, select, textarea').val(modelValue);
-    }
-    else if (modelValue !== DOMValue) {
-      console.error(this.el.id + ': The DOM and the API show a different initial value!!');
-    }
-
-    // Set the $input to the input element
-    this.$input = this.$el_find('input, select, textarea');
-    this.input = this.$input.get(0);
-
-    // set the error element
-    this.$err = $('#' + this.$el.prop('id') + '_error');
-    this.err = this.$err.get(0);
-
-    // *** ATTACH TO SOME MODEL EVENTS ***
-    this.listenTo(this.model, 'validate:valid', this.onValid);
-    this.listenTo(this.model, 'validate:invalid', this.onInvalid);
-    this.listenTo(this.model, 'validate:pending', this.onValidationPending);
-
-    // Set events depending on the root element
-    if (this.input === this.el) {
-      // root element is the input, select or textarea element
-      this.events = {
-        "blur" : "updateModel",
-        "keypress" : "handleKey"
-      };
-    }
-    else {
-      // root element is not the same as the input elemnent
-      this.events = {
-        "blur input,select,textarea" : "updateModel",
-        "keypress input,select,textarea" : "handleKey"
-      };
-    }
-
-    // activate the event handlers
-    this.delegateEvents();
-  },
-
-  events: {
-    // no events here, they are initialized in the initialize method and may differ
-    // slightly depending on which element was found
-  },
-
-  // change the resulting character when typing, depending on the rules
-  // the keypresses may not even be visible for a split second, so we cannot use the model.validate
-  // we must therefore resort to handling the keypress before the result becomes visible
-  // and preventDefault() when we want to alter the result
-  handleKey: function(event) {
-    var rules = this.model.getRules();
-    var view = this;
-    var value = $(event.target).val();
-
-    // loop through all rules and perform all handlers
-    $.each(rules, function(index, rule){
-
-      if (rule.name in view.keyHandlers) {
-        var result = view.keyHandlers[rule.name](value, rule.args, event);
-
-        if (result !== true) {
-          // the input key was not valid, insert the alternative key that was given
-          event.preventDefault();
-          view.insertTextAtCursor(result);
-        }
+      // Set events depending on the root element
+      if (this.input === this.el) {
+        // root element is the input, select or textarea element
+        this.events = {
+          "blur" : "updateModel",
+          "keypress" : "handleKey"
+        };
+      }
+      else {
+        // root element is not the same as the input elemnent
+        this.events = {
+          "blur input,select,textarea" : "updateModel",
+          "keypress input,select,textarea" : "handleKey"
+        };
       }
 
-    });
-
-  },
-
-  // keyHandlers return true for a valid input, otherwise the alternative string to insert at the cursor
-  keyHandlers: {
-    max_length: function(value, args, e) {
-      return (value.length < args[0]) || (e.which < 32) || ''; // e.which==0 for non-character keys
+      // activate the event handlers
+      this.delegateEvents();
     },
 
-    numeric: function(value, args, e) {
-      return (String.fromCharCode(e.which) !== ',') || '.';
+    events: {
+      // no events here, they are initialized in the initialize method and may differ
+      // slightly depending on which element was found
     },
 
-    is_numeric: function(value, args, e) {
-      return (String.fromCharCode(e.which) !== ',') || '.';
+    // change the resulting character when typing, depending on the rules
+    // the keypresses may not even be visible for a split second, so we cannot use the model.validate
+    // we must therefore resort to handling the keypress before the result becomes visible
+    // and preventDefault() when we want to alter the result
+    handleKey: function(event) {
+      var rules = this.model.getRules();
+      var view = this;
+      var value = $(event.target).val();
+
+      // loop through all rules and perform all handlers
+      $.each(rules, function(index, rule){
+
+        if (rule.name in view.keyHandlers) {
+          var result = view.keyHandlers[rule.name](value, rule.args, event);
+
+          if (result !== true) {
+            // the input key was not valid, insert the alternative key that was given
+            event.preventDefault();
+            view.insertTextAtCursor(result);
+          }
+        }
+
+      });
+
     },
 
-    decimal: function(value, args, e) {
-      return (String.fromCharCode(e.which) !== ',') || '.';
+    // keyHandlers return true for a valid input, otherwise the alternative string to insert at the cursor
+    keyHandlers: {
+      max_length: function(value, args, e) {
+        return (value.length < args[0]) || (e.which < 32) || ''; // e.which==0 for non-character keys
+      },
+
+      numeric: function(value, args, e) {
+        return (String.fromCharCode(e.which) !== ',') || '.';
+      },
+
+      is_numeric: function(value, args, e) {
+        return (String.fromCharCode(e.which) !== ',') || '.';
+      },
+
+      decimal: function(value, args, e) {
+        return (String.fromCharCode(e.which) !== ',') || '.';
+      }
+
+    },
+
+    insertTextAtCursor: function(valueString){
+
+      //IE support
+      if (document.selection) {
+          this.$input.focus();
+          sel = document.selection.createRange();
+          sel.text = valueString;
+      }
+      //MOZILLA/NETSCAPE support
+      else if (this.input.selectionStart || this.input.selectionStart == '0') {
+          var startPos = this.input.selectionStart;
+          var endPos = this.input.selectionEnd;
+          this.input.value = this.input.value.substring(0, startPos) +
+          valueString +
+          this.input.value.substring(endPos, this.input.value.length);
+          this.input.selectionStart = startPos + valueString.length;
+          this.input.selectionEnd = startPos + valueString.length;
+      }
+      else{
+          this.$input.value += valueString;
+      }
+
+    },
+
+    // sync the model with the UI
+    updateModel: function(event) {
+      this.model.setValueAndValidate( $(event.target).val() );
+    },
+
+    // to be run when validation was performed
+    onValidation: function(model) {
+      if (model.validationState==='valid') {
+        this.onValid(model);
+      }
+      else if (model.validationState==='invalid') {
+        this.onInvalid(model);
+      }
+      else if (model.validationState==='pending') {
+        this.onValidationPending(model);
+      }
+    },
+
+    // hide the validationerror from the DOM
+    onValid: function(model) {
+      this.$err.fadeOut();
+      this.$err.removeClass('error');
+      this.$el.removeClass('error');
+    },
+
+    // show the validationerror in the DOM
+    onInvalid: function(model) {
+      this.$err.html(model.validationError).fadeIn();
+      this.$err.addClass('error');
+      this.$el.addClass('error');
+    },
+
+    onValidationPending: function(model) {
+      // actions to perform while waiting for validation
+    },
+
+    // like $().find, but also checks the element itself for a match
+    $el_find: function(selector) {
+      return this.$el.is(selector) ? this.$el : this.$el.find(selector);
     }
 
-  },
+  });
 
-  insertTextAtCursor: function(valueString){
+  /**
+  ***************************************
+  * The Ultraform Initialization
+  ***************************************
+  */
 
-    //IE support
-    if (document.selection) {
-        this.$input.focus();
-        sel = document.selection.createRange();
-        sel.text = valueString;
-    }
-    //MOZILLA/NETSCAPE support
-    else if (this.input.selectionStart || this.input.selectionStart == '0') {
-        var startPos = this.input.selectionStart;
-        var endPos = this.input.selectionEnd;
-        this.input.value = this.input.value.substring(0, startPos) +
-        valueString +
-        this.input.value.substring(endPos, this.input.value.length);
-        this.input.selectionStart = startPos + valueString.length;
-        this.input.selectionEnd = startPos + valueString.length;
-    }
-    else{
-        this.$input.value += valueString;
-    }
+  var that = this;
 
-  },
+  // initialize the FormModels
+  $(document).ready(function(){
 
-  // sync the model with the UI
-  updateModel: function(event) {
-    this.model.setValueAndValidate( $(event.target).val() );
-  },
+    // for every ufo-* form in the document gather some information
+    var collectionData = $('form[id^="ufo-"]').map(function(index, value){
 
-  // hide the validationerror from the DOM
-  onValid: function() {
-    this.$err.fadeOut();
-    this.$err.removeClass('error');
-  },
+      var idParts = this.id.split('-');
 
-  // show the validationerror in the DOM
-  onInvalid: function(error) {
-    this.$err.html(error).fadeIn();
-    this.$err.addClass('error');
-  },
+      // return the object to create a form of
+      return {
+        id: idParts[2],
+        name: idParts[1]
+      };
 
-  onValidationPending: function() {
-    // actions to perform while waiting for validation
-  },
+    }).get(); // $().map().get() creates an array of return values
 
-  // like $().find, but also checks the element itself for a match
-  $el_find: function(selector) {
-    return this.$el.is(selector) ? this.$el : this.$el.find(selector);
-  }
+    // create a FormModel for every form while adding it to a new FormCollection
+    that.formCollection = new FormCollection( collectionData );
+  });
 
-});
+};
 

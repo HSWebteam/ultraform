@@ -238,8 +238,35 @@ input[type='text'].required, textarea.required {
 }
 .validationError {
 	font-weight:bold;
+	color:red;
 }
+
+.error label {
+	color:red;
+}
+.error input {
+	border:1px solid red;
+}
+
+#ufo-forms-33_error {
+	background-color: lightblue;
+	border: 1px solid darkblue;
+	border-radius: 5px;
+	margin-left: 40px;
+	width: 500px;
+}
+#ufo-forms-33_error li {
+	border-bottom: 0px;
+	height:21px;
+}
+
 </style>
+
+<div id="ufo-forms-33_error">
+The following errors were encountered in the form:<br>
+<ul>
+</ul>
+</div>
 
 <h1>A test form:</h1>
 <p><b>See firebug console for some extra feedback</b></p>
@@ -250,9 +277,9 @@ input[type='text'].required, textarea.required {
 		<span id="ufo-forms-33-name_error" class="validationError"></span>
 		<span class="red">(is required AND may not be longer than 30 characters)</span>
 	</div>
-	<div>
+	<div id="ufo-forms-33-regexp">
 		<label for="regexp">RegExp (^[abc,]+$)</label>
-		<input  id="ufo-forms-33-regexp" type="text" name="regexp" value="" size="24" />
+		<input type="text" name="regexp" value="" size="24" />
 		<span id="ufo-forms-33-regexp_error" class="validationError"></span>
 		<span class="red">(regexp /^[abc,]+$/i must match)</span>
 	</div>

@@ -4,7 +4,16 @@
 		<title>Contact form test</title>
 		<style>
 		input.error {
-			border: 1px solid red;
+			background-color: #FFAAAA;
+		}
+		#ufo-forms-<?php echo $contact_form->name;?>_error {
+			background-color: lightblue;
+			border: 1px solid darkblue;
+			width: 500px;
+			margin-left:50px;
+		}
+		#ufo-forms-<?php echo $contact_form->name;?>_error li {
+			height: 21px;
 		}
 		</style>
 	</head>
@@ -12,6 +21,12 @@
 		<h1>Contact form</h1>
 
 		<p>If you would like to contact us, please fill out the following form.</p>
+
+		<div id="ufo-forms-<?php echo $contact_form->name;?>_error">
+			The following errors were encountered in the form:<br>
+			<ul>
+			</ul>
+		</div>
 		
 		<div id="contact_form">
 			<?php echo $contact_form->render('open');?>
@@ -36,7 +51,7 @@
         <script>
 
             // initialize
-            Ultraform.initialize({
+            var ultraform = new Ultraform({
             	apiUrl: "<?php echo base_url();?>api/",
             	validateUrl: "<?php echo base_url();?>api/validate/"
             });
