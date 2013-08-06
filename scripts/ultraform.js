@@ -29,6 +29,11 @@ var Ultraform = function(options) {
 
     initialize: function(initoptions) {
 
+      var view = new FormView({
+        model: this,
+        el: $('#ufo-' + initoptions.name + '-' + initoptions.id)
+      });
+
       // load the model from the server
       this.fetch({
         error: function() {
@@ -103,21 +108,12 @@ var Ultraform = function(options) {
       return {elements:elementModels, messages:response.messages};
     },
 
-    invalidElementModels: {}, // element models that are invalid
+    invalidElements: {}, // element models that are invalid
 
     updateValidation: function(elementModel){
-      console.log('update validation', elementModel);
-      console.log('goto: http://backbonetutorials.com/organizing-backbone-using-modules/');
-      if (elementModel.validationState==='invalid') {
-        // add to the invalids
-        this.invalidElementModels[elementModel.get('name')] = elementModel;
+      if (elementModel.validationState !== 'pending') {
+        this.trigger('updateValidation', elementModel);
       }
-      else {
-        // remove from the invalids
-        delete this.invalidElementModels[elementModel.get('name')];
-      }
-
-      console.log(this.invalidElementModels);
 
     }
 
@@ -136,6 +132,118 @@ var Ultraform = function(options) {
     validateUrl: options.validateUrl
   });
 
+  /**
+  ***************************************
+  * VIEW: FormView
+  * The View for a form
+  ***************************************
+  */
+
+  var FormView = Backbone.View.extend({
+
+    initialize: function(){
+
+      // find the validation error block (if it exists)
+      this.$err = $('#' + this.$el.prop('id') + '_error');
+      this.err = this.$err.get(0);
+      // hide the error block because we have no errors yet
+      this.$err.hide();
+
+      // find the ul element inside the error block
+      this.$errul = this.$err.find('ul');
+      this.errul = this.$errul.get(0);
+
+      // listen to model validation changes
+      this.listenTo(this.model, 'updateValidation', this.updateValidation);
+
+      this.invalidElements = {};
+      this.invalidElementsCount = 0;
+
+    },
+
+    updateValidation: function(elementModel){
+
+      var $err;
+
+      if (this.$err.length === 0) return;
+
+      if (elementModel.validationState==='invalid') {
+        if (! (elementModel.get('name') in this.invalidElements)) {
+          // if this is the first messages, show the message element this.$err
+          if (++this.invalidElementsCount === 1) {
+            this.$err.stop().fadeIn().slideDown();
+          }
+          // error is new, add a message
+          $err = this.addMessage(elementModel);
+          // add to the invalids
+          this.invalidElements[elementModel.get('name')] = {model: elementModel, $err: $err};
+        }
+        else {
+          // error has changed
+          $err = this.updateMessage(elementModel, this.invalidElements[elementModel.get('name')].$err);
+          // replace the element
+          this.invalidElements[elementModel.get('name')].$err = $err;
+        }
+      }
+      else {
+        if (elementModel.get('name') in this.invalidElements) {
+          // if this was the last message, hide the message element this.$err
+          if (--this.invalidElementsCount === 0) {
+            this.$err.stop().slideUp().fadeOut();
+          }
+          // error has been removed
+          this.removeMessage(this.invalidElements[elementModel.get('name')].$err);
+          // remove from the invalids
+          delete this.invalidElements[elementModel.get('name')];
+        }
+      }
+    },
+
+    // add an error message for the given model, return the added DOM element
+    addMessage: function(elementModel){
+
+      var $err;
+
+      if (this.$errul.length > 0) {
+        // there is an ul element in the errorblock, add the error to the ul
+        $err = $('<li>'+elementModel.validationError+'</li>');
+        // append to the <ul> element
+        $err.css('display', 'none').appendTo(this.$errul).slideDown();
+      }
+      else {
+        $err = $('<div>' + elementModel.validationError + '</div><br>');
+        // append to the error element
+        $err.css('display', 'none').appendTo(this.$err).slideDown();
+      }
+
+      return $err;
+    },
+
+    removeMessage: function($err){
+
+      $err.slideUp(function(){
+        $err.remove();
+      });
+    },
+
+    updateMessage: function(elementModel, $olderr){
+
+      var $err;
+
+      if (this.$errul.length > 0) {
+        // there is an ul element in the errorblock, add the error to the ul
+        $err = $('<li>'+elementModel.validationError+'</li>');
+      }
+      else {
+        $err = $('<span>' + elementModel.validationError + '</span><br>');
+      }
+
+      $olderr.replaceWith($err);
+
+      return $err;
+    }
+
+  });
 
   /**
   ***************************************
@@ -294,8 +402,8 @@ var Ultraform = function(options) {
           // this is a callback function, send the validation request to the server
           var data = {
             rule: rule.rule,
-            action: rule.name,
-            args: rule.args,
+            //action: rule.name,
+            //args: rule.args,
             value: attributes.value,
             name: model.get('name'),
             label: model.get('label')
@@ -498,8 +606,8 @@ var Ultraform = function(options) {
       is_unique: function(value, rule, model){
         var data = {
           rule: rule.rule,
-          action: rule.name,
-          args: rule.args,
+          //action: rule.name,
+          //args: rule.args,
           value: value,
           name: model.get('name'),
           label: model.get('label')
@@ -590,19 +698,6 @@ var Ultraform = function(options) {
 
       // return the result
       return message;
-    }
-
-  });
-
-  /**
-  ***************************************
-  * The Ultraform View for a <form>
-  ***************************************
-  */
-
-  var FormView = Backbone.View.extend({
-
-    initialize: function() {
     }
 
   });
@@ -762,12 +857,14 @@ var Ultraform = function(options) {
     onValid: function(model) {
       this.$err.fadeOut();
       this.$err.removeClass('error');
+      this.$el.removeClass('error');
     },
 
     // show the validationerror in the DOM
     onInvalid: function(model) {
       this.$err.html(model.validationError).fadeIn();
       this.$err.addClass('error');
+      this.$el.addClass('error');
     },
 
     onValidationPending: function(model) {
