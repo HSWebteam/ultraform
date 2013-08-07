@@ -33,9 +33,11 @@
 			Please leave your username and password for contacting.
 			<?php echo $contact_form->render('username');?>
 			<?php echo $contact_form->render('password');?>
-			<?php echo $contact_form->render('address');?>
+			<?php echo $contact_form->render('address');?><br>
+			I like sushi, that is why I will allow you to choose your own... sushi!
+			<?php echo $contact_form->render('sushi');?><br>
 			Now would you like to be remembered?
-			<?php echo $contact_form->render('remember_me');?>
+			<?php echo $contact_form->render('remember_me');?><br>
 			Do you have any remarks you want us to know about?
 			<?php echo $contact_form->render('remarks');?>
 			<?php echo $contact_form->render('submit');?>

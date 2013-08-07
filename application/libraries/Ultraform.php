@@ -62,7 +62,7 @@ class Ultraform {
 
 		// Decode the JSON, return objects
 		$data = json_decode($data);
-
+		
 		// Build elements from data objects
 		foreach($data->elements as $element)
 		{
@@ -89,6 +89,12 @@ class Ultraform {
 	 */
 	public function add($data)
 	{
+		if($data['name'] == 'sushi')
+		{
+			echo '<pre>';
+			print_r($data);
+			echo '</pre>';
+		}
 		$element = new Element($this);
 
 		foreach($data as $key => $value)
@@ -300,6 +306,7 @@ class Element {
 	public $type;
 
 	public $value;
+	public $options = array();
 	public $rules;
 	public $placeholder;
 
@@ -328,11 +335,23 @@ class Element {
 
 		// View data
 		$data = (array)$this;
-
+		
 		// Get translated values & derivative values
 		$data['label'] = $this->form->lang($this->name);
 		$data['placeholder'] = $this->form->lang($this->name . '_placeholder');
 		$data['id'] = 'ufo-forms-' . $this->form->name . '-' . $this->name;
+		
+		// If this element has options, render those
+		if(!empty($this->options))
+		{
+			// Unset any options we have already loaded
+			unset($data['options']);
+			// We have options, handle them
+			foreach($this->options as $option)
+			{
+				$data['options'][$option] = $this->form->lang($this->name . '_option_' . $option);
+			}
+		}
 
 		// Determine what template to use for this element
 		if(file_exists(APPPATH . '/views' . $template_dir . '_' . $this->name . '.php'))
