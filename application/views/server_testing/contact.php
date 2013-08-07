@@ -21,7 +21,7 @@
 		<h1>Contact form</h1>
 
 		<p>If you would like to contact us, please fill out the following form.</p>
-
+		
 		<div id="ufo-forms-<?php echo $contact_form->name;?>_error">
 			The following errors were encountered in the form:<br>
 			<ul>

@@ -27,7 +27,17 @@
 				"temaki",
 				"uramaki"
 			]
-		},      
+		},
+		"color": {
+			"name": "color",
+			"type": "radio",
+			"options": [
+				"yellow",
+				"green",
+				"blue",
+				"purple"
+			]
+		},
         "remember_me": {
         	"name": "remember_me",
         	"type": "checkbox"
