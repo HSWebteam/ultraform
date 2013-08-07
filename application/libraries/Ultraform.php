@@ -62,7 +62,7 @@ class Ultraform {
 
 		// Decode the JSON, return objects
 		$data = json_decode($data);
-
+		
 		// Build elements from data objects
 		foreach($data->elements as $element)
 		{
@@ -300,6 +300,7 @@ class Element {
 	public $type;
 
 	public $value;
+	public $options = array();
 	public $rules;
 	public $placeholder;
 
@@ -328,11 +329,17 @@ class Element {
 
 		// View data
 		$data = (array)$this;
-
+		
 		// Get translated values & derivative values
 		$data['label'] = $this->form->lang($this->name);
 		$data['placeholder'] = $this->form->lang($this->name . '_placeholder');
 		$data['id'] = 'ufo-forms-' . $this->form->name . '-' . $this->name;
+		
+		// If this element has options, render those
+		if(!empty($this->options))
+		{
+			$data['options'] = $this->generate_options();
+		}
 
 		// Determine what template to use for this element
 		if(file_exists(APPPATH . '/views' . $template_dir . '_' . $this->name . '.php'))
@@ -367,10 +374,32 @@ class Element {
 		$export['label'] = $this->form->lang($this->name);;
 		$export['value'] = $this->value;
 		$export['rules'] = $this->rules;
+		
+		// Add options if this element has them
+		if(!empty($this->options))
+		{
+			$export['options'] = $this->generate_options();
+		}
 
 		return $export;
 	}
 
+	/**
+	 * Will generate a translated array of options
+	 */
+	private function generate_options()
+	{
+		// We have options, handle them
+		$options = array();
+
+		foreach($this->options as $option)
+		{
+			$options[$option] = $this->form->lang($this->name . '_option_' . $option);
+		}
+		
+		return $options;
+	}
+	
 	public function __toString()
 	{
 		return $this->render();
