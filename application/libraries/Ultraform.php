@@ -89,12 +89,6 @@ class Ultraform {
 	 */
 	public function add($data)
 	{
-		if($data['name'] == 'sushi')
-		{
-			echo '<pre>';
-			print_r($data);
-			echo '</pre>';
-		}
 		$element = new Element($this);
 
 		foreach($data as $key => $value)
@@ -344,13 +338,7 @@ class Element {
 		// If this element has options, render those
 		if(!empty($this->options))
 		{
-			// Unset any options we have already loaded
-			unset($data['options']);
-			// We have options, handle them
-			foreach($this->options as $option)
-			{
-				$data['options'][$option] = $this->form->lang($this->name . '_option_' . $option);
-			}
+			$data['options'] = $this->generate_options();
 		}
 
 		// Determine what template to use for this element
@@ -386,10 +374,32 @@ class Element {
 		$export['label'] = $this->form->lang($this->name);;
 		$export['value'] = $this->value;
 		$export['rules'] = $this->rules;
+		
+		// Add options if this element has them
+		if(!empty($this->options))
+		{
+			$export['options'] = $this->generate_options();
+		}
 
 		return $export;
 	}
 
+	/**
+	 * Will generate a translated array of options
+	 */
+	private function generate_options()
+	{
+		// We have options, handle them
+		$options = array();
+
+		foreach($this->options as $option)
+		{
+			$options[$option] = $this->form->lang($this->name . '_option_' . $option);
+		}
+		
+		return $options;
+	}
+	
 	public function __toString()
 	{
 		return $this->render();
