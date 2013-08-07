@@ -34,11 +34,19 @@ $lang['username_placeholder'] = "Vul iets in";
 
 $lang['password'] = "Password";
 $lang['address'] = "Home address";
+
 $lang['sushi'] = "Sushi type";
 $lang['sushi_option_makizushi'] = "Makizushi";
 $lang['sushi_option_hosomaki'] = "Hosomaki";
 $lang['sushi_option_temaki'] = "Temaki";
 $lang['sushi_option_uramaki'] = "Uramaki";
+
+$lang['color'] = "Color";
+$lang['color_option_yellow'] = "Yellow";
+$lang['color_option_green'] = "Green";
+$lang['color_option_blue'] = "Blue";
+$lang['color_option_purple'] = "Purple";
+
 $lang['remember_me'] = "Remember me";
 $lang['remarks'] = "Remarks";
 

@@ -36,6 +36,7 @@
 			<?php echo $contact_form->render('address');?><br>
 			I like sushi, that is why I will allow you to choose your own... sushi!
 			<?php echo $contact_form->render('sushi');?><br>
+			<?php echo $contact_form->render('color');?><br>
 			Now would you like to be remembered?
 			<?php echo $contact_form->render('remember_me');?><br>
 			Do you have any remarks you want us to know about?
