@@ -34,6 +34,11 @@ $lang['username_placeholder'] = "Vul iets in";
 
 $lang['password'] = "Password";
 $lang['address'] = "Home address";
+$lang['sushi'] = "Sushi type";
+$lang['sushi_option_makizushi'] = "Makizushi";
+$lang['sushi_option_hosomaki'] = "Hosomaki";
+$lang['sushi_option_temaki'] = "Temaki";
+$lang['sushi_option_uramaki'] = "Uramaki";
 $lang['remember_me'] = "Remember me";
 $lang['remarks'] = "Remarks";
 

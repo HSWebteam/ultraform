@@ -18,6 +18,16 @@
         	"type": "password",
         	"rules": "required|min_length[5]"
         },
+		"sushi": {
+			"name": "sushi",
+			"type": "dropdown",
+			"options": [
+				"makizushi",
+				"hosomaki",
+				"temaki",
+				"uramaki"
+			]
+		},      
         "remember_me": {
         	"name": "remember_me",
         	"type": "checkbox"
