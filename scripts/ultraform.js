@@ -45,6 +45,25 @@ var Ultraform = function(ultraformOptions) {
         el: $('#' + this.id)
       });
 
+      // create element error view if an error-element can be found (elementId + _error)
+      var $errorElement = $('#' + this.id + '_error');
+      var $errorBlock = $('#ufo-' + this.parentModel.get('name') + '-' + this.parentModel.id);
+
+      // if there is no errorElement and also no global errorblock, create an errorElement
+      if ($errorElement.length === 0 && $errorBlock.length === 0) {
+        $errorElement = $('<span id="'+this.id+'_error"></span>').insertAfter(view.$el);
+      }
+
+      // if there is en errorBlock now, create an ElementErrorView for it
+      if ($errorElement.length > 0) {
+        var elementErrorView = new ElementErrorView({},{
+
+          elementModel: this,
+          $el: $errorElement
+
+        });
+      }
+
       // initialize validations
       this.initializeValidations.call(this);
     },
@@ -113,7 +132,6 @@ var Ultraform = function(ultraformOptions) {
     // keep the validate function in the model small
     // the real work is done in Backbone.Validate
     validate: function(attributes) {
-
       var rules = this.getRules();
 
       var model = this;
@@ -121,7 +139,12 @@ var Ultraform = function(ultraformOptions) {
       var oldState = this.validationState;
       var oldError = this.validationError;
 
-      var _pendingValidations = [];
+      // reject all old pending validations
+      $.each(this._pendingValidations, function(index, deferred){
+        deferred.reject();
+      });
+
+      this._pendingValidations = [];
 
       // loop through all rules and perform all validations
       $.each(rules, function(index, rule){
@@ -145,7 +168,7 @@ var Ultraform = function(ultraformOptions) {
             var validationError = model.processMessage(message, attributes.label, rule.args);
 
             // create a resolved validation (resolved with a validation error)
-            _pendingValidations.push( $.Deferred().resolve({valid:false , error:validationError}) );
+            model._pendingValidations.push( $.Deferred().resolve({valid:false , error:validationError}) );
 
             // break the loop
             //return false; // break
@@ -153,12 +176,12 @@ var Ultraform = function(ultraformOptions) {
           else if (validationResult === true) {
             // Valid
             // create a resolved validation (resolved with no validation error)
-            _pendingValidations.push( $.Deferred().resolve({valid:true}) );
+            model._pendingValidations.push( $.Deferred().resolve({valid:true}) );
           }
           else {
             // result is a deferred
             // create a pending validation
-            _pendingValidations.push( validationResult );
+            model._pendingValidations.push( validationResult );
 
             // if state changes, trigger an event
             if (model.validationState!=='pending') {
@@ -194,29 +217,22 @@ var Ultraform = function(ultraformOptions) {
 
           // result is a deferred
           // create a pending validation
-          _pendingValidations.push( deferred );
+          model._pendingValidations.push( deferred );
 
           // if state changes, trigger an event
           if (model.validationState!=='pending') {
             model.validationState = 'pending';
-            model.trigger('validate:pending', model);
+            model.trigger('validate', model);
           }
 
         }
       });
 
-      // reject all old pending validations
-      $.each(this._pendingValidations, function(index, deferred){
-        deferred.reject();
-      });
-
       // create a new Deferred for the new validation results
-      this._pendingValidations = _pendingValidations;
       this.pendingValidations = $.when.apply(this, this._pendingValidations);
 
       // trigger an event if the validation state or errors change
       this.pendingValidations.then(function(){
-
         // translate the arguments to a regular array
         var data = Array.prototype.slice.call(arguments, 0);
 
@@ -240,6 +256,9 @@ var Ultraform = function(ultraformOptions) {
         // if state or error changed, trigger an event
         if (oldState !== model.validationState || oldError !== model.validationError) {
           model.trigger('validate', model);
+
+          // execute updateValidation() on the parent model
+          model.parentModel.updateValidation();
         }
 
       });
@@ -525,6 +544,12 @@ var Ultraform = function(ultraformOptions) {
       // create the collection of elements
       this.elementCollection = new ElementCollection();
 
+      // create the view for the error block
+      var errorView = new ErrorBlockView({
+        model: this,
+        el: $('#ufo-' + initoptions.name + '-' + initoptions.id + '_error')
+      });
+
       // load the model from the server
       this.fetch({
         error: function() {
@@ -533,6 +558,9 @@ var Ultraform = function(ultraformOptions) {
       });
 
     },
+
+    validationState: 'valid', // whether all elements in the form are valid
+    invalidCount: 0, // number of invalid elements in the form
 
     // alternative url() function.
     // for a form named "ufo-forms-33" and a collection apiUrl "http://mysite.com/api"
@@ -556,6 +584,25 @@ var Ultraform = function(ultraformOptions) {
         parentModel: this
       });
 
+    },
+
+    // see if there are any invalid elements and act on it
+    // this function needs to be called by the elementModels on any validation change
+    updateValidation: function() {
+      var oldState = this.validationState;
+      this.invalidCount = _.where(this.elementCollection.models, {validationState:'invalid'}).length;
+
+      if (this.invalidCount > 0) {
+        this.validationState = 'invalid';
+      } else if (! _.isUndefined(_.findWhere(this.elementCollection.models, {validationState:'pending'}))) {
+        this.validationState = 'pending';
+      } else {
+        this.validationState = 'valid';
+      }
+
+      if (oldState !== this.validationState) {
+        this.trigger('validate', this);
+      }
     }
 
   });
@@ -573,115 +620,199 @@ var Ultraform = function(ultraformOptions) {
 
   /**
   ***************************************
-  * VIEW: FormView
-  * The View for a form
+  * VIEW: ErrorView
+  * The View for an error
   ***************************************
   */
 
-  var FormView = Backbone.View.extend({
+  var ErrorView = Backbone.View.extend({
+
+    initialize: function( attributes, options ){
+
+      // set some properties of the error
+      this.parentView = options.parentView;
+      this.elementModel = options.elementModel;
+      this.template = options.template;
+
+      // create the el from template
+      this.setElement(
+        $( _.template(this.template, {message:''}) )
+      );
+
+      // hide the element before we add it to the DOM
+      this.$el.hide();
+
+      // add the invisible element to the DOM
+      options.$attach.append( this.$el );
+
+      // listen to model validation
+      this.listenTo(this.elementModel, 'validate', this.onValidation);
+    },
+
+    // to be run when validation was performed
+    onValidation: function(model) {
+      if (model.validationState==='valid') {
+        this.onValid(model);
+      }
+      else if (model.validationState==='invalid') {
+        this.onInvalid(model);
+      }
+      else if (model.validationState==='pending') {
+        this.onValidationPending(model);
+      }
+    },
+
+    // hide the validationerror from the DOM
+    onValid: function(model) {
+      this.$el.slideUp();
+    },
+
+    // show the validationerror in the DOM
+    onInvalid: function(model) {
+      var oldel = this.el;
+      // create new element from template
+      this.setElement( $(_.template(this.template, {message: model.validationError})) );
+
+      // if the errorblock was hidden before this validation -> show without animation
+      // because the errorblock will have an animation
+      // (We are creating a dependency here. Suggestions for any better coding without dependency?)
+      if (this.parentView.model.invalidCount === 0) {
+        // do nothing, the newly created element is allready not-hidden
+      }
+      else if ($(oldel).is(':hidden')) {
+        // the old element was hidden, hide the new element
+        this.$el.hide();
+      }
+
+      // replace the old with the new
+      $(oldel).replaceWith( this.$el );
+      // display the new error element if it is not allready visible
+      this.$el.slideDown();
+    },
+
+    onValidationPending: function(model) {
+      // actions to perform while waiting for validation
+    }
+
+  });
+
+  /**
+  ***************************************
+  * VIEW: ElementErrorView
+  * The View for errors per element
+  ***************************************
+  */
+
+  var ElementErrorView = Backbone.View.extend({
+
+    initialize: function( attributes, options ){
+
+      // set some properties of the error
+      this.elementModel = options.elementModel;
+
+      // set $el
+      this.setElement(options.$el);
+
+      // listen to model validation
+      this.listenTo(this.elementModel, 'validate', this.onValidation);
+    },
+
+    // to be run when validation was performed
+    onValidation: function(model) {
+      if (model.validationState==='valid') {
+        this.onValid(model);
+      }
+      else if (model.validationState==='invalid') {
+        this.onInvalid(model);
+      }
+      else if (model.validationState==='pending') {
+        this.onValidationPending(model);
+      }
+    },
+
+    onValid: function(model) {
+      this.$el.fadeOut();
+    },
+
+    onInvalid: function(model) {
+      this.$el.text(model.validationError);
+      this.$el.fadeIn();
+    },
+
+    onValidationPending: function(model) {
+      // actions to perform while waiting for validation
+    }
+
+  });
+
+  /**
+  ***************************************
+  * VIEW: ErrorBlockView
+  * The View for the centralized error block
+  ***************************************
+  */
+
+  var ErrorBlockView = Backbone.View.extend({
 
     initialize: function(){
 
-      // find the validation error block (if it exists)
-      this.$err = $('#' + this.$el.prop('id') + '_error');
-      this.err = this.$err.get(0);
       // hide the error block because we have no errors yet
-      this.$err.hide();
+      this.$el.hide();
 
       // find the ul element inside the error block
-      this.$errul = this.$err.find('ul');
-      this.errul = this.$errul.get(0);
+      this.$ul = this.$el.find('ul');
+      this.ul = this.$el.get(0);
 
-      // listen to model validation changes
-      this.listenTo(this.model, 'updateValidation', this.updateValidation);
+      var template, $attach;
+      if (this.$ul.length > 0) {
+        // we have an <ul> element and need to add <li> elements to it
+        template = "<li><%=message%></li>";
+        $attach = this.$ul;
+      } else {
+        // we have another element. A <div> element will be used for the message
+        template = "<div><%=message%></div>";
+        $attach = this.$el;
+      }
 
-      this.invalidElements = {};
-      this.invalidElementsCount = 0;
+      // add ErrorView for elementModel
+      function addErrorBlockError(elementModel){
+
+        var errorView = new ErrorView({},{
+          elementModel: elementModel,
+          template: template,
+          parentView: this,
+          $attach: $attach
+        });
+
+      }
+
+      // create an ErrorView for every elementModel that is allready in the elementCollection
+      this.model.elementCollection.forEach(addErrorBlockError);
+
+      // create an ErrorView for every elementModel that is added to the elementCollection
+      this.listenTo(this.model.elementCollection, 'add', addErrorBlockError);
+
+      // update the visibility of this errorblock when validationState changes on the formModel
+      this.listenTo(this.model, 'validate', this.updateValidation);
 
     },
 
-    updateValidation: function(elementModel){
-
-      var $err;
-
-      if (this.$err.length === 0) return;
-
-      if (elementModel.validationState==='invalid') {
-        if (! (elementModel.get('name') in this.invalidElements)) {
-          // if this is the first messages, show the message element this.$err
-          if (++this.invalidElementsCount === 1) {
-            this.$err.stop().fadeIn().slideDown();
-          }
-          // error is new, add a message
-          $err = this.addMessage(elementModel);
-          // add to the invalids
-          this.invalidElements[elementModel.get('name')] = {model: elementModel, $err: $err};
-        }
-        else {
-          // error has changed
-          $err = this.updateMessage(elementModel, this.invalidElements[elementModel.get('name')].$err);
-          // replace the element
-          this.invalidElements[elementModel.get('name')].$err = $err;
-        }
+    updateValidation: function(formModel){
+      // update the visibility of the errorblock (if it is present)
+      // visibility of the errors in the block are handled in the ErrorView
+      if (formModel.validationState === 'invalid') {
+        this.$el.slideDown().fadeIn();
       }
       else {
-        if (elementModel.get('name') in this.invalidElements) {
-          // if this was the last message, hide the message element this.$err
-          if (--this.invalidElementsCount === 0) {
-            this.$err.stop().slideUp().fadeOut();
-          }
-          // error has been removed
-          this.removeMessage(this.invalidElements[elementModel.get('name')].$err);
-          // remove from the invalids
-          delete this.invalidElements[elementModel.get('name')];
-        }
-      }
-    },
-
-    // add an error message for the given model, return the added DOM element
-    addMessage: function(elementModel){
-
-      var $err;
-
-      if (this.$errul.length > 0) {
-        // there is an ul element in the errorblock, add the error to the ul
-        $err = $('<li>'+elementModel.validationError+'</li>');
-        // append to the <ul> element
-        $err.css('display', 'none').appendTo(this.$errul).slideDown();
-      }
-      else {
-        $err = $('<div>' + elementModel.validationError + '</div><br>');
-        // append to the error element
-        $err.css('display', 'none').appendTo(this.$err).slideDown();
+        this.$el.slideUp().fadeOut();
       }
 
-      return $err;
-    },
-
-    removeMessage: function($err){
-
-      $err.slideUp(function(){
-        $err.remove();
-      });
-    },
-
-    updateMessage: function(elementModel, $olderr){
-
-      var $err;
-
-      if (this.$errul.length > 0) {
-        // there is an ul element in the errorblock, add the error to the ul
-        $err = $('<li>'+elementModel.validationError+'</li>');
-      }
-      else {
-        $err = $('<span>' + elementModel.validationError + '</span><br>');
-      }
-
-      $olderr.replaceWith($err);
-
-      return $err;
     }
 
+  });
+
+
+  var FormView = Backbone.View.extend({
   });
 
   /**
@@ -714,10 +845,6 @@ var Ultraform = function(ultraformOptions) {
       // Set the $input to the input element
       this.$input = this.$el_find('input, select, textarea');
       this.input = this.$input.get(0);
-
-      // set the error element
-      this.$err = $('#' + this.$el.prop('id') + '_error');
-      this.err = this.$err.get(0);
 
       // *** ATTACH TO SOME MODEL EVENTS ***
       this.listenTo(this.model, 'validate', this.onValidation);
@@ -837,15 +964,11 @@ var Ultraform = function(ultraformOptions) {
 
     // hide the validationerror from the DOM
     onValid: function(model) {
-      this.$err.fadeOut();
-      this.$err.removeClass('error');
       this.$el.removeClass('error');
     },
 
     // show the validationerror in the DOM
     onInvalid: function(model) {
-      this.$err.html(model.validationError).fadeIn();
-      this.$err.addClass('error');
       this.$el.addClass('error');
     },
 
