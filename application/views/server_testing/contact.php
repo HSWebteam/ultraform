@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+	<meta charset='utf-8'> 
 	<head>
 		<title>Contact form test</title>
 		<style>
@@ -37,6 +38,8 @@
 			I like sushi, that is why I will allow you to choose your own... sushi!
 			<?php echo $contact_form->render('sushi');?><br>
 			<?php echo $contact_form->render('color');?><br>
+			What kind of sauce would you like with the colored sushi?
+			<?php echo $contact_form->render('sauce');?><br>
 			Now would you like to be remembered?
 			<?php echo $contact_form->render('remember_me');?><br>
 			Do you have any remarks you want us to know about?

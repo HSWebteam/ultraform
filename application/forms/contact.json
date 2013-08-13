@@ -39,6 +39,18 @@
 				"purple"
 			]
 		},
+		"sauce": {
+			"name": "sauce",
+			"type": "checkgroup",
+			"options": [
+				"bechamel",
+				"creme",
+				"mornay",
+				"nantua",
+				"cheddar_cheese",
+				"mustard"
+			]
+		},
         "remember_me": {
         	"name": "remember_me",
         	"type": "checkbox"
