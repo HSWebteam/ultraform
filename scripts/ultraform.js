@@ -26,7 +26,7 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var ElementModel = Backbone.Model.extend({
+  var ElementModel = Backbone.Model.extend(Ultraform.preExtend.ElementModel.call(this, {
 
     initialize: function(attributes, options) {
 
@@ -511,7 +511,7 @@ var Ultraform = function(ultraformOptions) {
       return message;
     }
 
-  });
+  }));
 
   /**
   ***************************************
@@ -520,9 +520,9 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var ElementCollection = Backbone.Collection.extend({
+  var ElementCollection = Backbone.Collection.extend(Ultraform.preExtend.ElementCollection.call(this, {
     model: ElementModel
-  });
+  }));
 
   /**
   ***************************************
@@ -531,7 +531,7 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var FormModel = Backbone.Model.extend({
+  var FormModel = Backbone.Model.extend(Ultraform.preExtend.FormModel.call(this, {
 
     initialize: function(initoptions) {
 
@@ -605,7 +605,7 @@ var Ultraform = function(ultraformOptions) {
       }
     }
 
-  });
+  }));
 
   /**
   ***************************************
@@ -614,9 +614,9 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var FormCollection = Backbone.Collection.extend({
+  var FormCollection = Backbone.Collection.extend(Ultraform.preExtend.FormCollection.call(this, {
     model: FormModel
-  });
+  }));
 
   /**
   ***************************************
@@ -625,7 +625,7 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var ErrorView = Backbone.View.extend({
+  var ErrorView = Backbone.View.extend(Ultraform.preExtend.ErrorView.call(this, {
 
     initialize: function( attributes, options ){
 
@@ -694,7 +694,7 @@ var Ultraform = function(ultraformOptions) {
       // actions to perform while waiting for validation
     }
 
-  });
+  }));
 
   /**
   ***************************************
@@ -703,7 +703,7 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var ElementErrorView = Backbone.View.extend({
+  var ElementErrorView = Backbone.View.extend(Ultraform.preExtend.ElementErrorView.call(this, {
 
     initialize: function( attributes, options ){
 
@@ -743,7 +743,7 @@ var Ultraform = function(ultraformOptions) {
       // actions to perform while waiting for validation
     }
 
-  });
+  }));
 
   /**
   ***************************************
@@ -752,7 +752,7 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var ErrorBlockView = Backbone.View.extend({
+  var ErrorBlockView = Backbone.View.extend(Ultraform.preExtend.ErrorBlockView.call(this, {
 
     initialize: function(){
 
@@ -809,11 +809,11 @@ var Ultraform = function(ultraformOptions) {
 
     }
 
-  });
+  }));
 
 
-  var FormView = Backbone.View.extend({
-  });
+  var FormView = Backbone.View.extend(Ultraform.preExtend.FormView.call(this, {
+  }));
 
   /**
   ***************************************
@@ -821,7 +821,7 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var ElementView = Backbone.View.extend({
+  var ElementView = Backbone.View.extend(Ultraform.preExtend.ElementView.call(this, {
 
     initialize: function() {
 
@@ -981,7 +981,7 @@ var Ultraform = function(ultraformOptions) {
       return this.$el.is(selector) ? this.$el : this.$el.find(selector);
     }
 
-  });
+  }));
 
   /**
   ***************************************
@@ -1013,3 +1013,15 @@ var Ultraform = function(ultraformOptions) {
 
 };
 
+// functions to pre-process when extending backbone objects
+Ultraform.preExtend = {
+  FormCollection: function(obj)    {console.log("FormCollection object", obj); return obj;},
+  FormModel: function(obj)         {console.log("FormModel object", obj); return obj;},
+  FormView: function(obj)          {console.log("FormView object", obj); return obj;},
+  ElementCollection: function(obj) {console.log("ElementCollection object", obj); return obj;},
+  ElementModel: function(obj)      {console.log("ElementModel object", obj); return obj;},
+  ElementView: function(obj)       {console.log("ElementView object", obj); return obj;},
+  ElementErrorView: function(obj)  {console.log("ElementErrorView object", obj); return obj;},
+  ErrorView: function(obj)         {console.log("ErrorView object", obj); return obj;},
+  ErrorBlockView: function(obj)    {console.log("ErrorBlockView object", obj); return obj;}
+};
