@@ -907,4 +907,3 @@ var Ultraform = function(options) {
   });
 
 };
-
