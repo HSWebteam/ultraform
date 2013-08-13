@@ -265,7 +265,7 @@ class Ultraform {
 		{
 			if($element->type !== 'open' && $element->type !== 'close')
 			{
-				$export['elements'][$element->name] = $element->export();
+				$export['elements'][] = $element->export();
 			}
 		}
 
