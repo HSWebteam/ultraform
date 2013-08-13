@@ -1,0 +1,1693 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"create_ci",
+				"create_sicknotice"
+			],
+			[
+				"Errorb",
+				"ErrorBlockViewMixin"
+			],
+			[
+				"ElementErrorV",
+				"ElementErrorViewMixin"
+			],
+			[
+				"ElementC",
+				"elementCollectionMixin"
+			],
+			[
+				"Eleme",
+				"ElementModelMixin"
+			],
+			[
+				"Elementm",
+				"ElementModelMixin"
+			],
+			[
+				"from",
+				"fromTemplate"
+			],
+			[
+				"onV",
+				"onValidation"
+			],
+			[
+				"err",
+				"errorBlock"
+			],
+			[
+				"old",
+				"oldInvalidCount"
+			],
+			[
+				"pending",
+				"pendingValidations"
+			],
+			[
+				"set",
+				"setElement"
+			],
+			[
+				"elem",
+				"elementModel"
+			],
+			[
+				"ErrorBloc",
+				"ErrorBlockErrorView"
+			],
+			[
+				"Err",
+				"ErrorBlockErrorView"
+			],
+			[
+				"Er",
+				"ErrorBlockErrorView"
+			],
+			[
+				"ul",
+				"ultraformOptions"
+			],
+			[
+				"elemen",
+				"elementsCollection"
+			],
+			[
+				"Element",
+				"ElementCollection"
+			],
+			[
+				"Ele",
+				"ElementCollection"
+			],
+			[
+				"elementmo",
+				"elementModel"
+			],
+			[
+				"coll",
+				"collection"
+			],
+			[
+				"form",
+				"FormCollection"
+			],
+			[
+				"FormM",
+				"FormModel"
+			],
+			[
+				"Form",
+				"FormModel"
+			],
+			[
+				"rule",
+				"ruleparts"
+			],
+			[
+				"elemenm",
+				"elementModels"
+			],
+			[
+				"key",
+				"keypressHandlers"
+			],
+			[
+				"keypre",
+				"keypressReplacements"
+			],
+			[
+				"keyp",
+				"keypressReplacements"
+			],
+			[
+				"prev",
+				"preValidate"
+			],
+			[
+				"hint",
+				"hint_img_url"
+			],
+			[
+				"calcula",
+				"calculatedFte"
+			],
+			[
+				"tot",
+				"totalFte"
+			],
+			[
+				"ind",
+				"indexOfFullRow"
+			],
+			[
+				"indef",
+				"indexOfFullPercent"
+			],
+			[
+				"indoep",
+				"indexOfEmptyPercent"
+			],
+			[
+				"indexoff",
+				"indexOfFullRow"
+			],
+			[
+				"urenveld",
+				"urenVeldenSelector"
+			],
+			[
+				"urenv",
+				"urenVeldenSelector"
+			],
+			[
+				"rows",
+				"rowsFilledIn"
+			],
+			[
+				"mana",
+				"manageDisablingRows"
+			],
+			[
+				"college",
+				"collegejaarUren"
+			],
+			[
+				"rekena",
+				"rekenhulp-aanstelling-uren"
+			],
+			[
+				"ects",
+				"ects_totaal_deelnemers"
+			],
+			[
+				"coor",
+				"coordinatie_uren"
+			],
+			[
+				"vaca",
+				"vacatures2_ungrouped"
+			],
+			[
+				"mede",
+				"medewerkers"
+			],
+			[
+				"pro",
+				"programmas"
+			],
+			[
+				"par",
+				"parent_result"
+			],
+			[
+				"new",
+				"new_tree"
+			],
+			[
+				"recu",
+				"recurse_count"
+			],
+			[
+				"cur",
+				"cursussen_db"
+			],
+			[
+				"tabl",
+				"table_name"
+			],
+			[
+				"col",
+				"Collegejaar"
+			],
+			[
+				"table",
+				"table_name"
+			],
+			[
+				"ta",
+				"table_mapping"
+			],
+			[
+				"per",
+				"percent"
+			],
+			[
+				"num",
+				"num_rows"
+			],
+			[
+				"prin",
+				"print_r"
+			],
+			[
+				"var",
+				"var_dump"
+			],
+			[
+				"cu",
+				"current_jaar"
+			],
+			[
+				"ins",
+				"insert_id"
+			],
+			[
+				"fun",
+				"functies"
+			],
+			[
+				"med",
+				"medewekers"
+			],
+			[
+				"colle",
+				"collegejaar"
+			],
+			[
+				"ref",
+				"referenced_tablename"
+			],
+			[
+				"id",
+				"id_mapping"
+			],
+			[
+				"table_m",
+				"table_map"
+			],
+			[
+				"ne",
+				"new_id"
+			],
+			[
+				"curr",
+				"current_filter_methode"
+			],
+			[
+				"curren",
+				"current_filter_methode_text"
+			],
+			[
+				"aan",
+				"aanstellingsomvang"
+			],
+			[
+				"is",
+				"isNaN"
+			],
+			[
+				"parse",
+				"parseFloat"
+			],
+			[
+				"ein",
+				"einde_aanstelling"
+			],
+			[
+				"eid",
+				"einde_aanstelling"
+			],
+			[
+				"develo",
+				"development"
+			],
+			[
+				"initialize",
+				"initializeVersion2"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/S/ziek.dev.fss.uu.nl/application/controllers/sicknotice.php",
+			"settings":
+			{
+				"buffer_size": 3415,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/S/ziek.dev.fss.uu.nl/application/libraries/Bcrypt.php",
+			"settings":
+			{
+				"buffer_size": 2659,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/S/ziek.dev.fss.uu.nl/system/helpers/form_helper.php",
+			"settings":
+			{
+				"buffer_size": 21772,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/S/ziek.dev.fss.uu.nl/application/libraries/Superform.php",
+			"settings":
+			{
+				"buffer_size": 35030,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/S/ziek.dev.fss.uu.nl/application/config/autoload.php",
+			"settings":
+			{
+				"buffer_size": 3180,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/S/ziek.dev.fss.uu.nl/application/language/dutch/sicknotice_lang.php",
+			"settings":
+			{
+				"buffer_size": 1326,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/S/ziek.dev.fss.uu.nl/application/views/sicknotice/edit.php",
+			"settings":
+			{
+				"buffer_size": 64,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/S/ziek.dev.fss.uu.nl/application/views/template.php",
+			"settings":
+			{
+				"buffer_size": 1466,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/User/php.sublime-build",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"php",
+				"Set Syntax: PHP"
+			]
+		],
+		"width": 392.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/S/ziek.dev.fss.uu.nl/application/core/MY_Loader.php",
+		"/S/ziek.dev.fss.uu.nl/application/views/create_sicknotice.php",
+		"/C/Documents and Settings/Meerv003/Application Data/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/Documents and Settings/Meerv003/Application Data/Sublime Text 3/Packages/User/JavaScript.sublime-settings",
+		"/C/wamp/www/ultraform/application/views/client_testing/form1.php",
+		"/C/wamp/www/ultraform/application/controllers/client_testing.php",
+		"/C/wamp/www/ultraform/application/libraries/Ultraform.php",
+		"/C/wamp/www/ultraform/application/views/server_testing/contact.php",
+		"/C/wamp/www/ultraform/application/config/autoload.php",
+		"/C/wamp/www/ultraform/application/views/client_server_testing/contact.php",
+		"/C/wamp/www/ultraform/scripts/ultraform.js",
+		"/S/taakstelling.dev.fss.uu.nl/application/controllers/medewerker.php",
+		"/C/Documents and Settings/Meerv003/Application Data/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/O/FSW/IDC/ICT/webteam/Projecten/Taakstelling/Release 1.7/Veranderingen.txt",
+		"/S/taakstelling.dev.fss.uu.nl/application/models/model_calc.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/models/model_medewerker.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/libraries/Superform.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/template.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/controllers/cursus.php",
+		"//soliscom.uu.nl/uu/Users/Meerv003/My Documents/FRAMEWORK VERBETERINGSVOORSTELLEN.TXT",
+		"/S/taakstelling.dev.fss.uu.nl/application/controllers/rapport.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/rapport/rapport_cursusoverzichttotaal.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/models/model_afdeling.php",
+		"/C/WINDOWS/system32/drivers/etc/hosts",
+		"//hs-web01.fss.uu.nl/Websites/webteam/www/poll.fss.uu.nl/web.config",
+		"/S/taakstelling.dev.fss.uu.nl/scripts/functions.js",
+		"//hs-web01.fss.uu.nl/Websites/webteam/www/poll.fss.uu.nl/application/config/database.php",
+		"//hs-web01.fss.uu.nl/Websites/webteam/www/poll.fss.uu.nl/default.aspx",
+		"/S/taakstelling.dev.fss.uu.nl/application/models/model_cursus.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/rapport/rapport_vacatures.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/rapport/rapport_cursusoverzicht.php",
+		"//hs-web-dev01.fss.uu.nl/Websites/webteam/www/taakstelling.dev.fss.uu.nl/application/models/model_cursus.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/models/model_common.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/controllers/koppeling.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/cursus/overzicht.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/cursus/edit.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/config/form.php",
+		"//hs-web-acc01.fss.uu.nl/websites/webteam/www/taakstelling.acc.fss.uu.nl/application/views/rapport/rapport_cursusoverzichttotaal.php",
+		"//hs-web01.fss.uu.nl/Websites/webteam/www/taakstelling.fss.uu.nl/application/views/rapport/rapport_cursusoverzichttotaal.php",
+		"//hs-web01.fss.uu.nl/Websites/webteam/www/taakstelling.fss.uu.nl/application/controllers/migrate.php",
+		"/C/Documents and Settings/Meerv003/Local Settings/Temp/7zO612.tmp/log_usage.json",
+		"//hs-web-dev01.fss.uu.nl/Websites/webteam/www/taakstelling.dev.fss.uu.nl/application/config/config.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/controllers/migrate.php",
+		"//hs-web01.fss.uu.nl/Websites/webteam/www/taakstelling.fss.uu.nl/application/config/config.php",
+		"//hs-web01.fss.uu.nl/Websites/webteam/www/taakstelling.fss.uu.nl/.htaccess",
+		"//hs-web01.fss.uu.nl/Websites/webteam/www/taakstelling.fss.uu.nl/application/logs/log-2013-03-05.php",
+		"//hs-web-dev01.fss.uu.nl/Websites/webteam/www/taakstelling.dev.fss.uu.nl/application/config/autoload.php",
+		"//hs-web01.fss.uu.nl/Websites/webteam/www/taakstelling.fss.uu.nl/application/config/autoload.php",
+		"//hs-web-acc01.fss.uu.nl/websites/webteam/www/taakstelling.acc.fss.uu.nl/application/controllers/migrate.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/medewerker/view.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/models/model_koppeling.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/models/model_migrate.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/medewerker/edit.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/models/model_rapport.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/koppeling/create.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/koppeling/edit.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/helpers/calc_helper.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/controllers/werkvorm.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/cursus/create.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/models/model_werkvorm.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/rapport/index.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/controllers/afdeling.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/controllers/leerstoel.php",
+		"/C/Documents and Settings/Meerv003/Application Data/Sublime Text 2/Packages/User/debug-yellow.sublime-snippet",
+		"/C/Documents and Settings/Meerv003/Application Data/Sublime Text 2/Packages/User/debug-lightblue.sublime-snippet",
+		"/C/Documents and Settings/Meerv003/Application Data/Sublime Text 2/Packages/User/phpdoc.sublime-snippet",
+		"/S/taakstelling.dev.fss.uu.nl/application/models/model_auth.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/config/taakstelling.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/config/config.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/libraries/Namldap.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/libraries/Adldap.php",
+		"/O/FSW/IDC/ICT/webteam/Code/Webteam framework/application/config/autoload.php",
+		"//hs-web01.fss.uu.nl/Websites/webteam/www/taakstelling.fss.uu.nl/application/views/template.php",
+		"//hs-web-acc01.fss.uu.nl/websites/webteam/www/taakstelling.acc.fss.uu.nl/application/views/template.php",
+		"//hs-web01.fss.uu.nl/Websites/webteam/www/taakstelling.fss.uu.nl/application/config/taakstelling.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/core/MY_Controller.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/migrate/migrate2.php",
+		"/S/taakstelling.dev.fss.uu.nl/css/taakstelling.css",
+		"//hs-web-acc01.fss.uu.nl/websites/webteam/www/taakstelling.acc.fss.uu.nl/css/taakstelling.css",
+		"//soliscom.uu.nl/uu/Users/Meerv003/My Documents/Desktop/nieuwjaar.pseudo.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/config/routes.php",
+		"//hs-web-acc01.fss.uu.nl/websites/webteam/www/taakstelling.acc.fss.uu.nl/application/controllers/afdeling.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/models/model_programma.php",
+		"//hs-web-acc01.fss.uu.nl/websites/webteam/www/taakstelling.acc.fss.uu.nl/application/models/model_rapport.php",
+		"//hs-web-acc01.fss.uu.nl/websites/webteam/www/taakstelling.acc.fss.uu.nl/application/controllers/rapport.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/controllers/account.php",
+		"//soliscom.uu.nl/uu/Users/Meerv003/My Documents/taakstelling-dev.sublime-project",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/rapport/rapport_medtaak.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/cursus/index.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/rapport/cursussen.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/controllers/index.html",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/rapport/rapport_owtaakkort.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/rapport/rapport_owtaak.php",
+		"/S/taakstelling.dev.fss.uu.nl/application/views/rapport/rapport_bijzonderheden.php",
+		"/C/Documents and Settings/Meerv003/Application Data/Sublime Text 2/Packages/User/php.sublime-build",
+		"//soliscom.uu.nl/uu/Users/Meerv003/My Documents/Desktop/BuysBallotLaboratorium.html",
+		"//soliscom.uu.nl/uu/Users/Meerv003/My Documents/Desktop/DavidDeWiedgebouw.html",
+		"//soliscom.uu.nl/uu/Users/Meerv003/My Documents/Desktop/HugoRKruytgebouw.html",
+		"//soliscom.uu.nl/uu/Users/Meerv003/My Documents/Desktop/LibraryUithof.html",
+		"//soliscom.uu.nl/uu/Users/Meerv003/My Documents/Desktop/Minnaertgebouw.html",
+		"//soliscom.uu.nl/uu/Users/Meerv003/My Documents/Desktop/Wiskundegebouw.html",
+		"//soliscom.uu.nl/uu/Users/Meerv003/My Documents/Desktop/kng80.html",
+		"//soliscom.uu.nl/uu/Users/Meerv003/My Documents/Desktop/UbuBinnenstad.html",
+		"/C/wamp/www/dojo_rules/.git/config",
+		"//hs-web01.fss.uu.nl/Websites/webteam/www/survey.fss.uu.nl/admin/tokens.php",
+		"//hs-web01.fss.uu.nl/Websites/webteam/www/survey.fss.uu.nl/admin/bounceprocessing.php",
+		"/C/wamp/www/demo/sites/all/modules/demo_module/demo_module.module",
+		"/C/wamp/www/demo/sites/all/modules/demo_module_feature/demo_module_feature.module",
+		"/C/wamp/www/demo/sites/all/modules/demo_module_feature/demo_module_feature.features.inc",
+		"/C/wamp/www/demo/sites/all/modules/demo_module_feature/demo_module_feature.context.inc",
+		"/C/wamp/www/demo/sites/all/modules/demo_module/demo_module.info",
+		"/C/wamp/www/demo/sites/all/modules/demo_module/demo_module.install",
+		"/C/wamp/www/demo/sites/all/modules/demo_module_feature/demo_module_feature.strongarm.inc",
+		"//hs-web-dev01.fss.uu.nl/Websites/webteam/www/drupal-demo.dev.fss.uu.nl/.gitignore",
+		"//hs-web-dev01.fss.uu.nl/Websites/webteam/www/limesurvey.dev.fss.uu.nl/config.php",
+		"/C/wamp/www/drupal-demo/.git/config",
+		"/C/wamp/www/drupaldemo2/.git/config",
+		"/S/drupal-demo.dev.fss.uu.nl/.gitignore",
+		"/C/wamp/www/drupaldemo2/.gitignore",
+		"/C/wamp/www/CIP/.git/config",
+		"/C/wamp/www/drupalproject/sites/all/modules/uu_roster/uu_roster.module",
+		"/C/wamp/www/drupalproject/sites/all/modules/uu_roster/uu_roster.install",
+		"/C/wamp/www/drupalproject/sites/all/modules/uu_roster/uu_roster.info",
+		"//hs-web-dev01.fss.uu.nl/Websites/webteam/www/limesurvey.dev.fss.uu.nl/index.php",
+		"//soliscom.uu.nl/uu/Users/Meerv003/My Documents/Desktop/noname",
+		"//hs-web-dev01.fss.uu.nl/Websites/webteam/www/limesurvey.dev.fss.uu.nl/limesurvey/config.php",
+		"//hs-web-dev01.fss.uu.nl/Websites/webteam/www/lunchgeld.dev.fss.uu.nl/web.config",
+		"//hs-web-dev01.fss.uu.nl/Websites/webteam/www/limesurvey.dev.fss.uu.nl/web.config"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 90.0,
+		"where_history":
+		[
+			"S:\\ziek.dev.fss.uu.nl",
+			"C:\\wamp\\www\\ultraform",
+			"S:\\taakstelling.dev.fss.uu.nl",
+			"\\\\hs-web01.fss.uu.nl\\Websites\\webteam\\www\\taakstelling.dev.fss.uu.nl",
+			"\\\\hs-web01.fss.uu.nl\\Websites\\webteam\\www\\taakstelling.dev.fss.uu.nl\\application\\",
+			"\\\\hs-web01.fss.uu.nl\\Websites\\webteam\\www\\taakstelling.fss.uu.nl\\",
+			"S:\\taakstelling.dev.fss.uu.nl\\application",
+			"S:\\taakstelling.dev.fss.uu.nl\\application\\controllers",
+			"S:\\taakstelling.dev.fss.uu.nl\\application\\views\\rapport",
+			"<open folders>"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"radiobutton",
+			"textarea",
+			"smarty",
+			"parse",
+			"fetch",
+			"ElementCollection",
+			"ElementModel",
+			"console.",
+			"ElementCollection",
+			"ElementModel",
+			"initializeValidations",
+			"getRules",
+			"ErrorView",
+			"console.",
+			"ElementErrorView",
+			"ElementView",
+			"ElementErrorView",
+			"_.temp",
+			"ElementErrorView",
+			"$attach",
+			"ElementErrorView",
+			"ErrorView",
+			"ElementView",
+			"console.",
+			"oldInvalidCount",
+			"updateValidation",
+			"oldinvalidcount",
+			"invalidElementCount",
+			"_.findw",
+			"console.",
+			"UPDATE MODEL",
+			"validationstate",
+			"ErrorBlockErrorView",
+			"delegateEvents",
+			"ElementView",
+			"console.",
+			"zeing",
+			"adding errorb",
+			"initializen",
+			"events",
+			"validate",
+			"onValidation",
+			"onvalidation",
+			"console.",
+			"onvalid",
+			"elementmodel",
+			"validate",
+			"ErrorBlockErrorView",
+			"validate",
+			"ElementModel",
+			"ElementView",
+			"console.",
+			"Backbone.View.exten",
+			"this.$err",
+			"$err",
+			"updateValidation",
+			"console.",
+			"model.parent",
+			"initializeValidations",
+			"silent",
+			"ElementModel",
+			"options",
+			"deferred",
+			"when",
+			"options",
+			"console.",
+			"slide",
+			"slideIn",
+			"ufo-forms",
+			"ufo-",
+			"console.",
+			"border-bottom",
+			"processMessage",
+			"invalidElementModels",
+			"invalidElements",
+			"invalidElement",
+			"invalidElementModels",
+			"%s",
+			"elementModels",
+			"message",
+			"updateValidation",
+			"listento",
+			"update validation",
+			"addClass('e",
+			"addClass(\"e",
+			"validate",
+			"onValidation",
+			"listento",
+			"trigger",
+			"console.dir",
+			"validationUrl",
+			"apiurl",
+			"ElementModel",
+			"collection",
+			"base",
+			"url",
+			"collection",
+			"Ultraform.",
+			"console.log",
+			"(value, args)",
+			"args[0]",
+			"validations",
+			"is_unique",
+			"validate",
+			"%0",
+			"validate",
+			"attributes",
+			"console.",
+			"matches:",
+			"console.",
+			"initializeValidations",
+			"promise",
+			"promise()",
+			"id=\"ufo-forms-33-",
+			"parse",
+			"%s",
+			"error",
+			"$el_find",
+			"error",
+			"$el_find",
+			".validationE",
+			"attributes.messages[",
+			"\n    ",
+			"$el.find",
+			"$el",
+			"different ini",
+			"/api",
+			"\n     "
+		],
+		"highlight": false,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"138",
+			"146",
+			"145",
+			"144",
+			"143",
+			"142",
+			"141",
+			"140",
+			"139",
+			"148",
+			"147",
+			"137",
+			"136",
+			"134",
+			"135",
+			"133",
+			"132",
+			"131",
+			"Buys Ballot Laboratorium,020",
+			"130"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": true,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 5,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/S/ziek.dev.fss.uu.nl/application/controllers/sicknotice.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3415,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2473,
+								2477
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+								"css": "C:/Program Files/nodejs/node.exe",
+								"javascript": "C:/Program Files/nodejs/node.exe",
+								"php": "C:/wamp/bin/php/php5.4.15/php.exe"
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1012.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/S/ziek.dev.fss.uu.nl/application/libraries/Bcrypt.php",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 2659,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+								"css": "C:/Program Files/nodejs/node.exe",
+								"javascript": "C:/Program Files/nodejs/node.exe",
+								"php": "C:/wamp/bin/php/php5.4.15/php.exe"
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/S/ziek.dev.fss.uu.nl/system/helpers/form_helper.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 21772,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5972,
+								5980
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+								"css": "C:/Program Files/nodejs/node.exe",
+								"javascript": "C:/Program Files/nodejs/node.exe",
+								"php": "C:/wamp/bin/php/php5.4.15/php.exe"
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 3506.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/S/ziek.dev.fss.uu.nl/application/libraries/Superform.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 35030,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								17840,
+								17840
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+								"css": "C:/Program Files/nodejs/node.exe",
+								"javascript": "C:/Program Files/nodejs/node.exe",
+								"php": "C:/wamp/bin/php/php5.4.15/php.exe"
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 8419.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/S/ziek.dev.fss.uu.nl/application/config/autoload.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3180,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2019,
+								2019
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+								"css": "C:/Program Files/nodejs/node.exe",
+								"javascript": "C:/Program Files/nodejs/node.exe",
+								"php": "C:/wamp/bin/php/php5.4.15/php.exe"
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/PHP/PHP.tmLanguage"
+						},
+						"translation.x": -0.0,
+						"translation.y": 405.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/S/ziek.dev.fss.uu.nl/application/language/dutch/sicknotice_lang.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1326,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1051,
+								1051
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/S/ziek.dev.fss.uu.nl/application/views/sicknotice/edit.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 64,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								25,
+								25
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+								"css": "C:/Program Files/nodejs/node.exe",
+								"javascript": "C:/Program Files/nodejs/node.exe",
+								"php": "C:/wamp/bin/php/php5.4.15/php.exe"
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/PHP/PHP.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/S/ziek.dev.fss.uu.nl/application/views/template.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1466,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1302,
+								1302
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+								"css": "C:/Program Files/nodejs/node.exe",
+								"javascript": "C:/Program Files/nodejs/node.exe",
+								"php": "C:/wamp/bin/php/php5.4.15/php.exe"
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": -0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 34.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 100.0
+	},
+	"project": "ST3_ziek.sublime-project",
+	"replace":
+	{
+		"height": 62.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"viewrapmet",
+				"application/views/rapport/rapport_medtaak.php"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"",
+				"\\\\soliscom.uu.nl\\uu\\Users\\Meerv003\\My Documents\\ST3_ultraform.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 260.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

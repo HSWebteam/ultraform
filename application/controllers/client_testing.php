@@ -7,7 +7,7 @@ class Client_Testing extends CI_Controller {
 	*/
 	public function qunit()
 	{
-		$this->load->helper('url');
+		$this->load->helper('url') ;
 		$this->load->view('client_testing/qunit');
 	}
 
