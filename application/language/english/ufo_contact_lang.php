@@ -47,6 +47,13 @@ $lang['color_option_green'] = "Green";
 $lang['color_option_blue'] = "Blue";
 $lang['color_option_purple'] = "Purple";
 
+$lang['sauce_option_bechamel'] = "Béchamel sauce";
+$lang['sauce_option_creme'] = "Crème sauce";
+$lang['sauce_option_mornay'] = "Mornay sauce";
+$lang['sauce_option_nantua'] = "Nantua sauce";
+$lang['sauce_option_cheddar_cheese'] = "Cheddar cheese sauce";
+$lang['sauce_option_mustard'] = "Mustard sauce";
+
 $lang['remember_me'] = "Remember me";
 $lang['remarks'] = "Remarks";
 

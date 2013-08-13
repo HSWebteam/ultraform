@@ -334,6 +334,7 @@ class Element {
 		$data['label'] = $this->form->lang($this->name);
 		$data['placeholder'] = $this->form->lang($this->name . '_placeholder');
 		$data['id'] = 'ufo-forms-' . $this->form->name . '-' . $this->name;
+		$data['formname'] = $this->form->name;
 		
 		// If this element has options, render those
 		if(!empty($this->options))
