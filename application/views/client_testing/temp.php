@@ -473,8 +473,6 @@ Ultraform.beforeExtend.ElementModel = function(obj) {
             // make the current model visible/invisible depending on the dependOn model
             this.set({isVisible: dependOnIsVisible && dependOnIsValid});            
         }
-
-        console.log('handleVisibility '+this.get('name')+': '+this.get('isVisible'));
     };
 
     // the returned object will be used in Backbone.Model.extend(obj)
@@ -512,7 +510,7 @@ Ultraform.beforeExtend.ElementView = function(obj) {
     <script>
 
     var ultraform;
-    console.log('xx');
+
     // initialize
     $(document).ready(function(){
 

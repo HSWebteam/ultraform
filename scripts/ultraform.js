@@ -57,9 +57,10 @@ var Ultraform = function(ultraformOptions) {
       // if there is en errorBlock now, create an ElementErrorView for it
       var elementErrorView;
       if ($errorElement.length > 0) {
-        elementErrorView = new ElementErrorView({},{
+        elementErrorView = new ElementErrorView({
+          model: this
+        },{
 
-          elementModel: this,
           $el: $errorElement
 
         });
@@ -643,7 +644,6 @@ var Ultraform = function(ultraformOptions) {
 
       // set some properties of the error
       this.parentView = options.parentView;
-      this.elementModel = options.elementModel;
       this.template = options.template;
 
       // create the el from template
@@ -658,7 +658,7 @@ var Ultraform = function(ultraformOptions) {
       options.$attach.append( this.$el );
 
       // listen to model validation
-      this.listenTo(this.elementModel, 'validate', this.onValidation);
+      this.listenTo(this.model, 'validate', this.onValidation);
     },
 
     // to be run when validation was performed
@@ -719,14 +719,11 @@ var Ultraform = function(ultraformOptions) {
 
     initialize: function( attributes, options ){
 
-      // set some properties of the error
-      this.elementModel = options.elementModel;
-
       // set $el
       this.setElement(options.$el);
 
       // listen to model validation
-      this.listenTo(this.elementModel, 'validate', this.onValidation);
+      this.listenTo(this.model, 'validate', this.onValidation);
     },
 
     // to be run when validation was performed
@@ -789,8 +786,9 @@ var Ultraform = function(ultraformOptions) {
       // add ErrorView for elementModel
       function addErrorBlockError(elementModel){
 
-        var errorView = new ErrorView({},{
-          elementModel: elementModel,
+        var errorView = new ErrorView({
+          model: elementModel
+        },{
           template: template,
           parentView: this,
           $attach: $attach
@@ -1027,13 +1025,13 @@ var Ultraform = function(ultraformOptions) {
 
 // functions to pre-process when extending backbone objects
 Ultraform.beforeExtend = {
-  FormCollection: function(obj)    {console.log("FormCollection object", obj); return obj;},
-  FormModel: function(obj)         {console.log("FormModel object", obj); return obj;},
-  FormView: function(obj)          {console.log("FormView object", obj); return obj;},
-  ElementCollection: function(obj) {console.log("ElementCollection object", obj); return obj;},
-  ElementModel: function(obj)      {console.log("ElementModel object", obj); return obj;},
-  ElementView: function(obj)       {console.log("ElementView object", obj); return obj;},
-  ElementErrorView: function(obj)  {console.log("ElementErrorView object", obj); return obj;},
-  ErrorView: function(obj)         {console.log("ErrorView object", obj); return obj;},
-  ErrorBlockView: function(obj)    {console.log("ErrorBlockView object", obj); return obj;}
+  FormCollection: function(obj)    {return obj;},
+  FormModel: function(obj)         {return obj;},
+  FormView: function(obj)          {return obj;},
+  ElementCollection: function(obj) {return obj;},
+  ElementModel: function(obj)      {return obj;},
+  ElementView: function(obj)       {return obj;},
+  ElementErrorView: function(obj)  {return obj;},
+  ErrorView: function(obj)         {return obj;},
+  ErrorBlockView: function(obj)    {return obj;}
 };
