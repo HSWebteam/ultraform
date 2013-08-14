@@ -26,7 +26,7 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var ElementModel = Backbone.Model.extend(Ultraform.preExtend.ElementModel.call(this, {
+  var ElementModel = Backbone.Model.extend(Ultraform.beforeExtend.ElementModel.call(this, {
 
     initialize: function(attributes, options) {
 
@@ -55,8 +55,9 @@ var Ultraform = function(ultraformOptions) {
       }
 
       // if there is en errorBlock now, create an ElementErrorView for it
+      var elementErrorView;
       if ($errorElement.length > 0) {
-        var elementErrorView = new ElementErrorView({},{
+        elementErrorView = new ElementErrorView({},{
 
           elementModel: this,
           $el: $errorElement
@@ -66,6 +67,12 @@ var Ultraform = function(ultraformOptions) {
 
       // initialize validations
       this.initializeValidations.call(this);
+
+      // return the created views so we can extend the initialize functionality
+      return {
+        view: view,
+        elementErrorView: elementErrorView
+      };
     },
 
     // first set the value, then validate
@@ -520,7 +527,7 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var ElementCollection = Backbone.Collection.extend(Ultraform.preExtend.ElementCollection.call(this, {
+  var ElementCollection = Backbone.Collection.extend(Ultraform.beforeExtend.ElementCollection.call(this, {
     model: ElementModel
   }));
 
@@ -531,7 +538,7 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var FormModel = Backbone.Model.extend(Ultraform.preExtend.FormModel.call(this, {
+  var FormModel = Backbone.Model.extend(Ultraform.beforeExtend.FormModel.call(this, {
 
     initialize: function(initoptions) {
 
@@ -557,6 +564,11 @@ var Ultraform = function(ultraformOptions) {
         }
       });
 
+      // return created views so we can extend functionality in the afterExtend function
+      return {
+        view: view,
+        errorView: errorView
+      };
     },
 
     validationState: 'valid', // whether all elements in the form are valid
@@ -614,7 +626,7 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var FormCollection = Backbone.Collection.extend(Ultraform.preExtend.FormCollection.call(this, {
+  var FormCollection = Backbone.Collection.extend(Ultraform.beforeExtend.FormCollection.call(this, {
     model: FormModel
   }));
 
@@ -625,7 +637,7 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var ErrorView = Backbone.View.extend(Ultraform.preExtend.ErrorView.call(this, {
+  var ErrorView = Backbone.View.extend(Ultraform.beforeExtend.ErrorView.call(this, {
 
     initialize: function( attributes, options ){
 
@@ -703,7 +715,7 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var ElementErrorView = Backbone.View.extend(Ultraform.preExtend.ElementErrorView.call(this, {
+  var ElementErrorView = Backbone.View.extend(Ultraform.beforeExtend.ElementErrorView.call(this, {
 
     initialize: function( attributes, options ){
 
@@ -752,7 +764,7 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var ErrorBlockView = Backbone.View.extend(Ultraform.preExtend.ErrorBlockView.call(this, {
+  var ErrorBlockView = Backbone.View.extend(Ultraform.beforeExtend.ErrorBlockView.call(this, {
 
     initialize: function(){
 
@@ -812,7 +824,7 @@ var Ultraform = function(ultraformOptions) {
   }));
 
 
-  var FormView = Backbone.View.extend(Ultraform.preExtend.FormView.call(this, {
+  var FormView = Backbone.View.extend(Ultraform.beforeExtend.FormView.call(this, {
   }));
 
   /**
@@ -821,7 +833,7 @@ var Ultraform = function(ultraformOptions) {
   ***************************************
   */
 
-  var ElementView = Backbone.View.extend(Ultraform.preExtend.ElementView.call(this, {
+  var ElementView = Backbone.View.extend(Ultraform.beforeExtend.ElementView.call(this, {
 
     initialize: function() {
 
@@ -1014,7 +1026,7 @@ var Ultraform = function(ultraformOptions) {
 };
 
 // functions to pre-process when extending backbone objects
-Ultraform.preExtend = {
+Ultraform.beforeExtend = {
   FormCollection: function(obj)    {console.log("FormCollection object", obj); return obj;},
   FormModel: function(obj)         {console.log("FormModel object", obj); return obj;},
   FormView: function(obj)          {console.log("FormView object", obj); return obj;},
