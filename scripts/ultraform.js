@@ -38,7 +38,7 @@ var Ultraform = function(ultraformOptions) {
       this.set({
         id: 'ufo-' + this.parentModel.get('name') + '-' + this.parentModel.id + '-' + attributes.name,
         validationState: 'valid', // state after the last validation, can be valid, invalid or pending
-        validationError: '' // last validation error message
+        validationError: 'valid' // last validation error message or 'valid' or 'pending'
       }, {silent: true});
 
       // create view for this models element
@@ -72,7 +72,6 @@ var Ultraform = function(ultraformOptions) {
       this.initializeValidations.call(this);
 
       // when validation values change, update the parent model
-      this.parentModel.listenTo(this, 'change:validationState', this.parentModel.updateValidation);
       this.parentModel.listenTo(this, 'change:validationError', this.parentModel.updateValidation);
 
       // return the created views so we can extend the initialize functionality
@@ -146,9 +145,6 @@ var Ultraform = function(ultraformOptions) {
       var rules = this.getRules();
 
       var model = this;
-      var error = '';
-      var oldState = this.get('validationState');
-      var oldError = this.get('validationError');
 
       // reject all old pending validations
       $.each(this._pendingValidations, function(index, deferred){
@@ -195,7 +191,7 @@ var Ultraform = function(ultraformOptions) {
             model._pendingValidations.push( validationResult );
 
             // update validationState
-            model.set({validationState:'pending'});
+            model.set({validationState:'pending', validationError:'pending'});
           }
 
         }
@@ -228,7 +224,7 @@ var Ultraform = function(ultraformOptions) {
           model._pendingValidations.push( deferred );
 
           // update validation state
-          model.set({validationState:'pending'});
+          model.set({validationState:'pending', validationError:'pending'});
         }
       });
 
@@ -252,8 +248,10 @@ var Ultraform = function(ultraformOptions) {
         });
 
         // if no validation errors were found: set validation state to valid
-        model.set({validationState: isValid ? 'valid' : 'invalid'});
-        model.set({validationError: firstError});
+        model.set({
+          validationState: isValid ? 'valid' : 'invalid',
+          validationError: isValid ? 'valid' : firstError
+        });
 
       });
 
@@ -577,30 +575,34 @@ var Ultraform = function(ultraformOptions) {
     // make submodels for every element in the returned object,
     // return the new attributes property for the model
     parse: function(response) {
-
       this.set('messages', response.messages);
 
       this.elementCollection.add(response.elements, {
         parentCollection: this.elementCollection,
         parentModel: this
       });
-
     },
 
     // see if there are any invalid elements and act on it
     // this function needs to be called by the elementModels on any validation change
     updateValidation: function() {
-
+      var model = this;
       var invalidCount = this.elementCollection.where({validationState:'invalid'}).length;
-      this.set({invalidCount: invalidCount});
+      var set = {invalidCount: invalidCount};
 
       if (invalidCount > 0) {
-        this.set({validationState: 'invalid'});
+        set.validationState = 'invalid';
       } else if (this.elementCollection.findWhere({validationState:'pending'})) {
-        this.set({validationState: 'pending'});
+        set.validationState = 'pending';
       } else {
-        this.set({validationState: 'valid'});
+        set.validationState = 'valid';
       }
+
+      // use _.defer here so that the change events for the elementModels can be finished
+      // before the change events for this formModel are handled
+      // this is usefull for animations where we want ErrorView to be changed before
+      // the ErrorBlockView is changed
+      _.defer(function(){model.set(set);});
     }
 
   }));
@@ -643,7 +645,7 @@ var Ultraform = function(ultraformOptions) {
       options.$attach.append( this.$el );
 
       // listen to model validation
-      this.listenTo(this.model, 'change:validationState', this.onValidation);
+      this.listenTo(this.model, 'change:validationError', this.onValidation);
     },
 
     // to be run when validation was performed
@@ -707,8 +709,8 @@ var Ultraform = function(ultraformOptions) {
       // set $el
       this.setElement(options.$el);
 
-      // listen to model validation
-      this.listenTo(this.model, 'change:validationState', this.onValidation);
+      // listen to model validation changes
+      this.listenTo(this.model, 'change:validationError', this.onValidation);
     },
 
     // to be run when validation was performed
@@ -787,9 +789,8 @@ var Ultraform = function(ultraformOptions) {
       // create an ErrorView for every elementModel that is added to the elementCollection
       this.listenTo(this.model.elementCollection, 'add', addErrorBlockError);
 
-      // update the visibility of this errorblock when validationState changes on the formModel
-      this.listenTo(this.model, 'change:validationState', this.updateValidation);
-
+      // update the visibility of this errorblock when invalidCount changes on the formModel
+      this.listenTo(this.model, 'change:invalidCount', this.updateValidation);
     },
 
     updateValidation: function(formModel){
@@ -842,7 +843,7 @@ var Ultraform = function(ultraformOptions) {
       this.input = this.$input.get(0);
 
       // *** ATTACH TO SOME MODEL EVENTS ***
-      this.listenTo(this.model, 'change:validationState', this.onValidation);
+      this.listenTo(this.model, 'change:validationError', this.onValidation);
 
       // Set events depending on the root element
       if (this.input === this.el) {
