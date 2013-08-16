@@ -18,6 +18,7 @@
 
 var Ultraform = function(ultraformOptions) {
 
+  "use strict";
 
   /**
   ***************************************
