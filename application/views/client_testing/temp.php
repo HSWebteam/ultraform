@@ -441,9 +441,8 @@ Ultraform.beforeExtend.ElementModel = function(obj) {
         if (_.isUndefined(dependOnModel)) {
             // dependOnModel does not yet exist, wait for it to be added and then start listening to it
             this.listenTo(this.parentCollection, 'add', function(addedModel) {
-                if (addedModel.get('name') === dependOnName) {
+                if (addedModel.get('name') == dependOnName) {
                     // listen to validation changes and visibility changes on the depend-on model
-                    this.listenTo(addedModel, 'validate', this.handleVisibility);
                     this.listenTo(addedModel, 'change', this.handleVisibility);
                     // set visibility depending on current state of other elementModels
                     this.handleVisibility(addedModel);
@@ -452,7 +451,6 @@ Ultraform.beforeExtend.ElementModel = function(obj) {
         }
         else {
             // listen to validation changes and visibility changes on the depend-on model
-            this.listenTo(dependOnModel, 'validate', this.handleVisibility);
             this.listenTo(dependOnModel, 'change', this.handleVisibility);
             // set visibility depending on current state of other elementModels
             this.handleVisibility(dependOnModel);
@@ -468,7 +466,7 @@ Ultraform.beforeExtend.ElementModel = function(obj) {
         else {
             // check if the depend-on model is visible and valid
             var dependOnIsVisible = dependOnModel.get('isVisible');
-            var dependOnIsValid = dependOnModel.validationState==='valid';
+            var dependOnIsValid = dependOnModel.get('validationState')=='valid';
 
             // make the current model visible/invisible depending on the dependOn model
             this.set({isVisible: dependOnIsVisible && dependOnIsValid});            
