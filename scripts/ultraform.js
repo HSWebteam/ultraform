@@ -534,6 +534,11 @@ var Ultraform = function(ultraformOptions) {
         el: $('#ufo-' + initoptions.name + '-' + initoptions.id)
       });
 
+      // get the settings for this form
+      this.set({
+        settings: _.extend(this.get('settings'), view.$el.data('ufo'))
+      });
+
       // create the collection of elements
       this.elementCollection = new ElementCollection();
 
@@ -560,6 +565,12 @@ var Ultraform = function(ultraformOptions) {
         view: view,
         errorView: errorView
       };
+    },
+
+    defaults: {
+      settings: {
+        validateOn: 'blur'
+      }
     },
 
     // alternative url() function.
@@ -847,20 +858,13 @@ var Ultraform = function(ultraformOptions) {
       this.listenTo(this.model, 'change:validationError', this.onValidation);
 
       // Set events depending on the root element
-      if (this.input === this.el) {
-        // root element is the input, select or textarea element
-        this.events = {
-          "blur" : "updateModel",
-          "keypress" : "handleKey"
-        };
-      }
-      else {
-        // root element is not the same as the input elemnent
-        this.events = {
-          "blur input,select,textarea" : "updateModel",
-          "keypress input,select,textarea" : "handleKey"
-        };
-      }
+      var elementSelector = (this.input === this.el) ? '' : ' input,select,textarea';
+      // Set events depending on validateOn setting of the form
+      var validateOn = this.model.parentModel.get('settings').validateOn; // blur, change
+
+      this.events = {};
+      this.events['keypress' + elementSelector] = 'handleKey';
+      this.events[validateOn + elementSelector] = 'updateModel';
 
       // activate the event handlers
       this.delegateEvents();

@@ -11,7 +11,7 @@ class Client_Testing extends CI_Controller {
 		$this->load->view('client_testing/qunit');
 	}
 
-	public function temp()
+	public function index()
 	{
 		$this->load->helper('url');
 		$this->load->view('client_testing/temp');
