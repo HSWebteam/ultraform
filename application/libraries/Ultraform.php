@@ -20,6 +20,8 @@ class Ultraform {
 	// The set of elements in the form
 	private $elements = array();
 
+	public $request = 'Not initialized';
+	
 	// Is the form considered valid
 	public $valid = FALSE;
 
@@ -51,12 +53,54 @@ class Ultraform {
 	}
 
 	/**
+	 * Pre-process a given form. This will prepare everything neccesary to use this form for this request type
+	 * This function determines the type of request based on the POST variable. See docs for more information.
+	 * 
+	 * @param String $form The name of the form to process
+	 */
+	public function preprocess($form)
+	{
+		// See if the 'ufo-action' POST is present
+		if($this->CI->input->post('ufo-action'))
+		{	
+			$this->request = 'json';
+			// This is a AJAX call from the client
+			if($this->CI->input->post('ufo-action') == 'callback')
+			{
+				// This is a validation callback, do not load the full form
+				$this->request = 'callback';
+				return TRUE;
+			}
+			elseif(!$this->CI->input->post('ufo-form') == $form)
+			{
+				// The POST is not meant for this form
+				return $this;
+			}
+		}
+		else
+		{
+			// Just preprocess the form without any AJAX
+			$this->request = 'html';
+		}
+		
+		$this->load($form);
+		
+		return $this;
+	}
+	
+	/**
 	 * Load a form from a JSON file in the forms directory.
 	 *
 	 * @param String form The name of the form template to load.
 	 */
 	public function load($form)
 	{
+// 		// If this is a AJAX request for validation, then do not load all the form
+// 		if(this->input->is_ajax_request() && isset($this->input->post('validation_callback')))
+// 		{
+// 			return "Request is a validation callback."
+// 		}
+		
 		// Load the form data using forms_dir and forms_ext from the config
 		$data = file_get_contents($this->config['forms_dir'] . $form . $this->config['forms_ext']);
 
@@ -80,6 +124,31 @@ class Ultraform {
 		$this->validate();
 
 		return $this;
+	}
+	
+	/**
+	 * Ajax
+	 * 
+	 * This function handles all the ajax output the form can be required to generate.
+	 * It bases the output on the $this->request variable.
+	 */
+	public function ajax()
+	{
+		if($this->request == 'callback')
+		{
+			// Do callback
+			$this->validate_callback();
+		}
+		elseif($this->request == 'json')
+		{
+			// Do export
+			$this->export();
+		}
+		else
+		{
+			// Unknown request
+			echo 'Request type unknown, run preprocess or check your request POST variable.';
+		}
 	}
 
 	/**
@@ -192,6 +261,11 @@ class Ultraform {
 						}
 					}
 				}
+			}
+			else
+			{
+				// Form is valid
+				$this->valid = TRUE;
 			}
 		}
 	}

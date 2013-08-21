@@ -7,13 +7,22 @@ class Server_Testing extends MY_Controller {
 	
 	public function index()
 	{	
-		// Load profiler
-		//$this->output->enable_profiler(TRUE);
-		
 		$this->load->library('ultraform');
 
-		$this->data['contact_form'] = $this->ultraform->load('contact');
+		$form = new Ultraform();
+		
+		$this->data['contact_form'] = $form->preprocess('contact');
+		
+		if($form->request == 'callback' || $form->request == 'json')
+		{
+			return $form->ajax();
+		}
+		elseif($form->valid)
+		{
+			// If form is valid do stuff
+			echo 'Form is valid';
+		}
 		
 		$this->load->view('server_testing/contact.php', $this->data);
 	}
-}		
+}
