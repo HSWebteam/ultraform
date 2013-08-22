@@ -282,7 +282,7 @@ The following errors were encountered in the form:<br>
 
 <h1>A test form:</h1>
 <p><b>See firebug console for some extra feedback</b></p>
-<form id="ufo-forms-33" class="form-wrapper" action="#ex2" method="post" data-ufo='{"validateOn":"keyup"}'>
+<form id="ufo-forms-33" class="form-wrapper" action="#ex2" method="post">
     <div id="ufo-forms-33-name">
         <label for="name">Name</label>
         <input id="name" type="text" name="name" value="" size="24" placeholder="Default value" />
