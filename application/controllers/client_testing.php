@@ -13,6 +13,15 @@ class Client_Testing extends CI_Controller {
 
 	public function index()
 	{
+		if ($this->input->is_ajax_request()) {
+			if ($this->input->post('ufo-action') == 'callback') {
+				return $this->validate();
+			}
+			elseif ($this->input->post('ufo-action') == 'json') {
+				return $this->api();
+			}
+		}
+
 		$this->load->helper('url');
 		$this->load->view('client_testing/temp');
 	}
@@ -87,11 +96,11 @@ class Client_Testing extends CI_Controller {
 	/**
 	* testobjects -- Mocks the API
 	*/
-	public function api($forms_name='', $one=null)
+	public function api()
 	{
 		// for: model.fetch
 		// GET /mocks/33
-		if ($_SERVER['REQUEST_METHOD'] === 'GET' AND $forms_name=='forms' AND !is_null($one))
+		if ($_SERVER['REQUEST_METHOD'] === 'POST' AND $this->input->post('ufo-form')=='forms')
 		{
 			// return the models for page $pagename
 			$obj = array(
@@ -196,6 +205,9 @@ class Client_Testing extends CI_Controller {
 					'is_natural_no_zero' => 'Het %s veld moet een natuurlijk getal boven nul bevatten',
 					'valid_email' => 'Het %s veld moet een geldig email adres bevatten',
 					'valid_emails' => '%s veld moet geldige emailadressen bevatten, gescheiden door komma\'s'
+				),
+				'settings' => array(
+					'validateOn' => 'keyup'
 				)
 			);
 

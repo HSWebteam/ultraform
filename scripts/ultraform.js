@@ -200,6 +200,7 @@ var Ultraform = function(ultraformOptions) {
 
           // this is a callback function, send the validation request to the server
           var data = {
+            "ufo-action": "callback",
             rule: rule.rule,
             //action: rule.name,
             //args: rule.args,
@@ -213,7 +214,7 @@ var Ultraform = function(ultraformOptions) {
 
           // execute the ajax call
           $.ajax({
-            url: ultraformOptions.validateUrl,
+            url: location.pathname,
             type: 'POST',
             data: data
           }).done(function(result){
@@ -409,6 +410,7 @@ var Ultraform = function(ultraformOptions) {
       },
       is_unique: function(value, rule, model){
         var data = {
+          "ufo-action": "callback",
           rule: rule.rule,
           //action: rule.name,
           //args: rule.args,
@@ -422,7 +424,7 @@ var Ultraform = function(ultraformOptions) {
 
         // execute the ajax call
         $.ajax({
-          url: ultraformOptions.validateUrl,
+          url: location.pathname,
           type: 'POST',
           data: data
         }).done(function(result){
@@ -528,15 +530,12 @@ var Ultraform = function(ultraformOptions) {
 
     initialize: function(initoptions) {
 
+      var model = this;
+
       // create the view for the form
       var view = new FormView({
         model: this,
         el: $('#ufo-' + initoptions.name + '-' + initoptions.id)
-      });
-
-      // get the settings for this form
-      this.set({
-        settings: _.extend(this.get('settings'), view.$el.data('ufo'))
       });
 
       // create the collection of elements
@@ -549,7 +548,17 @@ var Ultraform = function(ultraformOptions) {
       });
 
       // load the model from the server
-      this.fetch({
+      // since we ar NOT using RESTfull communication, we do a custom POST
+      $.ajax({
+        type: 'POST',
+        data: {
+          "ufo-action" : "json",
+          "ufo-form" : initoptions.name,
+          "ufo-id" : initoptions.id
+        },
+        success: function(data){
+          model.parse(data);
+        },
         error: function() {
           console.error('the model '+this.cid+' could not be loaded');
         }
@@ -573,21 +582,19 @@ var Ultraform = function(ultraformOptions) {
       }
     },
 
-    // alternative url() function.
-    // for a form named "ufo-forms-33" and a collection apiUrl "http://mysite.com/api"
-    // the resulting url will be "http://mysite.com/api/forms/"
-    url: function() {
-      var url = ultraformOptions.apiUrl;
-      var base = url + (url.charAt(url.length - 1) === '/' ? '' : '/') + this.get('name');
-      if (this.isNew()) return base;
-      return base + (base.charAt(base.length - 1) === '/' ? '' : '/') + encodeURIComponent(this.id);
-    },
+    // alternative url, allways talk to the current url
+    url: location.pathname,
 
     // perform when the data is returned by the server,
     // make submodels for every element in the returned object,
     // return the new attributes property for the model
     parse: function(response) {
       this.set('messages', response.messages);
+
+      // get the settings for this form
+      this.set({
+        settings: _.extend(this.get('settings'), response.settings)
+      });
 
       this.elementCollection.add(response.elements, {
         parentCollection: this.elementCollection,
