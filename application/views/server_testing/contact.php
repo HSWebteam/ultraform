@@ -7,13 +7,13 @@
 		input.error {
 			background-color: #FFAAAA;
 		}
-		#ufo-forms-<?php echo $contact_form->name;?>_error {
+		#ufo-<?php echo $contact_form->name;?>_error {
 			background-color: lightblue;
 			border: 1px solid darkblue;
 			width: 500px;
 			margin-left:50px;
 		}
-		#ufo-forms-<?php echo $contact_form->name;?>_error li {
+		#ufo-<?php echo $contact_form->name;?>_error li {
 			height: 21px;
 		}
 		</style>
