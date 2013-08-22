@@ -37,7 +37,7 @@ var Ultraform = function(ultraformOptions) {
 
       // set id and some other values
       this.set({
-        id: 'ufo-' + this.parentModel.get('name') + '-' + this.parentModel.id + '-' + attributes.name,
+        id: this.parentModel.get('domid') + '-' + attributes.name,
         validationState: 'valid', // state after the last validation, can be valid, invalid or pending
         validationError: 'valid' // last validation error message or 'valid' or 'pending'
       }, {silent: true});
@@ -50,7 +50,7 @@ var Ultraform = function(ultraformOptions) {
 
       // create element error view if an error-element can be found (elementId + _error)
       var $errorElement = $('#' + this.id + '_error');
-      var $errorBlock = $('#ufo-' + this.parentModel.get('name') + '-' + this.parentModel.id);
+      var $errorBlock = $('#' + this.parentModel.get('domid'));
 
       // if there is no errorElement and also no global errorblock, create an errorElement
       if ($errorElement.length === 0 && $errorBlock.length === 0) {
@@ -167,12 +167,13 @@ var Ultraform = function(ultraformOptions) {
 
             // set validation error message
             var message;
-            if (typeof model.parentModel.attributes.messages !== 'undefined') {
-              message = model.parentModel.attributes.messages[rule.name];
+            if (model.parentModel.attributes.messages) {
+              message = model.parentModel.attributes.messages[rule.name] || '';
             }
             else {
               message = 'ERROR';
             }
+
             var validationError = model.processMessage(message, attributes.label, rule.args);
 
             // create a resolved validation (resolved with a validation error)
@@ -535,7 +536,7 @@ var Ultraform = function(ultraformOptions) {
       // create the view for the form
       var view = new FormView({
         model: this,
-        el: $('#ufo-' + initoptions.name + '-' + initoptions.id)
+        el: $('#' + initoptions.domid)
       });
 
       // create the collection of elements
@@ -544,7 +545,7 @@ var Ultraform = function(ultraformOptions) {
       // create the view for the error block
       var errorView = new ErrorBlockView({
         model: this,
-        el: $('#ufo-' + initoptions.name + '-' + initoptions.id + '_error')
+        el: $('#' + initoptions.domid + '_error')
       });
 
       // load the model from the server
@@ -589,7 +590,7 @@ var Ultraform = function(ultraformOptions) {
     // make submodels for every element in the returned object,
     // return the new attributes property for the model
     parse: function(response) {
-      this.set('messages', response.messages);
+      this.set('messages', response.messages || {});
 
       // get the settings for this form
       this.set({
@@ -1009,6 +1010,7 @@ var Ultraform = function(ultraformOptions) {
 
       // return the object to create a form of
       return {
+        domid: this.id,
         id: idParts[2],
         name: idParts[1]
       };
