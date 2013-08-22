@@ -12,10 +12,10 @@ class Server_Testing extends MY_Controller {
 		$form = new Ultraform();
 		
 		$this->data['contact_form'] = $form->preprocess('contact');
-		
+	
 		if($form->request == 'callback' || $form->request == 'json')
 		{
-			return $form->ajax();
+			echo $form->ajax();
 		}
 		elseif($form->valid)
 		{
@@ -23,6 +23,9 @@ class Server_Testing extends MY_Controller {
 			echo 'Form is valid';
 		}
 		
-		$this->load->view('server_testing/contact.php', $this->data);
+		if($form->request == 'html')
+		{
+			$this->load->view('server_testing/contact.php', $this->data);
+		}
 	}
 }
