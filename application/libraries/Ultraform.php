@@ -71,7 +71,7 @@ class Ultraform {
 				$this->request = 'callback';
 				return TRUE;
 			}
-			elseif(!$this->CI->input->post('ufo-form') == $form)
+			elseif($this->CI->input->post('ufo-form') != $form)
 			{
 				// The POST is not meant for this form
 				return $this;
@@ -95,12 +95,6 @@ class Ultraform {
 	 */
 	public function load($form)
 	{
-// 		// If this is a AJAX request for validation, then do not load all the form
-// 		if(this->input->is_ajax_request() && isset($this->input->post('validation_callback')))
-// 		{
-// 			return "Request is a validation callback."
-// 		}
-		
 		// Load the form data using forms_dir and forms_ext from the config
 		$data = file_get_contents($this->config['forms_dir'] . $form . $this->config['forms_ext']);
 
@@ -137,12 +131,12 @@ class Ultraform {
 		if($this->request == 'callback')
 		{
 			// Do callback
-			$this->validate_callback();
+			echo $this->validate_callback();
 		}
 		elseif($this->request == 'json')
 		{
 			// Do export
-			$this->export();
+			echo $this->export();
 		}
 		else
 		{
@@ -285,10 +279,10 @@ class Ultraform {
 			$post = $this->CI->input->post();
 
 			// Create validation rules for this request
-			$this->CI->form_validation->set_rules($post['name'], $post['label'], $post['rule']);
+			$this->CI->form_validation->set_rules($post['ufo-name'], $post['ufo-label'], $post['uf-rule']);
 
 			// Create proper POST value for the field to validate
-			$_POST[$post['name']] = $post['value'];
+			$_POST[$post['ufo-name']] = $post['ufo-value'];
 
 			// Set output type to json
 			$this->CI->output->set_content_type('application/json');
@@ -297,7 +291,7 @@ class Ultraform {
 			if($this->CI->form_validation->run() == FALSE)
 			{
 				// Return error message
-				return json_encode(array('valid' => FALSE, 'error' => form_error($post['name'])));
+				return json_encode(array('valid' => FALSE, 'error' => form_error($post['ufo-name'])));
 			}
 			else
 			{
@@ -331,6 +325,9 @@ class Ultraform {
 	 */
 	public function export()
 	{
+		// If the profiler is on, turn it off
+		$this->CI->output->enable_profiler(FALSE);
+		
 		$export = array();
 
 		// Export elements
@@ -349,7 +346,7 @@ class Ultraform {
 		// Export messages
 		$messages = $this->CI->lang->load('form_validation', '' , TRUE);
 		$export['messages'] = $messages;
-
+		
 		return json_encode($export);
 	}
 }
@@ -407,7 +404,7 @@ class Element {
 		// Get translated values & derivative values
 		$data['label'] = $this->form->lang($this->name);
 		$data['placeholder'] = $this->form->lang($this->name . '_placeholder');
-		$data['id'] = 'ufo-forms-' . $this->form->name . '-' . $this->name;
+		$data['id'] = 'ufo-' . $this->form->name . '-' . $this->name;
 		$data['formname'] = $this->form->name;
 		
 		// If this element has options, render those
