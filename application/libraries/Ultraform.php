@@ -115,8 +115,11 @@ class Ultraform {
 		$this->name = $form;
 
 		// See if validation is needed, if so do it
-		$this->validate();
-
+		if($this->request == 'html')
+		{
+			$this->validate();
+		}
+		
 		return $this;
 	}
 	
@@ -131,18 +134,20 @@ class Ultraform {
 		if($this->request == 'callback')
 		{
 			// Do callback
-			echo $this->validate_callback();
+			$ajax = $this->validate_callback();
 		}
 		elseif($this->request == 'json')
 		{
 			// Do export
-			echo $this->export();
+			$ajax = $this->export();
 		}
 		else
 		{
 			// Unknown request
-			echo 'Request type unknown, run preprocess or check your request POST variable.';
+			$ajax = 'Request type unknown, run preprocess or check your request POST variable.';
 		}
+		
+		return $ajax;
 	}
 
 	/**
