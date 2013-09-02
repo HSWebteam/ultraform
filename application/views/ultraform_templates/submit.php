@@ -1,1 +1,1 @@
-<?php echo form_submit('submit', 'Submit');?>
+<?php echo form_submit($name, $label);?>

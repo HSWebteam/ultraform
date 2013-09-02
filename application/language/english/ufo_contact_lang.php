@@ -57,5 +57,7 @@ $lang['sauce_option_mustard'] = "Mustard sauce";
 $lang['remember_me'] = "Remember me";
 $lang['remarks'] = "Remarks";
 
+$lang['submit'] = "Submit!";
+
 /* End of file ufo_contact_lang.php */
 /* Location: ./system/language/english/ufo_contact_lang.php */
