@@ -35,8 +35,13 @@
 			<?php echo $contact_form->render('username');?>
 			<?php echo $contact_form->render('password');?>
 			<?php echo $contact_form->render('address');?><br>
+			These are tests for different label sources.
+			<?php echo $contact_form->render('labeltest');?>
+			<?php echo $contact_form->render('label_uit_name');?><br>
 			I like sushi, that is why I will allow you to choose your own... sushi!
 			<?php echo $contact_form->render('sushi');?><br>
+			This is a test for options at runtime.
+			<?php echo $contact_form->render('fish');?><br>
 			<?php echo $contact_form->render('color');?><br>
 			What kind of sauce would you like with the colored sushi?
 			<?php echo $contact_form->render('sauce');?><br>

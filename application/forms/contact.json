@@ -12,7 +12,16 @@
         "address": {
         	"name": "address",
         	"type": "text"
-        },        
+        },
+        "labeltest_json": {
+        	"name": "labeltest",
+        	"type": "text",
+        	"label": "Test label uit JSON"
+        },
+        "labeltest_name": {
+        	"name": "label_uit_name",
+        	"type": "text"
+        },                  
         "password": {
         	"name": "password",
         	"type": "password",
@@ -22,12 +31,17 @@
 			"name": "sushi",
 			"type": "dropdown",
 			"options": [
-				"makizushi",
-				"hosomaki",
-				"temaki",
-				"uramaki"
+				"makizushi": "Makizushi",
+				"hosomaki": "Hosomaki",
+				"temaki": "Temaki",
+				"uramaki": "Uramaki"
 			]
 		},
+		"fish": {
+			"name": "fish",
+			"type": "dropdown",
+			"label": "Fish"
+		},		
 		"color": {
 			"name": "color",
 			"type": "radio",
