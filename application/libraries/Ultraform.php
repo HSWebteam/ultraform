@@ -17,9 +17,13 @@ class Ultraform {
 	// Name of the form
 	public $name = NULL;
 
+	// Language data
+	public $lang = NULL;
+	
 	// The set of elements in the form
 	private $elements = array();
 
+	// Type of request, valid: html|json|validate
 	public $request = 'Not initialized';
 	
 	// Is the form considered valid
@@ -101,15 +105,15 @@ class Ultraform {
 		// Decode the JSON, return objects
 		$data = json_decode($data);
 		
+		// Load language for this form
+		$this->lang = $this->CI->lang->load('ufo_' . $form, '' , TRUE);		
+		
 		// Build elements from data objects
 		foreach($data->elements as $element)
 		{
 			// Add element to elements
 			$this->add(get_object_vars($element));
 		}
-
-		// Load language for this form
-		$this->lang = $this->CI->lang->load('ufo_' . $form, '' , TRUE);
 
 		// Set name of the form
 		$this->name = $form;
@@ -157,14 +161,14 @@ class Ultraform {
 	 */
 	public function add($data)
 	{
-		$element = new Element($this);
+		$element = new Element($this, $data);
 
-		foreach($data as $key => $value)
-		{
-			$element->$key = $value;
-		}
+// 		foreach($data as $key => $value)
+// 		{
+// 			$element->$key = $value;
+// 		}
 
-		$this->elements[] = $element;
+		$this->elements[$element->name] = $element;
 	}
 
 	/**
@@ -175,6 +179,29 @@ class Ultraform {
 	public function get_elements()
 	{
 		return $this->elements;
+	}
+	
+	/**
+	 * Sets the options of a element on runtime
+	 * 
+	 * @param string $element_name Element name
+	 * @param array $options Array of options key/value
+	 */
+	public function set_options($element_name, $options)
+	{
+		// See if the element exists
+		if(array_key_exists($element_name, $this->elements))
+		{
+			// Run set_options of element object
+			$element = $this->elements[$element_name]->set_options($options);
+			
+			return TRUE;
+		}
+		else
+		{
+			// Return error if the element does not exist
+			return 'ERROR: No element with that name';
+		}
 	}
 
 	/**
@@ -321,7 +348,7 @@ class Ultraform {
 		else
 		{
 			// Does not exist
-			return '';
+			return FALSE;
 		}
 	}
 
@@ -371,8 +398,7 @@ class Element {
 	public $form;
 	public $label;
 
-	// The type of the name
-	// Valid options: open|close|hidden|submit|text|password
+	// The type of the element
 	public $type;
 
 	public $value;
@@ -386,13 +412,27 @@ class Element {
 	/**
 	 * Constructor
 	 */
-	public function __construct($form)
+	public function __construct($form, $data)
 	{
 		// Get the CI instance
 		$this->CI =& get_instance();
 
 		// Assign parent form
 		$this->form = $form;
+		
+		foreach($data as $key => $value)
+		{
+			$this->$key = $value;
+		}
+		
+		// Set the label for this element
+		$this->set_label();
+		
+		// Generate any options this element has
+		if(!empty($this->options))
+		{
+			$this->generate_options();
+		}
 	}
 
 	/**
@@ -407,16 +447,17 @@ class Element {
 		$data = (array)$this;
 		
 		// Get translated values & derivative values
-		$data['label'] = $this->form->lang($this->name);
+		$data['label'] = $this->label;
 		$data['placeholder'] = $this->form->lang($this->name . '_placeholder');
 		$data['id'] = 'ufo-' . $this->form->name . '-' . $this->name;
 		$data['formname'] = $this->form->name;
+		$data['options'] = $this->options;
 		
-		// If this element has options, render those
-		if(!empty($this->options))
-		{
-			$data['options'] = $this->generate_options();
-		}
+// 		// If this element has options, render those
+// 		if(!empty($this->options))
+// 		{
+// 			//$data['options'] = $this->generate_options();
+// 		}
 
 		// Determine what template to use for this element
 		if(file_exists(APPPATH . '/views' . $template_dir . '_' . $this->name . '.php'))
@@ -448,15 +489,18 @@ class Element {
 		$export = array();
 
 		$export['name'] = $this->name;
-		$export['label'] = $this->form->lang($this->name);;
+		//$export['label'] = $this->form->lang($this->name);
+		$export['label'] = $this->label;
 		$export['value'] = $this->value;
 		$export['rules'] = $this->rules;
+		$export['options'] = $this->options;
 		
-		// Add options if this element has them
-		if(!empty($this->options))
-		{
-			$export['options'] = $this->generate_options();
-		}
+		// TODO
+// 		// Add options if this element has them
+// 		if(!empty($this->options))
+// 		{
+// 			$export['options'] = $this->generate_options();
+// 		}
 
 		return $export;
 	}
@@ -466,20 +510,60 @@ class Element {
 	 */
 	private function generate_options()
 	{
-		// We have options, handle them
-		$options = array();
-
-		foreach($this->options as $option)
+		// Assign the element's options array to a local variable
+		$options = $this->options;
+		
+		// Reset options
+		$this->options = array();
+		
+		foreach($options as $option)
 		{
-			$options[$option] = $this->form->lang($this->name . '_option_' . $option);
+			$this->options[$option] = $this->form->lang($this->name . '_option_' . $option);
+		}
+
+		return $this->options;
+	}
+	
+	/**
+	 * Determines what the human readable string should be set to for this element
+	 */
+	private function set_label()
+	{
+		// If we have a lang file entry use that
+		if($this->form->lang($this->name))
+		{
+			// Get the label from the language file
+			$this->label = $this->form->lang($this->name);
+		}
+		// If we have a JSON data file 'lang' value use that
+		elseif($this->label != NULL)
+		{
+			// Do nothing, we use the label from the JSON
+		}
+		// If we don't have anything use the element name
+		else
+		{
+			$this->label = $this->name;
 		}
 		
-		return $options;
+		return $this->label;
+	}
+	
+	/**
+	 * Sets options of the element.
+	 * 
+	 * @param array $options Array of options key/value
+	 */
+	public function set_options($options)
+	{
+		$this->options = $options;
+		
+		return TRUE;
 	}
 	
 	public function __toString()
 	{
-		return $this->render();
+		return (String) $this->render();
 	}
 }
 
