@@ -4,22 +4,26 @@
         	"name": "open",
         	"type": "open"
         },
-        "username": {
-        	"name": "username",
-        	"type": "text",
-        	"rules": "required|min_length[5]|max_length[12]"
-        },        
-        "password": {
-        	"name": "password",
-        	"type": "password",
-        	"rules": "required|min_length[5]"
+        "card_name": {
+        	"name": "cardname",
+        	"type": "text"
         },
-        "remember_me": {
-        	"name": "remember_me",
-        	"type": "checkbox"
+        "card_type": {
+            "name": "type",
+            "type": "dropdown",
+            "options": [
+                "artifact",
+                "creature",
+                "enchantment",
+                "instant",
+                "land",
+                "planeswalker",
+                "sorcery",
+                "tribal"
+            ]
         },
         "submit": {
-        	"name": "submit",
+        	"name": "search",
         	"type": "submit"
         },
         "close": {
