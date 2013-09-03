@@ -166,11 +166,6 @@ class Ultraform {
 	{
 		$element = new Element($this, $data);
 
-// 		foreach($data as $key => $value)
-// 		{
-// 			$element->$key = $value;
-// 		}
-
 		$this->elements[$element->name] = $element;
 	}
 
@@ -393,6 +388,14 @@ class Ultraform {
 		
 		return json_encode($export);
 	}
+	
+	/**
+	 * To string
+	 */
+	public function __toString()
+	{
+		return $this->render();
+	}
 }
 
 /**
@@ -464,12 +467,6 @@ class Element {
 		$data['id'] = 'ufo-' . $this->form->name . '-' . $this->name;
 		$data['formname'] = $this->form->name;
 		$data['options'] = $this->options;
-		
-// 		// If this element has options, render those
-// 		if(!empty($this->options))
-// 		{
-// 			//$data['options'] = $this->generate_options();
-// 		}
 
 		// Determine what template to use for this element
 		if(file_exists(APPPATH . '/views' . $template_dir . '_' . $this->name . '.php'))
@@ -505,14 +502,12 @@ class Element {
 		$export['label'] = $this->label;
 		$export['value'] = $this->value;
 		$export['rules'] = $this->rules;
-		$export['options'] = $this->options;
 		
-		// TODO
-// 		// Add options if this element has them
-// 		if(!empty($this->options))
-// 		{
-// 			$export['options'] = $this->generate_options();
-// 		}
+		// Add options if this element has them
+		if($this->options != NULL)
+		{
+			$export['options'] = $this->options;
+		}
 
 		return $export;
 	}
@@ -588,6 +583,9 @@ class Element {
 		return TRUE;
 	}
 	
+	/**
+	 * To string
+	 */
 	public function __toString()
 	{
 		return (String) $this->render();
