@@ -28,11 +28,13 @@
 | placeholder text. Leave not defined if there is no placeholder.
 */
 $lang['username'] 				= "Username";
-// $lang['username_placeholder'] 	= "Vul iets in";
-// hint
+$lang['username_placeholder'] 	= "RikdeSik";
+$lang['username_hint']			= "RikdeSik";
 // error if override
 
 $lang['password'] 				= "Password";
+$lang['password_placeholder']	= "wachtwoord";
+$lang['password_hint']			= "wachtwoord";
 $lang['submit']					= "Login";
 		
 $lang['remember_me'] 			= "Remember me";

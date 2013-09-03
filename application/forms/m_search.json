@@ -12,6 +12,10 @@
             "name": "type",
             "type": "checkgroup"
         },
+        "creature_type": {
+            "name": "creature_type",
+            "type": "dropdown"
+        },
         "submit": {
         	"name": "search",
         	"type": "submit"

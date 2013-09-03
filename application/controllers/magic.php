@@ -3,12 +3,20 @@
 /**
  * @author Rik van Duijn <ik@rikvanduijn.nl>
  */
-class Magic extends MY_Controller {
-	
+class Magic extends MY_Controller 
+{
+
 	private $_account = array(
 			'username'	=>	'RikdeSik',
 			'password'	=>	'wachtwoord'
 		);
+
+	public function __construct() 
+	{
+		parent::__construct();
+		
+		$this->config->load('magic');
+	}	
 
 	public function index()
 	{	
@@ -95,6 +103,10 @@ class Magic extends MY_Controller {
 			);
 
 		$form->set_options('type', $card_types);
+
+		$creature_types = $this->config->item('creature_types');
+
+		$form->set_options('creature_type', $creature_types);
 
 		if($form->request == 'callback' || $form->request == 'json')
 		{
