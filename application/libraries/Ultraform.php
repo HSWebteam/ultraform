@@ -105,8 +105,11 @@ class Ultraform {
 		// Decode the JSON, return objects
 		$data = json_decode($data);
 		
-		// Load language for this form
-		$this->lang = $this->CI->lang->load('ufo_' . $form, '' , TRUE);		
+		// Try to load a language file for this form
+		if(file_exists($this->CI->input->server('DOCUMENT_ROOT') . '/' . APPPATH . 'language/' . $this->CI->config->item('language') . '/ufo_' . $form . '_lang.php'))
+		{
+			$this->lang = $this->CI->lang->load('ufo_' . $form, '' , TRUE);
+		}	
 		
 		// Build elements from data objects
 		foreach($data->elements as $element)
@@ -339,15 +342,24 @@ class Ultraform {
 	 */
 	public function lang($line)
 	{
-		// Check if translation key exists
-		if(array_key_exists($line, $this->lang))
+		// Check to see if we have a loaded language file
+		if($this->lang != NULL)
 		{
-			// Exists
-			return $this->lang[$line];
+			// Check if translation key exists
+			if(array_key_exists($line, $this->lang))
+			{
+				// Exists
+				return $this->lang[$line];
+			}
+			else
+			{
+				// Does not exist
+				return FALSE;
+			}
 		}
 		else
 		{
-			// Does not exist
+			// No language file, so no translation
 			return FALSE;
 		}
 	}
@@ -514,13 +526,28 @@ class Element {
 		$options = $this->options;
 		
 		// Reset options
-		$this->options = array();
+		$this->options = array();		
 		
-		foreach($options as $option)
+		foreach($options as $key => $option)
 		{
-			$this->options[$option] = $this->form->lang($this->name . '_option_' . $option);
+			// See if there is a language file translation
+			if($this->form->lang($this->name . '_option_' . $option))
+			{
+				// There is a language translation
+				$this->options[$option] = $this->form->lang($this->name . '_option_' . $option);
+			}
+			// Use the JSON translation
+			elseif(gettype($options) == 'object')
+			{
+				$this->options[$key] = $option;
+			}
+			// Use the value as key
+			else
+			{
+				$this->options[$option] = $option;
+			}
 		}
-
+		
 		return $this->options;
 	}
 	
