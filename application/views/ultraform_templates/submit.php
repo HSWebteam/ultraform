@@ -1,1 +1,1 @@
-<?php echo form_submit($name, $label);?>
+<button type="submit" class="btn" name="<?php echo $name;?>"><?php echo $label;?></button>
