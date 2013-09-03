@@ -1,7 +1,13 @@
-ultraform
+Ultraform
 =========
 
-Ultraform
+Prime principles
+* Has to be faster then writing normal form code
+* Has to be scalable from small to huge applications
+* Has to use best practices where possible
+* Has to be future oriented
+* Has to be out of the box useable
+* Has to be easily extendable
 
 JSON format for forms
 =====================
