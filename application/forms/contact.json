@@ -30,18 +30,18 @@
 		"sushi": {
 			"name": "sushi",
 			"type": "dropdown",
-			"options": [
+			"options": {
 				"makizushi": "Makizushi",
 				"hosomaki": "Hosomaki",
 				"temaki": "Temaki",
 				"uramaki": "Uramaki"
-			]
+			}
 		},
 		"fish": {
 			"name": "fish",
 			"type": "dropdown",
 			"label": "Fish"
-		},		
+		},
 		"color": {
 			"name": "color",
 			"type": "radio",

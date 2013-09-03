@@ -514,13 +514,28 @@ class Element {
 		$options = $this->options;
 		
 		// Reset options
-		$this->options = array();
+		$this->options = array();		
 		
-		foreach($options as $option)
+		foreach($options as $key => $option)
 		{
-			$this->options[$option] = $this->form->lang($this->name . '_option_' . $option);
+			// See if there is a language file translation
+			if($this->form->lang($this->name . '_option_' . $option))
+			{
+				// There is a language translation
+				$this->options[$option] = $this->form->lang($this->name . '_option_' . $option);
+			}
+			// Use the JSON translation
+			elseif(gettype($options) == 'object')
+			{
+				$this->options[$key] = $option;
+			}
+			// Use the value as key
+			else
+			{
+				$this->options[$option] = $option;
+			}
 		}
-
+		
 		return $this->options;
 	}
 	
