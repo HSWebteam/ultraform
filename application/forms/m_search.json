@@ -10,17 +10,7 @@
         },
         "card_type": {
             "name": "type",
-            "type": "dropdown",
-            "options": [
-                "artifact",
-                "creature",
-                "enchantment",
-                "instant",
-                "land",
-                "planeswalker",
-                "sorcery",
-                "tribal"
-            ]
+            "type": "checkgroup"
         },
         "submit": {
         	"name": "search",

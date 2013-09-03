@@ -83,6 +83,19 @@ class Magic extends MY_Controller {
 		$form = new Ultraform();
 		$this->data['search_form'] = $form->preprocess('m_search');
 
+		$card_types = array(
+				'artifact'		=>	'Artifact',
+				'creature'		=>	'Creature',
+				'enchantment'	=>	'Enchantment',
+				'instant'		=>	'Instant',
+				'land'			=>	'Land',
+				'planeswalker'	=>	'Planeswalker',
+				'sorcery'		=>	'Sorcery',
+				'tribal'		=>	'Tribal'
+			);
+
+		$form->set_options('type', $card_types);
+
 		if($form->request == 'callback' || $form->request == 'json')
 		{
 			echo $form->ajax();
