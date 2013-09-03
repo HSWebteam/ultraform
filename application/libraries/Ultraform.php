@@ -388,6 +388,14 @@ class Ultraform {
 		
 		return json_encode($export);
 	}
+	
+	/**
+	 * To string
+	 */
+	public function __toString()
+	{
+		return $this->render();
+	}
 }
 
 /**
