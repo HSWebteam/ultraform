@@ -4,6 +4,10 @@ body {
 	background-color: #41413F;
 }
 
+h3 {
+	margin-left: 20px;
+}
+
 .menubg{
   background: black;
   color: white;
@@ -13,7 +17,6 @@ body {
 .maincontent{
   background-color: white;
   min-height: 600px;
-  padding: 0 30px 50px 30px;
 }
 
 .error {

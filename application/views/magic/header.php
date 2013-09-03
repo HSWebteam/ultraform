@@ -1,13 +1,6 @@
-<div class="top">
-	<div class="container headimg">
-		
-	</div>
-</div>
-
-<div class="menubg">
-	
-	<div class="container menu">
-		<h2>MtG trader web-app</h2>
+<div class="navbar navbar-inverse">
+	<div class="navbar-inner">
+		<a class="brand" href="<?php echo base_url();?>magic">MtG trader web-app</a>
 	</div>
 </div>
 

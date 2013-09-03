@@ -14,12 +14,14 @@
     </head>
     <body>
 
-        <?php echo $header ?>
+        
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="{$base_url}scripts/jquery-1.8.2.min.js"><\/script>')</script>
+        <script>window.jQuery || document.write('<script src="<?php echo base_url();?>scripts/jquery-1.8.2.min.js"><\/script>')</script>
 
         <div class="container maincontent">
+
+            <?php echo $header ?>
 
             <section class="content_section">
                 
