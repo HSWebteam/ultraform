@@ -1,0 +1,28 @@
+{
+    "elements": {
+        "open": {
+        	"name": "open",
+        	"type": "open"
+        },
+        "card_name": {
+        	"name": "cardname",
+        	"type": "text"
+        },
+        "card_type": {
+            "name": "type",
+            "type": "checkgroup"
+        },
+        "creature_type": {
+            "name": "creature_type",
+            "type": "dropdown"
+        },
+        "submit": {
+        	"name": "search",
+        	"type": "submit"
+        },
+        "close": {
+        	"name": "close",
+        	"type": "close"
+        }
+    }
+}

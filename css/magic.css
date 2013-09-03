@@ -1,0 +1,28 @@
+/** magic test case style sheet **/
+
+body {
+	background-color: #41413F;
+}
+
+h3 {
+	margin-left: 20px;
+}
+
+.menubg{
+  background: black;
+  color: white;
+  padding: 0;
+}
+
+.maincontent{
+  background-color: white;
+  min-height: 600px;
+}
+
+.error {
+	color: red;
+}
+
+h3 {
+	font-size: 1.3em;
+}
