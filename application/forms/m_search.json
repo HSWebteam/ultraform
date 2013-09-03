@@ -14,7 +14,7 @@
         },
         "creature_type": {
             "name": "creature_type",
-            "type": "dropdown"
+            "type": "text"
         },
         "submit": {
         	"name": "search",

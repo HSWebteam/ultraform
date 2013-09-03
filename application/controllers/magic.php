@@ -106,7 +106,20 @@ class Magic extends MY_Controller
 
 		$creature_types = $this->config->item('creature_types');
 
-		$form->set_options('creature_type', $creature_types);
+		$creature_type_list = '';
+
+		end($creature_types);
+		$last_key = key($creature_types);
+		foreach($creature_types as $key => $creature_type)
+		{
+			$creature_type_list .= '"' . $creature_type . '"';
+			if($key !== $last_key)
+			{
+				$creature_type_list .= ', ';
+			}
+		}
+
+		$form->set_options('creature_type', $creature_type_list);
 
 		if($form->request == 'callback' || $form->request == 'json')
 		{
