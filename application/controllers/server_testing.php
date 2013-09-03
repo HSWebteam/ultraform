@@ -13,6 +13,17 @@ class Server_Testing extends MY_Controller {
 		
 		$this->data['contact_form'] = $form->preprocess('contact');
 	
+		// Set some options on runtime
+		$fish = array(
+				'catfish' => 'African glass catfish',
+				'lungfish' => 'African lungfish',
+				'eater' => 'Algae eater',
+				'angelfish' => 'Black angelfish',
+				'whitefish' => 'Round whitefis'
+				);
+		
+		$form->set_options('fish', $fish);
+		
 		if($form->request == 'callback' || $form->request == 'json')
 		{
 			echo $form->ajax();
