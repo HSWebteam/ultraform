@@ -8,10 +8,9 @@ class Server_Testing extends MY_Controller {
 	public function index()
 	{	
 		$this->load->library('ultraform');
-
-		$form = new Ultraform();
 		
-		$this->data['contact_form'] = $form->preprocess('contact');
+		$form = new Ultraform('contact');
+		$this->data['contact_form'] = $form;
 	
 		// Set some options on runtime
 		$fish = array(

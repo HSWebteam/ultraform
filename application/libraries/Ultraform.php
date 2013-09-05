@@ -28,17 +28,29 @@ class Ultraform {
 	
 	// Is the form considered valid
 	public $valid = FALSE;
-
+	
 	/**
 	 * Constructor
 	 */
-	public function __construct()
+	public function __construct($form=NULL, $name=NULL)
 	{
+		if(gettype($form) == 'array')
+		{
+			// This is the codeigniter loader, ignore it
+			return FALSE;
+		}
+
+		// Assign name if set
+		$this->name = $name;
+
 		// Get the CI instance
 		$this->CI =& get_instance();
 
 		// Load the config
 		$this->config();
+		
+		// Preprocess the form
+		$this->preprocess($form);
 	}
 
 	/**
