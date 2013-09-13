@@ -41,7 +41,16 @@ class Ultraform {
 		}
 
 		// Assign name if set
-		$this->name = $name;
+		if($name != NULL)
+		{
+			// Override name
+			$this->name = $name;
+		}
+		else
+		{
+			// Default name
+			$this->name = $form;
+		}
 
 		// Get the CI instance
 		$this->CI =& get_instance();
@@ -130,9 +139,6 @@ class Ultraform {
 			$this->add(get_object_vars($element));
 		}
 
-		// Set name of the form
-		$this->name = $form;
-
 		// See if validation is needed, if so do it
 		if($this->request == 'html')
 		{
@@ -176,9 +182,13 @@ class Ultraform {
 	 */
 	public function add($data)
 	{
+		// Create a new element
 		$element = new Element($this, $data);
 
+		// Assign the new element to the elements array
 		$this->elements[$element->name] = $element;
+		
+		return TRUE;
 	}
 
 	/**
@@ -221,7 +231,6 @@ class Ultraform {
 	 */
 	public function render($name = NULL)
 	{
-
 		if($name === NULL)
 		{
 			$html = '';
@@ -254,20 +263,34 @@ class Ultraform {
 	 */
 	public function validate()
 	{
-		//TODO: IF POST
-		$post = $this->CI->input->post();
-
-		if(!empty($post))
+		// First see if there is a POST
+		if(count($_POST) > 0)
 		{
+			// Now see if the POST is for this form
+			$key = key($_POST);
+			if(substr_count($key, 'ufo-' . $this->name) == FALSE)
+			{
+				// The form name identifier was found
+				return FALSE;
+			}
+			
+			// First bring the POST array back to from uniquename to name
+			foreach($_POST as $key => $value)
+			{
+				$newkey = str_replace('ufo-' . $this->name . '-', '', $key);
+				$_POST[$newkey] = $_POST[$key];
+				unset($_POST[$key]);
+			}
+			
 			// Load CI form validation library
 			$this->CI->load->library('form_validation');
 
 			// Set validation rules for all elements
 			foreach($this->elements as $element)
 			{
-				$this->CI->form_validation->set_rules($element->name, $element->name, $element->rules);
+				$this->CI->form_validation->set_rules($element->name, $element->name, $element->rules); //TODO: See if we don't need to get some sort of string for human readable error message
 			}
-
+			
 			// Run validation
 			if ($this->CI->form_validation->run() == FALSE)
 			{
@@ -280,10 +303,10 @@ class Ultraform {
 				foreach($this->elements as $element)
 				{
 					// If the POST had this element
-					if(array_key_exists($element->name, $post))
+					if(array_key_exists($element->name, $_POST))
 					{
 						// Repopulate the form
-						$element->value = $post[$element->name];
+						$element->value = $_POST[$element->name];
 						//TODO: Don't do this if this is a password name
 						//TODO: Checkboxes, radio buttons
 
@@ -421,9 +444,13 @@ class Element {
 	// CI object
 	public $CI;
 
+	public $id;
 	public $name;
-	public $form;
+	public $uniquename; // Used when we need a unique reference to this element
 	public $label;
+	
+	// A refrence back to its parent Ultraform object
+	public $form;
 
 	// The type of the element
 	public $type;
@@ -452,6 +479,10 @@ class Element {
 			$this->$key = $value;
 		}
 		
+		$this->placeholder = $this->form->lang($this->name . '_placeholder'); //TODO: Write a function like set_label() for this
+		$this->uniquename = 'ufo-' . $this->form->name . '-' . $this->name;
+		$this->id = $this->uniquename;
+		
 		// Set the label for this element
 		$this->set_label();
 		
@@ -473,10 +504,11 @@ class Element {
 		// View data
 		$data = (array)$this;
 		
-		// Get translated values & derivative values
+		// Create a data array to pass to the element view
 		$data['label'] = $this->label;
-		$data['placeholder'] = $this->form->lang($this->name . '_placeholder');
-		$data['id'] = 'ufo-' . $this->form->name . '-' . $this->name;
+		$data['placeholder'] = $this->placeholder;
+		$data['name'] = $this->uniquename;
+		$data['id'] = $this->id;
 		$data['formname'] = $this->form->name;
 		$data['options'] = $this->options;
 
@@ -507,10 +539,9 @@ class Element {
 	 */
 	public function export()
 	{
+		// Build the export array
 		$export = array();
-
-		$export['name'] = $this->name;
-		//$export['label'] = $this->form->lang($this->name);
+		$export['name'] = $this->id;
 		$export['label'] = $this->label;
 		$export['value'] = $this->value;
 		$export['rules'] = $this->rules;
