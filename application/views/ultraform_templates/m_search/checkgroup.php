@@ -1,4 +1,4 @@
-<div>
+<div class="well">
 	<label for="<?php echo $name;?>"><?php echo $label?>: </label>
 	<?php foreach($options as $key => $value):?>
 

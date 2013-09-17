@@ -22,8 +22,8 @@ class Magic extends MY_Controller
 	{	
 		$this->load->library('ultraform');
 
-		$form = new Ultraform();
-		$this->data['login_form'] = $form->preprocess('m_login');
+		$form = new Ultraform('m_login');
+		$this->data['login_form'] = $form;
 
 		if($form->request == 'callback' || $form->request == 'json')
 		{
@@ -60,8 +60,8 @@ class Magic extends MY_Controller
 	{
 		$this->load->library('ultraform');
 
-		$form = new Ultraform();
-		$this->data['register_form'] = $form->preprocess('m_register');
+		$form = new Ultraform('m_register');
+		$this->data['register_form'] = $form;
 
 		if($form->request == 'callback' || $form->request == 'json')
 		{
@@ -88,8 +88,8 @@ class Magic extends MY_Controller
 	{
 		$this->load->library('ultraform');
 
-		$form = new Ultraform();
-		$this->data['search_form'] = $form->preprocess('m_search');
+		$form = new Ultraform('m_search');
+		$this->data['search_form'] = $form;
 
 		$card_types = array(
 				'artifact'		=>	'Artifact',
