@@ -16,6 +16,9 @@ class Ultraform {
 
 	// Name of the form
 	public $name = NULL;
+	
+	// JSON source of the form
+	public $source = NULL;
 
 	// Language data
 	public $lang = NULL;
@@ -39,6 +42,8 @@ class Ultraform {
 			// This is the codeigniter loader, ignore it
 			return FALSE;
 		}
+		
+		$this->source = $form;
 
 		// Assign name if set
 		if($name != NULL)
@@ -108,28 +113,27 @@ class Ultraform {
 			$this->request = 'html';
 		}
 		
-		$this->load($form);
+		$this->load();
 		
 		return $this;
 	}
 	
 	/**
 	 * Load a form from a JSON file in the forms directory.
-	 *
-	 * @param String form The name of the form template to load.
+	 * Load() will try to load the $source of the form.
 	 */
-	public function load($form)
+	public function load()
 	{
 		// Load the form data using forms_dir and forms_ext from the config
-		$data = file_get_contents($this->config['forms_dir'] . $form . $this->config['forms_ext']);
+		$data = file_get_contents($this->config['forms_dir'] . $this->source . $this->config['forms_ext']);
 
 		// Decode the JSON, return objects
 		$data = json_decode($data);
 		
 		// Try to load a language file for this form
-		if(file_exists($this->CI->input->server('DOCUMENT_ROOT') . '/' . APPPATH . 'language/' . $this->CI->config->item('language') . '/ufo_' . $form . '_lang.php'))
+		if(file_exists($this->CI->input->server('DOCUMENT_ROOT') . '/' . APPPATH . 'language/' . $this->CI->config->item('language') . '/ufo_' . $this->source . '_lang.php'))
 		{
-			$this->lang = $this->CI->lang->load('ufo_' . $form, '' , TRUE);
+			$this->lang = $this->CI->lang->load('ufo_' . $this->source, '' , TRUE);
 		}	
 		
 		// Build elements from data objects
@@ -498,6 +502,8 @@ class Element {
 	 */
 	public function render()
 	{
+		//TODO: Make sure uniquename is determined again
+		
 		// Load the template data
 		$template_dir = $this->form->config['template_dir'];
 
