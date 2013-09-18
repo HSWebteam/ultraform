@@ -855,7 +855,7 @@ var Ultraform = function(ultraformOptions) {
         this.$el_find('input, select, textarea').val(modelValue);
       }
       else if (modelValue !== DOMValue) {
-        console.error(this.el.id + ': The DOM and the API show a different initial value!!');
+        console.error(this.el.id + ': The DOM and the API show a different initial value!!', {modelValue:modelValue, DOMValue:DOMValue});
       }
 
       // Set the $input to the input element
