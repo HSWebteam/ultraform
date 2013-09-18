@@ -42,10 +42,35 @@ var Ultraform = function(ultraformOptions) {
         validationError: 'valid' // last validation error message or 'valid' or 'pending'
       }, {silent: true});
 
+      // create an optioncollection (the options of a radiobutton group, checkbox group or selectbox)
+      this.optionCollection = new OptionCollection();
+
+      var domSelector = '#' + this.id;
+      var $domElement = $(domSelector);
+
+console.log('attributes', attributes);
+      // add options
+      if ('options' in attributes) {
+
+        var optionsArray = _.map(attributes.options, function(val, key){
+          return {value:key, label:val};
+        });
+
+        console.log('adding options', optionsArray);
+        this.optionCollection.add(optionsArray, {
+          parentCollection: this.optionCollection,
+          parentModel: this,
+          parentDomSelector: domSelector,
+          $parentDomElement: $domElement
+        });
+      }
+
+console.log('optionCollection', this.optionCollection);
+
       // create view for this models element
       var view = new ElementView({
         model: this,
-        el: $('#' + this.id)
+        el: $domElement
       });
 
       // create element error view if an error-element can be found (elementId + _error)
@@ -994,6 +1019,59 @@ var Ultraform = function(ultraformOptions) {
 
   /**
   ***************************************
+  * Options
+  ***************************************
+  */
+
+  var OptionView = Backbone.View.extend(Ultraform.beforeExtend.OptionView.call(this, {
+
+    events: {
+      change: 'updateModel'
+    },
+
+    updateModel: function(event) {
+console.dir({checked: $(event.target).is(':checked')});
+      this.model.set( 'checked', $(event.target).is(':checked') );
+    }
+
+  }));
+
+  var OptionModel = Backbone.Model.extend(Ultraform.beforeExtend.OptionModel.call(this, {
+    initialize: function(attributes, options) {
+      console.log('OptionModel initialization', {attributes:attributes, options:options});
+
+      // selector of radio-inputs are combination of radio-input-group + radio-input value
+      var selector = options.parentDomSelector+'-'+attributes.value;
+
+      // find the dom element
+      var $domElement;
+
+      if (options.$parentDomElement.length > 0) {
+        // searching in the dom, inside the parent element for speed
+        $domElement = options.$parentDomElement.find( selector );
+      }
+      else {
+        // no parent element, search in the whole document
+        $domElement = $(selector);
+      }
+
+      // create view for this models element
+      var view = new OptionView({
+        model: this,
+        el: $domElement
+      });
+
+      console.log('view', view);
+    }
+  }));
+
+  var OptionCollection = Backbone.Collection.extend(Ultraform.beforeExtend.OptionCollection.call(this, {
+    model: OptionModel
+  }));
+
+
+  /**
+  ***************************************
   * The Ultraform Initialization
   ***************************************
   */
@@ -1032,6 +1110,9 @@ Ultraform.beforeExtend = {
   ElementModel: function(obj)      {return obj;},
   ElementView: function(obj)       {return obj;},
   ElementErrorView: function(obj)  {return obj;},
+  OptionCollection: function(obj) {return obj;},
+  OptionModel: function(obj)      {return obj;},
+  OptionView: function(obj)       {return obj;},
   ErrorView: function(obj)         {return obj;},
   ErrorBlockView: function(obj)    {return obj;}
 };
