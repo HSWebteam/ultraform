@@ -25,7 +25,7 @@ class Server_Testing extends MY_Controller {
 				);
 		
 		$form->set_options('fish', $fish);
-
+		
 		if($form->request == 'callback' || $form->request == 'json')
 		{
 			echo $form->ajax();
@@ -38,7 +38,7 @@ class Server_Testing extends MY_Controller {
 
 		if($form2->request == 'callback' || $form2->request == 'json')
 		{
-			echo $form->ajax();
+			echo $form2->ajax();
 		}
 		elseif($form2->valid)
 		{
