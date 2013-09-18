@@ -269,22 +269,13 @@ class Ultraform {
 	public function validate()
 	{
 		// First see if there is a POST
-		if(count($_POST) > 0)
+		if(array_key_exists('ufo-formname', $_POST))
 		{
 			// Now see if the POST is for this form
-			$key = key($_POST);
-			if(substr_count($key, 'ufo-' . $this->name) == FALSE)
+			if($_POST['ufo-formname'] != $this->name)
 			{
-				// The form name identifier was found
+				// This is not meant for this form
 				return FALSE;
-			}
-			
-			// First bring the POST array back to from uniquename to name
-			foreach($_POST as $key => $value)
-			{
-				$newkey = str_replace('ufo-' . $this->name . '-', '', $key);
-				$_POST[$newkey] = $_POST[$key];
-				unset($_POST[$key]);
 			}
 			
 			// Load CI form validation library
@@ -503,8 +494,6 @@ class Element {
 	 */
 	public function render()
 	{
-		//TODO: Make sure uniquename is determined again
-		
 		// Load the template data
 		$template_dir = $this->form->config['template_dir'];
 
@@ -514,8 +503,8 @@ class Element {
 		// Create a data array to pass to the element view
 		$data['label'] = $this->label;
 		$data['placeholder'] = $this->placeholder;
-		$data['name'] = $this->uniquename;
-		$data['id'] = $this->id;
+		$data['name'] = $this->name;
+		$data['id'] = $this->uniquename;
 		$data['formname'] = $this->form->name;
 		$data['options'] = $this->options;
 
@@ -548,7 +537,7 @@ class Element {
 	{
 		// Build the export array
 		$export = array();
-		$export['name'] = $this->id;
+		$export['name'] = $this->name;
 		$export['label'] = $this->label;
 		$export['value'] = $this->value;
 		$export['rules'] = $this->rules;
