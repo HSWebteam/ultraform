@@ -85,15 +85,15 @@ class Ultraform {
 	/**
 	 * Pre-process a given form. This will prepare everything neccesary to use this form for this request type
 	 * This function determines the type of request based on the POST variable. See docs for more information.
-	 * 
-	 * @param String $form The name of the form to process
 	 */
-	public function preprocess($form)
+	public function preprocess()
 	{
 		// See if the 'ufo-action' POST is present
 		if($this->CI->input->post('ufo-action'))
 		{	
+			// This is a JSON request
 			$this->request = 'json';
+			
 			// This is a AJAX call from the client
 			if($this->CI->input->post('ufo-action') == 'callback')
 			{
@@ -101,10 +101,11 @@ class Ultraform {
 				$this->request = 'callback';
 				return TRUE;
 			}
-			elseif($this->CI->input->post('ufo-form') != $form)
+			elseif($this->CI->input->post('ufo-form') != $this->name)
 			{
 				// The POST is not meant for this form
-				return $this;
+				$this->request = 'none';				
+				return FALSE;
 			}
 		}
 		else
@@ -149,7 +150,7 @@ class Ultraform {
 			$this->validate();
 		}
 		
-		return $this;
+		return TRUE;
 	}
 	
 	/**
