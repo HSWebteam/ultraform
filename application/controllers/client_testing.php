@@ -188,7 +188,7 @@ class Client_Testing extends CI_Controller {
 					array(
 						'name'  => 'color',
 						'label' => 'Color',
-						'value' => '',
+						'value' => 'yellow',
 						'rules' => 'required|matches[alpha]',
 						'options' => array(
 							'yellow' => 'yellow',

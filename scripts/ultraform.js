@@ -33,7 +33,6 @@ var Ultraform = function(ultraformOptions) {
 
       // set parents
       this.parentModel = options.parentModel;
-      this.parentCollection = options.parentCollection;
 
       // set id and some other values
       this.set({
@@ -288,7 +287,7 @@ var Ultraform = function(ultraformOptions) {
         var model = this;
 
         // get the model that this element matches with
-        var matchWith = this.parentCollection.where({name: args[0]});
+        var matchWith = this.collection.where({name: args[0]});
 
         // start listening to changes to matching model to validate this model
         function validateOnModelChange(matchingModel) {
@@ -308,7 +307,7 @@ var Ultraform = function(ultraformOptions) {
         else {
 
           // listen for models being added
-          this.listenTo(this.parentCollection, 'add', function(addedModel){
+          this.listenTo(this.collection, 'add', function(addedModel){
 
             if (addedModel.attributes.name === args[0]) {
               // then when the model is added, listen to changes on the model
@@ -407,7 +406,7 @@ var Ultraform = function(ultraformOptions) {
       // MARK: this is not a pure function, the "args" argument can be changed
       matches: function(value, rule){
 
-        var matchWithModel = this.parentCollection.findWhere({name:rule.args[0]});
+        var matchWithModel = this.collection.findWhere({name:rule.args[0]});
         var matchWithValue = matchWithModel.attributes.value;
 
         // change the args[0] to the label of the field, for when the message gets generated
@@ -605,7 +604,6 @@ var Ultraform = function(ultraformOptions) {
       });
 
       this.elementCollection.add(response.elements, {
-        parentCollection: this.elementCollection,
         parentModel: this
       });
 
@@ -852,11 +850,18 @@ var Ultraform = function(ultraformOptions) {
       // *** CREATE A COLLECTION OF OPTIONS FOR RADIOBUTTONGROUP, CHECKBOXGROUP AND SELECT ***
       this.collection = new OptionCollection();
 
+      var that = this;
+
       // make an array of the this.options.options object
       // the server gives us something like: {"color1":"Red", "color2":"Blue", "anotherkey":"anothervalue"}
       // we translate that to: [{value:"color1", label:"Red"}, {...}, {...}]
-      var optionsArray = _.map(this.options.options, function(value, key){
-        return {value:key, label:value};
+      var optionsArray = _.sortBy(_.map(this.options.options, function(value, key){
+        var checked = (that.model.attributes.value == key);
+        return {value:key, label:value, checked:checked};
+      }), function(val) {
+        // we also sort the checked elements to the end
+        // this is to make sure that the DOM/API difference check works
+        return val.checked;
       });
 
       this.collection.add(optionsArray, {
@@ -878,7 +883,7 @@ var Ultraform = function(ultraformOptions) {
         $elFind(this.$el, 'input, select, textarea').val(modelValue);
       }
       else if (modelValue != DOMValue) {
-        console.error(this.el.id + ': The DOM and the API show a different initial value!!', {modelValue:modelValue, DOMValue:DOMValue});
+        console.error(this.model.id + ': The DOM and the API show a different initial value!!', {modelValue:modelValue, DOMValue:DOMValue});
       }
 
       // Set the $input to the input element
@@ -915,7 +920,9 @@ var Ultraform = function(ultraformOptions) {
       }
       else {
         var chk = this.collection.where({checked: true});
-        return chk.length===0 ? '' : chk[0].get('value');
+        var value = chk.length===0 ? '' : chk[0].get('value');
+
+        return value;
       }
     },
 
@@ -1031,6 +1038,25 @@ var Ultraform = function(ultraformOptions) {
 
   var OptionView = Backbone.View.extend(Ultraform.beforeExtend.OptionView.call(this, {
 
+    initialize: function() {
+
+      var modelChecked = this.options.checked;
+      var $input = $elFind(this.$el, 'option, input[type="radio"], input[type="checkbox"]');
+      var domChecked = $input.is(':checked');
+
+      if (!domChecked && modelChecked) {
+        // dom was not checked, check the dom
+        $input.prop('checked', true);
+      }
+      else if (domChecked) {
+        // check the model during initialization, so that the elementview
+        // can than compare the checked options with the model value(s)
+        this.model.set({'checked':true}, {silent:true});
+        // the optionModel is unchecked by default
+      }
+
+    },
+
     events: {
       change: 'updateModel'
     },
@@ -1067,7 +1093,8 @@ var Ultraform = function(ultraformOptions) {
       var view = new OptionView({
         elementView: options.parentView,
         model: this,
-        el: $domElement
+        el: $domElement,
+        checked: attributes.checked
       });
 
       var that = this;

@@ -274,7 +274,7 @@ input[type='text'].required, textarea.required {
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests">
 
-<div id="ufo-forms-33_error">
+<div id="ufo-forms-33_error" style="display:none">
 The following errors were encountered in the form:<br>
 <ul>
 </ul>
@@ -381,7 +381,7 @@ The following errors were encountered in the form:<br>
 	</div>
 	<div>
 		<label for="color">color: </label>
-			<input type="radio" value="yellow" name="color" id="ufo-forms-33-color-yellow">yellow 
+			<input type="radio" value="yellow" name="color" id="ufo-forms-33-color-yellow" checked>yellow 
 			<input type="radio" value="green" name="color" id="ufo-forms-33-color-green">green 
 			<input type="radio" value="blue" name="color" id="ufo-forms-33-color-blue">blue 
 			<input type="radio" value="purple" name="color" id="ufo-forms-33-color-purple">purple 
@@ -444,11 +444,11 @@ Ultraform.beforeExtend.ElementModel = function(obj) {
 	obj.initializeVisibility = function() {
 		// get the model that the visibility depends on
 		var dependOnName = showWhenValid[this.get('name')];
-		var dependOnModel = this.parentCollection.findWhere({name: dependOnName});
+		var dependOnModel = this.collection.findWhere({name: dependOnName});
 		
 		if (_.isUndefined(dependOnModel)) {
 			// dependOnModel does not yet exist, wait for it to be added and then start listening to it
-			this.listenTo(this.parentCollection, 'add', function(addedModel) {
+			this.listenTo(this.collection, 'add', function(addedModel) {
 				if (addedModel.get('name') == dependOnName) {
 					// listen to validation changes and visibility changes on the depend-on model
 					this.listenTo(addedModel, 'change', this.handleVisibility);
