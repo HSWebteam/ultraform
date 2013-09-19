@@ -33,7 +33,6 @@ var Ultraform = function(ultraformOptions) {
 
       // set parents
       this.parentModel = options.parentModel;
-      this.parentCollection = options.parentCollection;
 
       // set id and some other values
       this.set({
@@ -42,10 +41,15 @@ var Ultraform = function(ultraformOptions) {
         validationError: 'valid' // last validation error message or 'valid' or 'pending'
       }, {silent: true});
 
+      var domSelector = '#' + this.id;
+      var $domElement = $(domSelector);
+
       // create view for this models element
       var view = new ElementView({
         model: this,
-        el: $('#' + this.id)
+        options: attributes.options || {}, // options like radiobuttons, checkboxes, options
+        selector: domSelector,
+        el: $domElement
       });
 
       // create element error view if an error-element can be found (elementId + _error)
@@ -283,7 +287,7 @@ var Ultraform = function(ultraformOptions) {
         var model = this;
 
         // get the model that this element matches with
-        var matchWith = this.parentCollection.where({name: args[0]});
+        var matchWith = this.collection.where({name: args[0]});
 
         // start listening to changes to matching model to validate this model
         function validateOnModelChange(matchingModel) {
@@ -303,7 +307,8 @@ var Ultraform = function(ultraformOptions) {
         else {
 
           // listen for models being added
-          this.listenTo(this.parentCollection, 'add', function(addedModel){
+          this.listenTo(this.collection, 'add', function(addedModel){
+
             if (addedModel.attributes.name === args[0]) {
               // then when the model is added, listen to changes on the model
               validateOnModelChange(addedModel);
@@ -370,26 +375,26 @@ var Ultraform = function(ultraformOptions) {
         preg = preg.slice(1); // remove the first delimiter
 
         // modifiers that are valid in JS and PHP
-        var valid_modifiers = {i:true, m:true};
+        var validModifiers = {i:true, m:true};
 
         // find the end delimiter
         while (preg.length > 0) {
           // remove last char from preg
-          var last_char = preg.slice(-1);
+          var lastChar = preg.slice(-1);
           preg = preg.slice(0,preg.length-1);
 
           // if last character is not the delimiter, add it to the list of modifiers
-          if (last_char === delimiter) {
+          if (lastChar === delimiter) {
             // break the loop
             break;
           }
-          else if (last_char in valid_modifiers) {
+          else if (lastChar in validModifiers) {
             // add to list of modifiers
-            modifiers += last_char;
+            modifiers += lastChar;
           }
           else {
             // warn for invalid modifier (might be valid in PHP but not in JS)
-            alert('Invalid modifier for RegExp, Ultraform does not know what to do with '+last_char);
+            alert('Invalid modifier for RegExp, Ultraform does not know what to do with '+lastChar);
           }
         }
 
@@ -401,7 +406,7 @@ var Ultraform = function(ultraformOptions) {
       // MARK: this is not a pure function, the "args" argument can be changed
       matches: function(value, rule){
 
-        var matchWithModel = this.parentCollection.findWhere({name:rule.args[0]});
+        var matchWithModel = this.collection.findWhere({name:rule.args[0]});
         var matchWithValue = matchWithModel.attributes.value;
 
         // change the args[0] to the label of the field, for when the message gets generated
@@ -480,7 +485,7 @@ var Ultraform = function(ultraformOptions) {
         return (/^([a-zA-Z0-9\+_\-]+)(\.[a-zA-Z0-9\+_\-]+)*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,6}$/).test($.trim(value));
       },
       valid_emails: function(value){
-        elementmodel = this;
+        var elementmodel = this;
         var emails = value.split(',');
         var result = true;
         $.each(emails, function(i, v){
@@ -590,6 +595,7 @@ var Ultraform = function(ultraformOptions) {
     // make submodels for every element in the returned object,
     // return the new attributes property for the model
     parse: function(response) {
+
       this.set('messages', response.messages || {});
 
       // get the settings for this form
@@ -598,9 +604,9 @@ var Ultraform = function(ultraformOptions) {
       });
 
       this.elementCollection.add(response.elements, {
-        parentCollection: this.elementCollection,
         parentModel: this
       });
+
     },
 
     // see if there are any invalid elements and act on it
@@ -841,10 +847,32 @@ var Ultraform = function(ultraformOptions) {
 
     initialize: function() {
 
+      // *** CREATE A COLLECTION OF OPTIONS FOR RADIOBUTTONGROUP, CHECKBOXGROUP AND SELECT ***
+      this.collection = new OptionCollection();
+
+      var that = this;
+
+      // make an array of the this.options.options object
+      // the server gives us something like: {"color1":"Red", "color2":"Blue", "anotherkey":"anothervalue"}
+      // we translate that to: [{value:"color1", label:"Red"}, {...}, {...}]
+      var optionsArray = _.sortBy(_.map(this.options.options, function(value, key){
+        var checked = (that.model.attributes.value == key);
+        return {value:key, label:value, checked:checked};
+      }), function(val) {
+        // we also sort the checked elements to the end
+        // this is to make sure that the DOM/API difference check works
+        return val.checked;
+      });
+
+      this.collection.add(optionsArray, {
+        parentDomSelector: this.options.selector,
+        parentView: this
+      });
+
       // *** UPDATE THE MODEL OR THE UI IF NEEDED ***
       // compare the value in the DOM with the value that we got from the model
       var modelValue = this.model.attributes.value;
-      var DOMValue = this.$el_find('input, select').val();
+      var DOMValue = this.getValue();
       if (modelValue === null || typeof modelValue == 'undefined') {
         // the model did not give a value
         // fill the model with the values from the DOM
@@ -852,14 +880,14 @@ var Ultraform = function(ultraformOptions) {
       }
       else if (DOMValue === '') {
         // the DOM seems empty, set the model value to the DOM value
-        this.$el_find('input, select, textarea').val(modelValue);
+        $elFind(this.$el, 'input, select, textarea').val(modelValue);
       }
-      else if (modelValue !== DOMValue) {
-        console.error(this.el.id + ': The DOM and the API show a different initial value!!');
+      else if (modelValue != DOMValue) {
+        console.error(this.model.id + ': The DOM and the API show a different initial value!!', {modelValue:modelValue, DOMValue:DOMValue});
       }
 
       // Set the $input to the input element
-      this.$input = this.$el_find('input, select, textarea');
+      this.$input = $elFind(this.$el, 'input, select, textarea');
       this.input = this.$input.get(0);
 
       // *** ATTACH TO SOME MODEL EVENTS ***
@@ -881,6 +909,21 @@ var Ultraform = function(ultraformOptions) {
     events: {
       // no events here, they are initialized in the initialize method and may differ
       // slightly depending on which element was found
+    },
+
+    // get the value of the view
+    // if the view contains a single input element (has an empty collection), get the value from the input
+    // if the view contains subview (a collection with models with subviews), get the value from the subviews
+    getValue: function() {
+      if (this.collection.length === 0) {
+        return $elFind(this.$el, 'input, select').val();
+      }
+      else {
+        var chk = this.collection.where({checked: true});
+        var value = chk.length===0 ? '' : chk[0].get('value');
+
+        return value;
+      }
     },
 
     // change the resulting character when typing, depending on the rules
@@ -983,14 +1026,91 @@ var Ultraform = function(ultraformOptions) {
 
     onValidationPending: function(model) {
       // actions to perform while waiting for validation
-    },
-
-    // like $().find, but also checks the element itself for a match
-    $el_find: function(selector) {
-      return this.$el.is(selector) ? this.$el : this.$el.find(selector);
     }
 
   }));
+
+  /**
+  ***************************************
+  * Options
+  ***************************************
+  */
+
+  var OptionView = Backbone.View.extend(Ultraform.beforeExtend.OptionView.call(this, {
+
+    initialize: function() {
+
+      var modelChecked = this.options.checked;
+      var $input = $elFind(this.$el, 'option, input[type="radio"], input[type="checkbox"]');
+      var domChecked = $input.is(':checked');
+
+      if (!domChecked && modelChecked) {
+        // dom was not checked, check the dom
+        $input.prop('checked', true);
+      }
+      else if (domChecked) {
+        // check the model during initialization, so that the elementview
+        // can than compare the checked options with the model value(s)
+        this.model.set({'checked':true}, {silent:true});
+        // the optionModel is unchecked by default
+      }
+
+    },
+
+    events: {
+      change: 'updateModel'
+    },
+
+    updateModel: function() {
+
+      var $input = $elFind(this.$el, 'option, input[type="radio"], input[type="checkbox"]');
+      var checked = $input.is(':checked');
+
+      // in case of NOT-radiobutton, the checked value will be used by the element-model to get the value
+      // this way, selectboxes and checkboxes can return an array of values
+      this.model.set( 'checked', checked );
+
+      // in case of Radiobutton, there is only one value and no uncheck event
+      // therefor we directly trigger the change even on the element-view
+      if (checked && this.$el.is('input[type="radio"]')) {
+        this.options.elementView.model.setValueAndValidate(this.model.attributes['value']);
+      }
+
+    }
+
+  }));
+
+  var OptionModel = Backbone.Model.extend(Ultraform.beforeExtend.OptionModel.call(this, {
+    initialize: function(attributes, options) {
+
+      // selector of radio-inputs are combination of radio-input-group + radio-input value
+      var selector = options.parentDomSelector+'-'+attributes.value;
+
+      // get the dom element for this option
+      var $domElement = $(selector);
+
+      // create view for this models element
+      var view = new OptionView({
+        elementView: options.parentView,
+        model: this,
+        el: $domElement,
+        checked: attributes.checked
+      });
+
+      var that = this;
+
+    }
+  }));
+
+  var OptionCollection = Backbone.Collection.extend(Ultraform.beforeExtend.OptionCollection.call(this, {
+    model: OptionModel
+  }));
+
+  // like $().find, but also checks the element itself for a match
+  var $elFind = function($el, selector) {
+    return $el.is(selector) ? $el : $el.find(selector);
+  };
+
 
   /**
   ***************************************
@@ -1032,6 +1152,9 @@ Ultraform.beforeExtend = {
   ElementModel: function(obj)      {return obj;},
   ElementView: function(obj)       {return obj;},
   ElementErrorView: function(obj)  {return obj;},
+  OptionCollection: function(obj) {return obj;},
+  OptionModel: function(obj)      {return obj;},
+  OptionView: function(obj)       {return obj;},
   ErrorView: function(obj)         {return obj;},
   ErrorBlockView: function(obj)    {return obj;}
 };
