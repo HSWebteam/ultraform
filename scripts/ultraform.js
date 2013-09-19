@@ -42,30 +42,14 @@ var Ultraform = function(ultraformOptions) {
         validationError: 'valid' // last validation error message or 'valid' or 'pending'
       }, {silent: true});
 
-      // create an optioncollection (the options of a radiobutton group, checkbox group or selectbox)
-      this.optionCollection = new OptionCollection();
-
       var domSelector = '#' + this.id;
       var $domElement = $(domSelector);
-
-      // add options
-      if ('options' in attributes) {
-
-        var optionsArray = _.map(attributes.options, function(val, key){
-          return {value:key, label:val};
-        });
-
-        this.optionCollection.add(optionsArray, {
-          parentCollection: this.optionCollection,
-          parentModel: this,
-          parentDomSelector: domSelector,
-          $parentDomElement: $domElement
-        });
-      }
 
       // create view for this models element
       var view = new ElementView({
         model: this,
+        options: attributes.options || {}, // options like radiobuttons, checkboxes, options
+        selector: domSelector,
         el: $domElement
       });
 
@@ -322,10 +306,10 @@ var Ultraform = function(ultraformOptions) {
 
         }
         else {
-console.log('listening to adding with name '+args[0]);
+
           // listen for models being added
           this.listenTo(this.parentCollection, 'add', function(addedModel){
-console.log('added model', addedModel);
+
             if (addedModel.attributes.name === args[0]) {
               // then when the model is added, listen to changes on the model
               validateOnModelChange(addedModel);
@@ -392,26 +376,26 @@ console.log('added model', addedModel);
         preg = preg.slice(1); // remove the first delimiter
 
         // modifiers that are valid in JS and PHP
-        var valid_modifiers = {i:true, m:true};
+        var validModifiers = {i:true, m:true};
 
         // find the end delimiter
         while (preg.length > 0) {
           // remove last char from preg
-          var last_char = preg.slice(-1);
+          var lastChar = preg.slice(-1);
           preg = preg.slice(0,preg.length-1);
 
           // if last character is not the delimiter, add it to the list of modifiers
-          if (last_char === delimiter) {
+          if (lastChar === delimiter) {
             // break the loop
             break;
           }
-          else if (last_char in valid_modifiers) {
+          else if (lastChar in validModifiers) {
             // add to list of modifiers
-            modifiers += last_char;
+            modifiers += lastChar;
           }
           else {
             // warn for invalid modifier (might be valid in PHP but not in JS)
-            alert('Invalid modifier for RegExp, Ultraform does not know what to do with '+last_char);
+            alert('Invalid modifier for RegExp, Ultraform does not know what to do with '+lastChar);
           }
         }
 
@@ -502,7 +486,7 @@ console.log('added model', addedModel);
         return (/^([a-zA-Z0-9\+_\-]+)(\.[a-zA-Z0-9\+_\-]+)*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,6}$/).test($.trim(value));
       },
       valid_emails: function(value){
-        elementmodel = this;
+        var elementmodel = this;
         var emails = value.split(',');
         var result = true;
         $.each(emails, function(i, v){
@@ -865,10 +849,25 @@ console.log('added model', addedModel);
 
     initialize: function() {
 
+      // *** CREATE A COLLECTION OF OPTIONS FOR RADIOBUTTONGROUP, CHECKBOXGROUP AND SELECT ***
+      this.collection = new OptionCollection();
+
+      // make an array of the this.options.options object
+      // the server gives us something like: {"color1":"Red", "color2":"Blue", "anotherkey":"anothervalue"}
+      // we translate that to: [{value:"color1", label:"Red"}, {...}, {...}]
+      var optionsArray = _.map(this.options.options, function(value, key){
+        return {value:key, label:value};
+      });
+
+      this.collection.add(optionsArray, {
+        parentDomSelector: this.options.selector,
+        parentView: this
+      });
+
       // *** UPDATE THE MODEL OR THE UI IF NEEDED ***
       // compare the value in the DOM with the value that we got from the model
       var modelValue = this.model.attributes.value;
-      var DOMValue = $el_find(this.$el, 'input, select').val();
+      var DOMValue = this.getValue();
       if (modelValue === null || typeof modelValue == 'undefined') {
         // the model did not give a value
         // fill the model with the values from the DOM
@@ -876,14 +875,14 @@ console.log('added model', addedModel);
       }
       else if (DOMValue === '') {
         // the DOM seems empty, set the model value to the DOM value
-        $el_find(this.$el, 'input, select, textarea').val(modelValue);
+        $elFind(this.$el, 'input, select, textarea').val(modelValue);
       }
-      else if (modelValue !== DOMValue) {
+      else if (modelValue != DOMValue) {
         console.error(this.el.id + ': The DOM and the API show a different initial value!!', {modelValue:modelValue, DOMValue:DOMValue});
       }
 
       // Set the $input to the input element
-      this.$input = $el_find(this.$el, 'input, select, textarea');
+      this.$input = $elFind(this.$el, 'input, select, textarea');
       this.input = this.$input.get(0);
 
       // *** ATTACH TO SOME MODEL EVENTS ***
@@ -905,6 +904,19 @@ console.log('added model', addedModel);
     events: {
       // no events here, they are initialized in the initialize method and may differ
       // slightly depending on which element was found
+    },
+
+    // get the value of the view
+    // if the view contains a single input element (has an empty collection), get the value from the input
+    // if the view contains subview (a collection with models with subviews), get the value from the subviews
+    getValue: function() {
+      if (this.collection.length === 0) {
+        return $elFind(this.$el, 'input, select').val();
+      }
+      else {
+        var chk = this.collection.where({checked: true});
+        return chk.length===0 ? '' : chk[0].get('value');
+      }
     },
 
     // change the resulting character when typing, depending on the rules
@@ -1024,18 +1036,20 @@ console.log('added model', addedModel);
     },
 
     updateModel: function() {
-      // do not listen to the change that we are going to create ourselves
-      this.stopListening( this.model.parentModel );
 
-      var $input = $el_find(this.$el, 'option, input[type="radio"], input[type="checkbox"]');
+      var $input = $elFind(this.$el, 'option, input[type="radio"], input[type="checkbox"]');
       var checked = $input.is(':checked');
+
+      // in case of NOT-radiobutton, the checked value will be used by the element-model to get the value
+      // this way, selectboxes and checkboxes can return an array of values
       this.model.set( 'checked', checked );
 
-      // UNchecking can happen without a dom-event triggering (in case of radiobuttons, when another radiobutton gets checked)
-      // Check if this radiobutton was unchecked when another radiobutton was checked
-      if (checked) {
-        this.listenTo( this.model.parentModel, 'change', this.updateModel );
+      // in case of Radiobutton, there is only one value and no uncheck event
+      // therefor we directly trigger the change even on the element-view
+      if (checked && this.$el.is('input[type="radio"]')) {
+        this.options.elementView.model.setValueAndValidate(this.model.attributes['value']);
       }
+
     }
 
   }));
@@ -1043,36 +1057,21 @@ console.log('added model', addedModel);
   var OptionModel = Backbone.Model.extend(Ultraform.beforeExtend.OptionModel.call(this, {
     initialize: function(attributes, options) {
 
-      // set parents
-      this.parentModel = options.parentModel;
-      this.parentCollection = options.parentCollection;
-
       // selector of radio-inputs are combination of radio-input-group + radio-input value
       var selector = options.parentDomSelector+'-'+attributes.value;
 
-      // find the dom element
-      var $domElement;
-
-      if (options.$parentDomElement.length > 0) {
-        // searching in the dom, inside the parent element for speed
-        $domElement = options.$parentDomElement.find( selector );
-      }
-      else {
-        // no parent element, search in the whole document
-        $domElement = $(selector);
-      }
+      // get the dom element for this option
+      var $domElement = $(selector);
 
       // create view for this models element
       var view = new OptionView({
+        elementView: options.parentView,
         model: this,
         el: $domElement
       });
 
       var that = this;
 
-      this.listenTo( this, 'change', function(){
-        that.parentModel.setValueAndValidate( that.attributes.value );
-      });
     }
   }));
 
@@ -1081,7 +1080,7 @@ console.log('added model', addedModel);
   }));
 
   // like $().find, but also checks the element itself for a match
-  var $el_find = function($el, selector) {
+  var $elFind = function($el, selector) {
     return $el.is(selector) ? $el : $el.find(selector);
   };
 
