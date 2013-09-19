@@ -184,7 +184,19 @@ class Client_Testing extends CI_Controller {
 						'name'  => 'sushi',
 						'label' => 'Sushi',
 						'value' => 'Has Wasabi',
-						'rules' => 'callback_sushi[wasabi]')
+						'rules' => 'callback_sushi[wasabi]'),
+					array(
+						'name'  => 'color',
+						'label' => 'Color',
+						'value' => 'yellow',
+						'rules' => 'required|matches[alpha]',
+						'options' => array(
+							'yellow' => 'yellow',
+							'green'  => 'green',
+							'blue'   => 'blue',
+							'purple' => 'purple'
+						)
+					)
 				),
 				'messages' => array(
 					'required' => 'Het %s veld mag niet leeg blijven.',
