@@ -412,10 +412,6 @@ class Ultraform {
 			{
 				// Repopulate the form based on type
 				switch($element->type) {
-					case 'checkbox':
-						// TODO
-						echo 'CHECKBOX: ' . $_POST[$element->name] . '<br>';
-						break;
 					case 'checkgroup':
 						// TODO
 						echo 'CHECKGROUP: ' . $_POST[$element->name] . '<br>';
@@ -423,9 +419,10 @@ class Ultraform {
 					case 'open':
 					case 'close':						
 					case 'password':
+						// Do nothing for these element types
 						break;
 					default:
-						// Default case, includes: most text fields, radiobuttons and dropdowns
+						// Default case, includes: most text fields, custom types, radiobuttons, checkboxes and dropdowns
 						$element->value = $_POST[$element->name];
 				}
 		
