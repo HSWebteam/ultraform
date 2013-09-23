@@ -294,28 +294,7 @@ class Ultraform {
 				$this->valid = FALSE;
 
 				// Repopulate the form
-				//$this->repopulate();
-
-				foreach($this->elements as $element)
-				{
-					// If the POST had this element
-					if(array_key_exists($element->name, $_POST))
-					{
-						// Repopulate the form
-						$element->value = $_POST[$element->name];
-						//TODO: Don't do this if this is a password name
-						//TODO: Checkboxes, radio buttons
-
-						$error = form_error($element->name, '', '');
-						//TODO: Add open/close error tags
-
-						if ($error)
-						{
-							$element->error = TRUE;
-							$element->error_text = $error;
-						}
-					}
-				}
+				$this->repopulate();
 			}
 			else
 			{
@@ -418,6 +397,50 @@ class Ultraform {
 		$export['messages'] = $messages;
 		
 		return json_encode($export);
+	}
+	
+	/**
+	 * Handles repopulating the form based on the POST array.
+	 */
+	private function repopulate()
+	{
+		// Iterate over all elements
+		foreach($this->elements as $element)
+		{
+			// If the POST had this element
+			if(array_key_exists($element->name, $_POST))
+			{
+				// Repopulate the form based on type
+				switch($element->type) {
+					case 'checkbox':
+						// TODO
+						echo 'CHECKBOX: ' . $_POST[$element->name] . '<br>';
+						break;
+					case 'checkgroup':
+						// TODO
+						echo 'CHECKGROUP: ' . $_POST[$element->name] . '<br>';
+						break;
+					case 'open':
+					case 'close':						
+					case 'password':
+						break;
+					default:
+						// Default case, includes: most text fields, radiobuttons and dropdowns
+						$element->value = $_POST[$element->name];
+				}
+		
+				// Set the error message
+				$error = form_error($element->name, '', '');
+				
+				//TODO: Add open/close error tags
+		
+				if ($error)
+				{
+					$element->error = TRUE;
+					$element->error_text = $error;
+				}
+			}
+		}
 	}
 	
 	/**
