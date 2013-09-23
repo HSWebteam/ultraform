@@ -413,8 +413,12 @@ class Ultraform {
 				// Repopulate the form based on type
 				switch($element->type) {
 					case 'checkgroup':
-						// TODO
-						echo 'CHECKGROUP: ' . $_POST[$element->name] . '<br>';
+						// Iterate through POST array for this checkgroup
+						foreach($_POST[$element->name] as $key => $value)
+						{
+							// Assign to selected array
+							$element->selected[] = $value;
+						}
 						break;
 					case 'open':
 					case 'close':						
@@ -473,6 +477,8 @@ class Element {
 
 	public $value;
 	public $options = array();
+	public $selected = array();
+	
 	public $rules;
 	public $placeholder;
 
@@ -572,7 +578,7 @@ class Element {
 	}
 
 	/**
-	 * Will generate a translated array of options
+	 * Will generate a translated array of options objects
 	 */
 	private function generate_options()
 	{
@@ -580,7 +586,7 @@ class Element {
 		$options = $this->options;
 		
 		// Reset options
-		$this->options = array();		
+		$this->options = array();
 		
 		foreach($options as $key => $option)
 		{
