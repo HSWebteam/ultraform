@@ -26,6 +26,14 @@ class Server_Testing extends MY_Controller {
 		
 		$form->set_options('fish', $fish);
 		
+// 		if(!empty($_POST))
+// 		{
+// 			echo '<pre>';
+// 			print_r($_POST);
+// 			echo '</pre>';
+// 			exit;
+// 		}
+		
 		if($form->request == 'callback' || $form->request == 'json')
 		{
 			echo $form->ajax();

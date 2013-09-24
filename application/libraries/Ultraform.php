@@ -294,28 +294,7 @@ class Ultraform {
 				$this->valid = FALSE;
 
 				// Repopulate the form
-				//$this->repopulate();
-
-				foreach($this->elements as $element)
-				{
-					// If the POST had this element
-					if(array_key_exists($element->name, $_POST))
-					{
-						// Repopulate the form
-						$element->value = $_POST[$element->name];
-						//TODO: Don't do this if this is a password name
-						//TODO: Checkboxes, radio buttons
-
-						$error = form_error($element->name, '', '');
-						//TODO: Add open/close error tags
-
-						if ($error)
-						{
-							$element->error = TRUE;
-							$element->error_text = $error;
-						}
-					}
-				}
+				$this->repopulate();
 			}
 			else
 			{
@@ -421,6 +400,51 @@ class Ultraform {
 	}
 	
 	/**
+	 * Handles repopulating the form based on the POST array.
+	 */
+	private function repopulate()
+	{
+		// Iterate over all elements
+		foreach($this->elements as $element)
+		{
+			// If the POST had this element
+			if(array_key_exists($element->name, $_POST))
+			{
+				// Repopulate the form based on type
+				switch($element->type) {
+					case 'checkgroup':
+						// Iterate through POST array for this checkgroup
+						foreach($_POST[$element->name] as $key => $value)
+						{
+							// Assign to selected array
+							$element->selected[] = $value;
+						}
+						break;
+					case 'open':
+					case 'close':						
+					case 'password':
+						// Do nothing for these element types
+						break;
+					default:
+						// Default case, includes: most text fields, custom types, radiobuttons, checkboxes and dropdowns
+						$element->value = $_POST[$element->name];
+				}
+		
+				// Set the error message
+				$error = form_error($element->name, '', '');
+				
+				//TODO: Add open/close error tags
+		
+				if ($error)
+				{
+					$element->error = TRUE;
+					$element->error_text = $error;
+				}
+			}
+		}
+	}
+	
+	/**
 	 * To string
 	 */
 	public function __toString()
@@ -453,6 +477,8 @@ class Element {
 
 	public $value;
 	public $options = array();
+	public $selected = array();
+	
 	public $rules;
 	public $placeholder;
 
@@ -552,7 +578,7 @@ class Element {
 	}
 
 	/**
-	 * Will generate a translated array of options
+	 * Will generate a translated array of options objects
 	 */
 	private function generate_options()
 	{
@@ -560,7 +586,7 @@ class Element {
 		$options = $this->options;
 		
 		// Reset options
-		$this->options = array();		
+		$this->options = array();
 		
 		foreach($options as $key => $option)
 		{
