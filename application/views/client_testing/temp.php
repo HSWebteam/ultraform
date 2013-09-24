@@ -265,6 +265,19 @@ input[type='text'].required, textarea.required {
 	height:21px;
 }
 
+#ufo-forms-33-color, #ufo-forms-33-sauce {
+	overflow:auto;
+}
+
+label.checkbox {
+	padding-left:0;
+}
+
+.radiogroup, .checkgroup {
+	float:left;
+	width:255px;
+}
+
 </style>
 </head>
 <body>
@@ -379,13 +392,48 @@ The following errors were encountered in the form:<br>
 		<span id="ufo-forms-33-sushi_error" class="validationError"></span>
 		<span class="red">(please state your sushi needs!)</span>
 	</div>
-	<div>
-		<label for="color">color: </label>
-			<input type="radio" value="yellow" name="color" id="ufo-forms-33-color-yellow" checked>yellow 
-			<input type="radio" value="green" name="color" id="ufo-forms-33-color-green">green 
-			<input type="radio" value="blue" name="color" id="ufo-forms-33-color-blue">blue 
-			<input type="radio" value="purple" name="color" id="ufo-forms-33-color-purple">purple 
-			<div class="error" id="ufo-forms-33-color_error"></div>
+	<div id="ufo-forms-33-color">
+		<label for="color">Color</label>
+		<div class="radiogroup">
+			<input type="radio" value="yellow" name="color" id="ufo-forms-33-color-yellow" checked>yellow<br>
+			<input type="radio" value="green" name="color" id="ufo-forms-33-color-green">green<br>
+			<input type="radio" value="blue" name="color" id="ufo-forms-33-color-blue">blue<br>
+			<input type="radio" value="purple" name="color" id="ufo-forms-33-color-purple">purple
+		</div>
+		<div class="error" id="ufo-forms-33-color_error"></div>
+		<span class="red">(what color of sushi would you like?)</span>
+	</div>
+	<div id="ufo-forms-33-sauce">
+		<label>Sauce</label>
+		<div class="checkgroup">
+			<label for="ufo-forms-33-sauce-bechamel" class="checkbox">
+				<input id="ufo-forms-33-sauce-bechamel" type="checkbox" name="sauce[]" value="bechamel">
+				bechamel 
+			</label>
+			<br>
+			<label for="ufo-forms-33-sauce-creme" class="checkbox">
+				<input id="ufo-forms-33-sauce-creme" type="checkbox" name="sauce[]" value="creme" checked>
+				creme 
+			</label>
+			<label for="ufo-forms-33-sauce-mornay" class="checkbox">
+				<input id="ufo-forms-33-sauce-mornay" type="checkbox" name="sauce[]" value="mornay">
+				mornay 
+			</label>
+			<label for="ufo-forms-33-sauce-nantua" class="checkbox">
+				<input id="ufo-forms-33-sauce-nantua" type="checkbox" name="sauce[]" value="nantua">
+				nantua 
+			</label>
+			<label for="ufo-forms-33-sauce-cheddar_cheese" class="checkbox">
+				<input id="ufo-forms-33-sauce-cheddar_cheese" type="checkbox" name="sauce[]" value="cheddar_cheese">
+				cheddar_cheese 
+			</label>
+			<label for="ufo-forms-33-sauce-mustard" class="checkbox">
+				<input id="ufo-forms-33-sauce-mustard" type="checkbox" name="sauce[]" value="mustard">
+				mustard 
+			</label>
+			<div id="ufo-forms-33-sauce_error" class="error"></div>
+		</div>
+		<span class="red">(what kind of sauce would you like with your sushi?)</span>
 	</div>
 	<div>
 		<input type="submit" name="submit_2" value="Submit" />
