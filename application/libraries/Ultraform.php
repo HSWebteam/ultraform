@@ -421,7 +421,9 @@ class Ultraform {
 						}
 						break;
 					case 'open':
-					case 'close':						
+					case 'close':
+					case 'upload':
+						// We cannot repopulate a upload field due to security reasons
 					case 'password':
 						// Do nothing for these element types
 						break;
