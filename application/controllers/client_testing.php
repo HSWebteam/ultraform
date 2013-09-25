@@ -195,7 +195,7 @@ class Client_Testing extends CI_Controller {
 							'green'  => 'green',
 							'blue'   => 'blue',
 							'purple' => 'purple'
-						),
+						)),
 					array(
 						'name' => 'sauce',
 						'label' => 'Sauce',
@@ -209,7 +209,6 @@ class Client_Testing extends CI_Controller {
 							'cheddar_cheese' => 'Cheddar cheese sauce',
 							'mustard' => 'Mustard sauce'
 						))
-					)
 				),
 				'messages' => array(
 					'required' => 'Het %s veld mag niet leeg blijven.',

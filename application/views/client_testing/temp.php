@@ -407,16 +407,16 @@ The following errors were encountered in the form:<br>
 		<label>Sauce</label>
 		<div class="checkgroup">
 			<label for="ufo-forms-33-sauce-bechamel" class="checkbox">
-				<input id="ufo-forms-33-sauce-bechamel" type="checkbox" name="sauce[]" value="bechamel">
+				<input id="ufo-forms-33-sauce-bechamel" type="checkbox" name="sauce[]" value="bechamel" checked>
 				bechamel 
 			</label>
 			<br>
 			<label for="ufo-forms-33-sauce-creme" class="checkbox">
-				<input id="ufo-forms-33-sauce-creme" type="checkbox" name="sauce[]" value="creme" checked>
+				<input id="ufo-forms-33-sauce-creme" type="checkbox" name="sauce[]" value="creme">
 				creme 
 			</label>
 			<label for="ufo-forms-33-sauce-mornay" class="checkbox">
-				<input id="ufo-forms-33-sauce-mornay" type="checkbox" name="sauce[]" value="mornay">
+				<input id="ufo-forms-33-sauce-mornay" type="checkbox" name="sauce[]" value="mornay" checked>
 				mornay 
 			</label>
 			<label for="ufo-forms-33-sauce-nantua" class="checkbox">
