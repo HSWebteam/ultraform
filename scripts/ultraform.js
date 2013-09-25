@@ -883,10 +883,10 @@ var Ultraform = function(ultraformOptions) {
       // *** UPDATE THE MODEL OR THE UI IF NEEDED ***
       // compare the value in the DOM with the value that we got from the model
       var modelValue = this.model.attributes.value;
+      var DOMValue = this.getValue();
 
       if (this.optionViews.length === 0) {
         // this is not an element with options, we get the value directly from the dom element
-        var DOMValue = this.$input.val();
         if (modelValue === null || typeof modelValue == 'undefined') {
           // the model did not give a value
           // fill the model with the values from the DOM
@@ -901,32 +901,28 @@ var Ultraform = function(ultraformOptions) {
         }
       }
       else {
-        // this is an element with options (like checkboxes, radiobuttons or select)
-        // get the array of values from the option views
-        var optionsDOMValue = _.map(this.optionViews, function(view, index) {
-          return view.getValue();
-        });
+
+        var modelValueArray = (_.isArray(modelValue)) ? modelValue : [modelValue];
 
         if (modelValue === null || typeof modelValue == 'undefined') {
           // the model did not give a value
           // fill the model with the values from the DOM
-          this.model.set('value', optionsDOMValue);
+          this.model.set('value', DOMValue);
         }
-        else if (optionsDOMValue.length === 0) {
+        else if (DOMValue.length === 0) {
           // the DOM seems empty, set the DOM value to the model value
           _.each(this.optionViews, function(view, index) {
-            if (modelValue.indexOf(view.options.value) !== -1) {
+            if (modelValueArray.indexOf(view.options.value) !== -1) {
               // this option is in the modelValue, check the dom element
               view.$el.prop('checked', true);
             }
           });
         }
-        else if (! _.isEqual(optionsDOMValue.sort(), modelValue.sort())) {
-          console.error(this.model.id + ': The DOM and the API show a different initial value!!', {modelValue:modelValue, DOMValue:optionsDOMValue});
+        else if (! _.isEqual(DOMValue.sort(), modelValueArray.sort())) {
+          console.error(this.model.id + ': The DOM and the API show a different initial value!!', {modelValue:modelValue, DOMValue:DOMValue});
         }
       }
 
-  
       // *** ATTACH TO SOME MODEL EVENTS ***
       this.listenTo(this.model, 'change:validationError', this.onValidation);
 
@@ -953,15 +949,18 @@ var Ultraform = function(ultraformOptions) {
     // if the view contains subview (a collection with models with subviews), get the value from the subviews
     getValue: function() {
       if (this.optionViews.length === 0) {
-        return $elFind(this.$el, 'input, select').val();
+        // get the value of the one input element as a string
+        return this.$input.val();
       }
       else {
-        var result = _.map(this.optionViews, function(view, index) {
-          var value = $elFind(view.$el, 'is:checked').val();
-          if (value) return value;
+        // get the values of the option elements as an array
+        var result = [];
+        _.each(this.optionViews, function(view, index) {
+          var value = view.getValue();
+          if (value) result.push(value);
         });
 
-        return result.length===0 ? '' : result.length===1 ? result[0] : result;
+        return result;
       }
     },
 
@@ -1080,12 +1079,6 @@ var Ultraform = function(ultraformOptions) {
     initialize: function() {
 
       this.$input = $elFind(this.$el, 'option, input[type="radio"], input[type="checkbox"]');
-
-      // remember the original dom value
-      this.originalChecked = this.$input.is(':checked');
-
-      // check/uncheck the dom, according to the "checked"-option
-      this.$input.prop('checked', this.options.checked);
 
     },
 
