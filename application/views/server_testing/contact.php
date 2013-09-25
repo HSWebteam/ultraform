@@ -55,6 +55,7 @@
 						<?php echo $contact_form->render('remember_me');?><br>
 						Do you have any remarks you want us to know about?
 						<?php echo $contact_form->render('remarks');?>
+						<?php echo $contact_form->render('file');?>
 						<?php echo $contact_form->render('submit');?>
 						<?php echo $contact_form->render('close');?>
 					</div>

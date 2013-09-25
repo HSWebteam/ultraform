@@ -421,7 +421,9 @@ class Ultraform {
 						}
 						break;
 					case 'open':
-					case 'close':						
+					case 'close':
+					case 'upload':
+						// We cannot repopulate a upload field due to security reasons
 					case 'password':
 						// Do nothing for these element types
 						break;
@@ -500,13 +502,13 @@ class Element {
 		{
 			$this->$key = $value;
 		}
-		
-		$this->placeholder = $this->form->lang($this->name . '_placeholder'); //TODO: Write a function like set_label() for this
+	
 		$this->uniquename = 'ufo-' . $this->form->name . '-' . $this->name;
 		$this->id = $this->uniquename;
 		
-		// Set the label for this element
-		$this->set_label();
+		// Set the label and placeholder for this element
+		$this->generate_label();
+		$this->generate_placeholder();
 		
 		// Generate any options this element has
 		if(!empty($this->options))
@@ -612,9 +614,9 @@ class Element {
 	}
 	
 	/**
-	 * Determines what the human readable string should be set to for this element
+	 * Determines what the human readable label should be set to for this element
 	 */
-	private function set_label()
+	private function generate_label()
 	{
 		// If we have a lang file entry use that
 		if($this->form->lang($this->name))
@@ -635,6 +637,26 @@ class Element {
 		
 		return $this->label;
 	}
+	
+	/**
+	 * Determines what the human readable placeholder should be set to for this element
+	 */
+	private function generate_placeholder()
+	{
+		// If we have a lang file entry use that
+		if($this->form->lang($this->name . '_placeholder'))
+		{
+			// Get the label from the language file
+			$this->placeholder = $this->form->lang($this->name . '_placeholder');
+		}
+		// If we have a JSON data file 'placeholder' value use that
+		elseif($this->placeholder != NULL)
+		{
+			// Do nothing, we use the placeholder from the JSON
+		}
+	
+		return $this->placeholder;
+	}	
 	
 	/**
 	 * Sets options of the element.
