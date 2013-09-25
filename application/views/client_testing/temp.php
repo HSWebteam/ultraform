@@ -246,7 +246,7 @@ input[type='text'].required, textarea.required {
 	color:red;
 }
 
-.error label {
+.error .radiogroup, .error label {
 	color:red;
 }
 .error input {
@@ -400,7 +400,7 @@ The following errors were encountered in the form:<br>
 			<input type="radio" value="blue" name="color" id="ufo-forms-33-color-blue">blue<br>
 			<input type="radio" value="purple" name="color" id="ufo-forms-33-color-purple">purple
 		</div>
-		<div class="error" id="ufo-forms-33-color_error"></div>
+		<span class="validationError" id="ufo-forms-33-color_error"></span>
 		<span class="red">(what color of sushi would you like?)</span>
 	</div>
 	<div id="ufo-forms-33-sauce">
@@ -431,8 +431,8 @@ The following errors were encountered in the form:<br>
 				<input id="ufo-forms-33-sauce-mustard" type="checkbox" name="sauce[]" value="mustard">
 				mustard 
 			</label>
-			<div id="ufo-forms-33-sauce_error" class="error"></div>
 		</div>
+		<span id="ufo-forms-33-sauce_error" class="validationError"></span>
 		<span class="red">(what kind of sauce would you like with your sushi?)</span>
 	</div>
 	<div>

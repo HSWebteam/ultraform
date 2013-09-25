@@ -147,6 +147,10 @@ var Ultraform = function(ultraformOptions) {
     // keep the validate function in the model small
     // the real work is done in Backbone.Validate
     validate: function(attributes) {
+
+      // in case of an array, make a concatenated string of it
+      var concatvalue = concat(attributes.value);
+
       var rules = this.getRules();
 
       var model = this;
@@ -164,7 +168,7 @@ var Ultraform = function(ultraformOptions) {
         if (rule.name in model.validations) {
 
           // execute the validation
-          var validationResult = model.validations[rule.name].call(model, attributes.value, rule, model);
+          var validationResult = model.validations[rule.name].call(model, concatvalue, rule, model);
 
           if (validationResult === false) {
             // inValid
@@ -209,7 +213,7 @@ var Ultraform = function(ultraformOptions) {
             rule: rule.rule,
             //action: rule.name,
             //args: rule.args,
-            value: attributes.value,
+            value: concatvalue,
             name: model.get('name'),
             label: model.get('label')
           };
@@ -407,7 +411,7 @@ var Ultraform = function(ultraformOptions) {
       matches: function(value, rule){
 
         var matchWithModel = this.collection.findWhere({name:rule.args[0]});
-        var matchWithValue = matchWithModel.attributes.value;
+        var matchWithValue = concat(matchWithModel.attributes.value);
 
         // change the args[0] to the label of the field, for when the message gets generated
         rule.args[0] = matchWithModel.attributes.label;
@@ -926,17 +930,37 @@ var Ultraform = function(ultraformOptions) {
       // *** ATTACH TO SOME MODEL EVENTS ***
       this.listenTo(this.model, 'change:validationError', this.onValidation);
 
-      // Set events depending on the root element
-      var elementSelector = (this.input === this.el) ? '' : ' input,select,textarea';
       // Set events depending on validateOn setting of the form
       var validateOn = this.model.parentModel.get('settings').validateOn; // blur, change
 
-      this.events = {};
-      this.events['keypress' + elementSelector] = 'handleKey';
-      this.events[validateOn + elementSelector] = 'updateModel';
+      // Add events to this view or to the optionsviews
+      if (this.optionViews.length > 0) {
+        _.each(this.optionViews, function(view, index) {
 
-      // activate the event handlers
-      this.delegateEvents();
+          // Set events depending on the root element
+          var elementSelector = (view.input === view.el) ? '' : ' input,textarea';
+
+          view.events = {};
+          view.events['change' + elementSelector] = 'updateModel';
+
+          // activate the event handlers
+          view.delegateEvents();        
+        });
+      
+      }
+      else {
+        // Set events depending on the root element
+        var elementSelector = (this.input === this.el) ? '' : ' input,textarea';
+
+        this.events = {};
+        this.events['keypress' + elementSelector] = 'handleKey';
+        this.events[validateOn + elementSelector] = 'updateModel';
+
+        // activate the event handlers
+        this.delegateEvents();
+      }
+
+  
     },
 
     events: {
@@ -1035,8 +1059,8 @@ var Ultraform = function(ultraformOptions) {
     },
 
     // sync the model with the UI
-    updateModel: function(event) {
-      this.model.setValueAndValidate( $(event.target).val() );
+    updateModel: function() {
+      this.model.setValueAndValidate( this.getValue() );
     },
 
     // to be run when validation was performed
@@ -1079,11 +1103,17 @@ var Ultraform = function(ultraformOptions) {
     initialize: function() {
 
       this.$input = $elFind(this.$el, 'option, input[type="radio"], input[type="checkbox"]');
+      this.input = this.$input.get(0);
 
     },
 
     getValue: function() {
       return this.$input.is(':checked') ? this.$input.val() : null;
+    },
+
+    updateModel: function() {
+      console.log('this', this);
+      this.options.elementView.updateModel.call(this.options.elementView);
     }
 
   }));
@@ -1091,6 +1121,11 @@ var Ultraform = function(ultraformOptions) {
   // like $().find, but also checks the element itself for a match
   var $elFind = function($el, selector) {
     return $el.is(selector) ? $el : $el.find(selector);
+  };
+
+  // if input is an array, concatenate it with , to create a string to compare against
+  var concat = function(input) {
+    return _.isArray(input) ? input.sort().join(',') : input;
   };
 
 
