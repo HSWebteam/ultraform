@@ -15,13 +15,28 @@
 				</fieldset>
 
 			<?php echo $login_form->render('close');?>
-			<span>No account? <a href="<?php echo base_url();?>magic/register">Register free!</a></span>
+			
 		</div>
 	</div>
 
 	<div class="span4 offset1">
 		<img src="<?php echo base_url();?>images/magic/scroll_rack.jpg">
 	</div>
+	
+</div>
+
+<h3>Geen account? meld je direct aan!</h3>
+
+<div class="row">
+	<div class="span5 offset1">
+
+		<div id="register_form" class="well">
+			<?php echo $register_form->render(); ?>
+		</div>
+	
+	</div>
+
+	
 
 </div>
 

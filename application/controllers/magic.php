@@ -31,6 +31,7 @@ class Magic extends MY_Controller
 		}
 		elseif($form->valid)
 		{
+
 			// If form is valid log the user in
 			if($this->input->post('username') === $this->_account['username'] && $this->input->post('password') === $this->_account['password'])
 			{
@@ -43,6 +44,18 @@ class Magic extends MY_Controller
 
 			}
 			
+		}
+
+		$r_form = new Ultraform('m_register');
+		$this->data['register_form'] = $r_form;
+
+		if($r_form->request == 'callback' || $r_form->request == 'json')
+		{
+			echo $r_form->ajax();
+		}
+		elseif($r_form->valid)
+		{
+			// If form is valid, create an account for the user
 		}
 
 		if($form->request == 'html')
