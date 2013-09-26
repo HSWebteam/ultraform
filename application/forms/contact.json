@@ -74,6 +74,11 @@
         	"type": "textarea",
         	"rules": "callback_sushi[3]"
         },
+        "file": {
+        	"name": "file",
+        	"type": "upload",
+        	"label": "Upload a file"
+        },
         "submit": {
         	"name": "submit",
         	"type": "submit"

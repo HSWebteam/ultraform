@@ -16,6 +16,9 @@ class Ultraform {
 
 	// Name of the form
 	public $name = NULL;
+	
+	// JSON source of the form
+	public $source = NULL;
 
 	// Language data
 	public $lang = NULL;
@@ -39,9 +42,20 @@ class Ultraform {
 			// This is the codeigniter loader, ignore it
 			return FALSE;
 		}
+		
+		$this->source = $form;
 
 		// Assign name if set
-		$this->name = $name;
+		if($name != NULL)
+		{
+			// Override name
+			$this->name = $name;
+		}
+		else
+		{
+			// Default name
+			$this->name = $form;
+		}
 
 		// Get the CI instance
 		$this->CI =& get_instance();
@@ -71,15 +85,15 @@ class Ultraform {
 	/**
 	 * Pre-process a given form. This will prepare everything neccesary to use this form for this request type
 	 * This function determines the type of request based on the POST variable. See docs for more information.
-	 * 
-	 * @param String $form The name of the form to process
 	 */
-	public function preprocess($form)
+	public function preprocess()
 	{
 		// See if the 'ufo-action' POST is present
 		if($this->CI->input->post('ufo-action'))
 		{	
+			// This is a JSON request
 			$this->request = 'json';
+			
 			// This is a AJAX call from the client
 			if($this->CI->input->post('ufo-action') == 'callback')
 			{
@@ -87,10 +101,11 @@ class Ultraform {
 				$this->request = 'callback';
 				return TRUE;
 			}
-			elseif($this->CI->input->post('ufo-form') != $form)
+			elseif($this->CI->input->post('ufo-form') != $this->name)
 			{
 				// The POST is not meant for this form
-				return $this;
+				$this->request = 'none';				
+				return FALSE;
 			}
 		}
 		else
@@ -99,28 +114,27 @@ class Ultraform {
 			$this->request = 'html';
 		}
 		
-		$this->load($form);
+		$this->load();
 		
 		return $this;
 	}
 	
 	/**
 	 * Load a form from a JSON file in the forms directory.
-	 *
-	 * @param String form The name of the form template to load.
+	 * Load() will try to load the $source of the form.
 	 */
-	public function load($form)
+	public function load()
 	{
 		// Load the form data using forms_dir and forms_ext from the config
-		$data = file_get_contents($this->config['forms_dir'] . $form . $this->config['forms_ext']);
+		$data = file_get_contents($this->config['forms_dir'] . $this->source . $this->config['forms_ext']);
 
 		// Decode the JSON, return objects
 		$data = json_decode($data);
 		
 		// Try to load a language file for this form
-		if(file_exists($this->CI->input->server('DOCUMENT_ROOT') . '/' . APPPATH . 'language/' . $this->CI->config->item('language') . '/ufo_' . $form . '_lang.php'))
+		if(file_exists($this->CI->input->server('DOCUMENT_ROOT') . '/' . APPPATH . 'language/' . $this->CI->config->item('language') . '/ufo_' . $this->source . '_lang.php'))
 		{
-			$this->lang = $this->CI->lang->load('ufo_' . $form, '' , TRUE);
+			$this->lang = $this->CI->lang->load('ufo_' . $this->source, '' , TRUE);
 		}	
 		
 		// Build elements from data objects
@@ -130,16 +144,13 @@ class Ultraform {
 			$this->add(get_object_vars($element));
 		}
 
-		// Set name of the form
-		$this->name = $form;
-
 		// See if validation is needed, if so do it
 		if($this->request == 'html')
 		{
 			$this->validate();
 		}
 		
-		return $this;
+		return TRUE;
 	}
 	
 	/**
@@ -176,9 +187,13 @@ class Ultraform {
 	 */
 	public function add($data)
 	{
+		// Create a new element
 		$element = new Element($this, $data);
 
+		// Assign the new element to the elements array
 		$this->elements[$element->name] = $element;
+		
+		return TRUE;
 	}
 
 	/**
@@ -221,7 +236,6 @@ class Ultraform {
 	 */
 	public function render($name = NULL)
 	{
-
 		if($name === NULL)
 		{
 			$html = '';
@@ -254,20 +268,25 @@ class Ultraform {
 	 */
 	public function validate()
 	{
-		//TODO: IF POST
-		$post = $this->CI->input->post();
-
-		if(!empty($post))
+		// First see if there is a POST
+		if(array_key_exists('ufo-formname', $_POST))
 		{
+			// Now see if the POST is for this form
+			if($_POST['ufo-formname'] != $this->name)
+			{
+				// This is not meant for this form
+				return FALSE;
+			}
+			
 			// Load CI form validation library
 			$this->CI->load->library('form_validation');
 
 			// Set validation rules for all elements
 			foreach($this->elements as $element)
 			{
-				$this->CI->form_validation->set_rules($element->name, $element->name, $element->rules);
+				$this->CI->form_validation->set_rules($element->name, $element->name, $element->rules); //TODO: See if we don't need to get some sort of string for human readable error message
 			}
-
+			
 			// Run validation
 			if ($this->CI->form_validation->run() == FALSE)
 			{
@@ -275,28 +294,7 @@ class Ultraform {
 				$this->valid = FALSE;
 
 				// Repopulate the form
-				//$this->repopulate();
-
-				foreach($this->elements as $element)
-				{
-					// If the POST had this element
-					if(array_key_exists($element->name, $post))
-					{
-						// Repopulate the form
-						$element->value = $post[$element->name];
-						//TODO: Don't do this if this is a password name
-						//TODO: Checkboxes, radio buttons
-
-						$error = form_error($element->name, '', '');
-						//TODO: Add open/close error tags
-
-						if ($error)
-						{
-							$element->error = TRUE;
-							$element->error_text = $error;
-						}
-					}
-				}
+				$this->repopulate();
 			}
 			else
 			{
@@ -402,6 +400,53 @@ class Ultraform {
 	}
 	
 	/**
+	 * Handles repopulating the form based on the POST array.
+	 */
+	private function repopulate()
+	{
+		// Iterate over all elements
+		foreach($this->elements as $element)
+		{
+			// If the POST had this element
+			if(array_key_exists($element->name, $_POST))
+			{
+				// Repopulate the form based on type
+				switch($element->type) {
+					case 'checkgroup':
+						// Iterate through POST array for this checkgroup
+						foreach($_POST[$element->name] as $key => $value)
+						{
+							// Assign to selected array
+							$element->selected[] = $value;
+						}
+						break;
+					case 'open':
+					case 'close':
+					case 'upload':
+						// We cannot repopulate a upload field due to security reasons
+					case 'password':
+						// Do nothing for these element types
+						break;
+					default:
+						// Default case, includes: most text fields, custom types, radiobuttons, checkboxes and dropdowns
+						$element->value = $_POST[$element->name];
+				}
+		
+				// Set the error message
+				$error = form_error($element->name, '', '');
+				
+				//TODO: Add open/close error tags
+		
+				if ($error)
+				{
+					$element->error = TRUE;
+					$element->error_text = $error;
+				}
+			}
+		}
+	}
+	
+	/**
 	 * To string
 	 */
 	public function __toString()
@@ -421,15 +466,21 @@ class Element {
 	// CI object
 	public $CI;
 
+	public $id;
 	public $name;
-	public $form;
+	public $uniquename; // Used when we need a unique reference to this element
 	public $label;
+	
+	// A refrence back to its parent Ultraform object
+	public $form;
 
 	// The type of the element
 	public $type;
 
 	public $value;
 	public $options = array();
+	public $selected = array();
+	
 	public $rules;
 	public $placeholder;
 
@@ -451,9 +502,13 @@ class Element {
 		{
 			$this->$key = $value;
 		}
+	
+		$this->uniquename = 'ufo-' . $this->form->name . '-' . $this->name;
+		$this->id = $this->uniquename;
 		
-		// Set the label for this element
-		$this->set_label();
+		// Set the label and placeholder for this element
+		$this->generate_label();
+		$this->generate_placeholder();
 		
 		// Generate any options this element has
 		if(!empty($this->options))
@@ -473,10 +528,11 @@ class Element {
 		// View data
 		$data = (array)$this;
 		
-		// Get translated values & derivative values
+		// Create a data array to pass to the element view
 		$data['label'] = $this->label;
-		$data['placeholder'] = $this->form->lang($this->name . '_placeholder');
-		$data['id'] = 'ufo-' . $this->form->name . '-' . $this->name;
+		$data['placeholder'] = $this->placeholder;
+		$data['name'] = $this->name;
+		$data['id'] = $this->uniquename;
 		$data['formname'] = $this->form->name;
 		$data['options'] = $this->options;
 
@@ -507,10 +563,9 @@ class Element {
 	 */
 	public function export()
 	{
+		// Build the export array
 		$export = array();
-
 		$export['name'] = $this->name;
-		//$export['label'] = $this->form->lang($this->name);
 		$export['label'] = $this->label;
 		$export['value'] = $this->value;
 		$export['rules'] = $this->rules;
@@ -525,7 +580,7 @@ class Element {
 	}
 
 	/**
-	 * Will generate a translated array of options
+	 * Will generate a translated array of options objects
 	 */
 	private function generate_options()
 	{
@@ -533,7 +588,7 @@ class Element {
 		$options = $this->options;
 		
 		// Reset options
-		$this->options = array();		
+		$this->options = array();
 		
 		foreach($options as $key => $option)
 		{
@@ -559,9 +614,9 @@ class Element {
 	}
 	
 	/**
-	 * Determines what the human readable string should be set to for this element
+	 * Determines what the human readable label should be set to for this element
 	 */
-	private function set_label()
+	private function generate_label()
 	{
 		// If we have a lang file entry use that
 		if($this->form->lang($this->name))
@@ -582,6 +637,26 @@ class Element {
 		
 		return $this->label;
 	}
+	
+	/**
+	 * Determines what the human readable placeholder should be set to for this element
+	 */
+	private function generate_placeholder()
+	{
+		// If we have a lang file entry use that
+		if($this->form->lang($this->name . '_placeholder'))
+		{
+			// Get the label from the language file
+			$this->placeholder = $this->form->lang($this->name . '_placeholder');
+		}
+		// If we have a JSON data file 'placeholder' value use that
+		elseif($this->placeholder != NULL)
+		{
+			// Do nothing, we use the placeholder from the JSON
+		}
+	
+		return $this->placeholder;
+	}	
 	
 	/**
 	 * Sets options of the element.

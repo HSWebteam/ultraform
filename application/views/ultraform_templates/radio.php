@@ -1,9 +1,7 @@
-<div class="well">
+<div>
 	<label for="<?php echo $name;?>"><?php echo $label?>: </label>
-	<?php foreach($options as $key => $value):?>
-	<label for="ufo-<?php echo $formname;?>-<?php echo $name;?>-<?php echo $key;?>" class="radio">
-		<input id="ufo-<?php echo $formname;?>-<?php echo $name;?>-<?php echo $key;?>" type="radio" name="<?php echo $name;?>" value="<?php echo $key;?>"><?php echo $value;?> 
-	</label>
+	<?php foreach($options as $key => $option):?>
+	<input id="ufo-<?php echo $formname;?>-<?php echo $name;?>-<?php echo $key;?>" type="radio" name="<?php echo $name;?>" value="<?php echo $key;?>"<?php if($value == $key):?> checked<?php endif;?>><?php echo $option;?> 
 	<?php endforeach;?>
 	<div id="<?php echo $id;?>_error" class="error"><?php echo $error_text;?></div>
 </div>
