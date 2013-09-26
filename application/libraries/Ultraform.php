@@ -131,6 +131,14 @@ class Ultraform {
 		// Decode the JSON, return objects
 		$data = json_decode($data);
 		
+		// See if the form is empty
+		if(empty($data))
+		{
+			//TODO: Proper error handling
+			echo 'Form ' . $this->name . ' was empty.';
+			exit;
+		}
+		
 		// Try to load a language file for this form
 		if(file_exists($this->CI->input->server('DOCUMENT_ROOT') . '/' . APPPATH . 'language/' . $this->CI->config->item('language') . '/ufo_' . $this->source . '_lang.php'))
 		{
