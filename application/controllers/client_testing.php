@@ -50,8 +50,6 @@ class Client_Testing extends CI_Controller {
 		$args   = isset($rule_e[1]) ? array(substr($rule_e[1], 0, strlen($rule_e[1])-1)) : array();
 		$value  = $this->input->post('value');
 
-
-
 		if ($_SERVER['REQUEST_METHOD'] === 'POST')
 		{
 

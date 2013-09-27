@@ -24,6 +24,11 @@
             "type": "password",
             "rules": "required|matches[password]"
         },
+        "avatar": {
+            "name": "avatar",
+            "type": "upload",
+            "rules": "required"
+        },
         "submit": {
         	"name": "submit",
         	"type": "submit"

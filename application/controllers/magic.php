@@ -22,8 +22,8 @@ class Magic extends MY_Controller
 	{	
 		$this->load->library('ultraform');
 
-		$form = new Ultraform();
-		$this->data['login_form'] = $form->preprocess('m_login');
+		$form = new Ultraform('m_login');
+		$this->data['login_form'] = $form;
 
 		if($form->request == 'callback' || $form->request == 'json')
 		{
@@ -31,6 +31,7 @@ class Magic extends MY_Controller
 		}
 		elseif($form->valid)
 		{
+
 			// If form is valid log the user in
 			if($this->input->post('username') === $this->_account['username'] && $this->input->post('password') === $this->_account['password'])
 			{
@@ -43,6 +44,18 @@ class Magic extends MY_Controller
 
 			}
 			
+		}
+
+		$r_form = new Ultraform('m_register');
+		$this->data['register_form'] = $r_form;
+
+		if($r_form->request == 'callback' || $r_form->request == 'json')
+		{
+			echo $r_form->ajax();
+		}
+		elseif($r_form->valid)
+		{
+			// If form is valid, create an account for the user
 		}
 
 		if($form->request == 'html')
@@ -60,8 +73,8 @@ class Magic extends MY_Controller
 	{
 		$this->load->library('ultraform');
 
-		$form = new Ultraform();
-		$this->data['register_form'] = $form->preprocess('m_register');
+		$form = new Ultraform('m_register');
+		$this->data['register_form'] = $form;
 
 		if($form->request == 'callback' || $form->request == 'json')
 		{
@@ -88,8 +101,8 @@ class Magic extends MY_Controller
 	{
 		$this->load->library('ultraform');
 
-		$form = new Ultraform();
-		$this->data['search_form'] = $form->preprocess('m_search');
+		$form = new Ultraform('m_search');
+		$this->data['search_form'] = $form;
 
 		$card_types = array(
 				'artifact'		=>	'Artifact',
@@ -106,7 +119,20 @@ class Magic extends MY_Controller
 
 		$creature_types = $this->config->item('creature_types');
 
-		$form->set_options('creature_type', $creature_types);
+		$creature_type_list = '';
+
+		end($creature_types);
+		$last_key = key($creature_types);
+		foreach($creature_types as $key => $creature_type)
+		{
+			$creature_type_list .= '"' . $creature_type . '"';
+			if($key !== $last_key)
+			{
+				$creature_type_list .= ', ';
+			}
+		}
+
+		$form->set_options('creature_type', $creature_type_list);
 
 		if($form->request == 'callback' || $form->request == 'json')
 		{

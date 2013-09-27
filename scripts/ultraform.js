@@ -37,8 +37,8 @@ var Ultraform = function(ultraformOptions) {
       // set id and some other values
       this.set({
         id: this.parentModel.get('domid') + '-' + attributes.name,
-        validationState: 'valid', // state after the last validation, can be valid, invalid or pending
-        validationError: 'valid' // last validation error message or 'valid' or 'pending'
+        validationState: 'unknown', // state after the last validation, can be valid, invalid or pending
+        validationError: 'unknown' // last validation error message or 'valid' or 'pending'
       }, {silent: true});
 
       var domSelector = '#' + this.id;
@@ -1078,15 +1078,16 @@ var Ultraform = function(ultraformOptions) {
 
     // hide the validationerror from the DOM
     onValid: function(model) {
-      this.$el.removeClass('error');
+      this.$el.removeClass('error').addClass('success');
     },
 
     // show the validationerror in the DOM
     onInvalid: function(model) {
-      this.$el.addClass('error');
+      this.$el.removeClass('success').addClass('error');
     },
 
     onValidationPending: function(model) {
+      this.$el.removeClass('success').removeClass('error');      
       // actions to perform while waiting for validation
     }
 
