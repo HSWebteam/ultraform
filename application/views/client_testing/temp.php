@@ -251,6 +251,15 @@ input[type='text'].required, textarea.required {
 }
 .error input {
 	border:1px solid red;
+	background-color:#FFEEEE;
+}
+
+.success .radiogroup, .success label {
+	color:green;
+}
+.success input {
+	border:1px solid green;
+	background-color:#EEFFEE;
 }
 
 #ufo-forms-33_error {
@@ -522,7 +531,7 @@ Ultraform.beforeExtend.ElementModel = function(obj) {
 		else {
 			// check if the depend-on model is visible and valid
 			var dependOnIsVisible = dependOnModel.get('isVisible');
-			var dependOnIsValid = dependOnModel.get('validationState')=='valid';
+			var dependOnIsValid = dependOnModel.get('validationState')!='invalid';
 
 			// make the current model visible/invisible depending on the dependOn model
 			this.set({isVisible: dependOnIsVisible && dependOnIsValid});            
@@ -559,21 +568,6 @@ Ultraform.beforeExtend.ElementView = function(obj) {
 	return obj;
 };
 
-
-	</script>
-	<script>
-
-	var ultraform;
-
-	// initialize
-	$(document).ready(function(){
-
-		ultraform = new Ultraform({
-			apiUrl: $base_url+'client_testing/api/',
-			validateUrl: $base_url+'client_testing/validate/'
-		});
-
-	});
 
 	</script>
 
