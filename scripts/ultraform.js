@@ -1112,7 +1112,6 @@ var Ultraform = function(ultraformOptions) {
     },
 
     updateModel: function() {
-      console.log('this', this);
       this.options.elementView.updateModel.call(this.options.elementView);
     }
 
