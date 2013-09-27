@@ -561,21 +561,6 @@ Ultraform.beforeExtend.ElementView = function(obj) {
 
 
 	</script>
-	<script>
-
-	var ultraform;
-
-	// initialize
-	$(document).ready(function(){
-
-		ultraform = new Ultraform({
-			apiUrl: $base_url+'client_testing/api/',
-			validateUrl: $base_url+'client_testing/validate/'
-		});
-
-	});
-
-	</script>
 
 </body>
 </html>

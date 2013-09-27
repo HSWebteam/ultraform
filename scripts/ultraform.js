@@ -1172,3 +1172,13 @@ Ultraform.beforeExtend = {
   ErrorView: function(obj)         {return obj;},
   ErrorBlockView: function(obj)    {return obj;}
 };
+
+var ultraform;
+
+// initialize
+$(document).ready(function(){
+
+  "use strict";
+  ultraform = new Ultraform();
+
+});
