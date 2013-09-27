@@ -147,6 +147,10 @@ var Ultraform = function(ultraformOptions) {
     // keep the validate function in the model small
     // the real work is done in Backbone.Validate
     validate: function(attributes) {
+
+      // in case of an array, make a concatenated string of it
+      var serializedValue = serialize(attributes.value);
+
       var rules = this.getRules();
 
       var model = this;
@@ -164,7 +168,7 @@ var Ultraform = function(ultraformOptions) {
         if (rule.name in model.validations) {
 
           // execute the validation
-          var validationResult = model.validations[rule.name].call(model, attributes.value, rule, model);
+          var validationResult = model.validations[rule.name].call(model, serializedValue, rule, model);
 
           if (validationResult === false) {
             // inValid
@@ -209,7 +213,7 @@ var Ultraform = function(ultraformOptions) {
             rule: rule.rule,
             //action: rule.name,
             //args: rule.args,
-            value: attributes.value,
+            value: serializedValue,
             name: model.get('name'),
             label: model.get('label')
           };
@@ -407,7 +411,7 @@ var Ultraform = function(ultraformOptions) {
       matches: function(value, rule){
 
         var matchWithModel = this.collection.findWhere({name:rule.args[0]});
-        var matchWithValue = matchWithModel.attributes.value;
+        var matchWithValue = serialize(matchWithModel.attributes.value);
 
         // change the args[0] to the label of the field, for when the message gets generated
         rule.args[0] = matchWithModel.attributes.label;
@@ -847,63 +851,116 @@ var Ultraform = function(ultraformOptions) {
 
     initialize: function() {
 
-      // *** CREATE A COLLECTION OF OPTIONS FOR RADIOBUTTONGROUP, CHECKBOXGROUP AND SELECT ***
-      this.collection = new OptionCollection();
-
       var that = this;
 
-      // make an array of the this.options.options object
+      // *** CREATE AN ARRAY OPTION VIEWS FOR RADIOBUTTONGROUP, CHECKBOXGROUP AND SELECT ***
       // the server gives us something like: {"color1":"Red", "color2":"Blue", "anotherkey":"anothervalue"}
-      // we translate that to: [{value:"color1", label:"Red"}, {...}, {...}]
-      var optionsArray = _.sortBy(_.map(this.options.options, function(value, key){
-        var checked = (that.model.attributes.value == key);
-        return {value:key, label:value, checked:checked};
+      this.optionViews = _.sortBy(_.map(this.options.options, function(value, key){
+        var modelValue = that.model.attributes.value;
+        var checked = (_.isArray(modelValue) ? modelValue.indexOf(key) !== -1 : modelValue == key);
+
+        // selector of radio-inputs are combination of radio-input-group + radio-input value
+        var selector = that.options.selector+'-'+key;
+
+        // get the dom element for this option
+        var $domElement = $(selector);
+
+        // create view
+        var view = new OptionView({
+          elementView: that,
+          el: $domElement,
+          checked: checked,
+          value: key
+        });
+
+        return view;
       }), function(val) {
         // we also sort the checked elements to the end
         // this is to make sure that the DOM/API difference check works
         return val.checked;
       });
 
-      this.collection.add(optionsArray, {
-        parentDomSelector: this.options.selector,
-        parentView: this
-      });
+      // Set the $input to the input element
+      this.$input = $elFind(this.$el, 'input, select, textarea');
+      this.input = this.$input.get(0);
 
       // *** UPDATE THE MODEL OR THE UI IF NEEDED ***
       // compare the value in the DOM with the value that we got from the model
       var modelValue = this.model.attributes.value;
       var DOMValue = this.getValue();
-      if (modelValue === null || typeof modelValue == 'undefined') {
-        // the model did not give a value
-        // fill the model with the values from the DOM
-        this.model.set('value', DOMValue);
-      }
-      else if (DOMValue === '') {
-        // the DOM seems empty, set the model value to the DOM value
-        $elFind(this.$el, 'input, select, textarea').val(modelValue);
-      }
-      else if (modelValue != DOMValue) {
-        console.error(this.model.id + ': The DOM and the API show a different initial value!!', {modelValue:modelValue, DOMValue:DOMValue});
-      }
 
-      // Set the $input to the input element
-      this.$input = $elFind(this.$el, 'input, select, textarea');
-      this.input = this.$input.get(0);
+      if (this.optionViews.length === 0) {
+        // this is not an element with options, we get the value directly from the dom element
+        if (modelValue === null || typeof modelValue == 'undefined') {
+          // the model did not give a value
+          // fill the model with the values from the DOM
+          this.model.set('value', DOMValue);
+        }
+        else if (DOMValue === '') {
+          // the DOM seems empty, set the DOM value to the model value
+          $elFind(this.$el, 'input, select, textarea').val(modelValue);
+        }
+        else if (modelValue != DOMValue) {
+          console.error(this.model.id + ': The DOM and the API show a different initial value!!', {modelValue:modelValue, DOMValue:DOMValue});
+        }
+      }
+      else {
+
+        var modelValueArray = (_.isArray(modelValue)) ? modelValue : [modelValue];
+
+        if (modelValue === null || typeof modelValue == 'undefined') {
+          // the model did not give a value
+          // fill the model with the values from the DOM
+          this.model.set('value', DOMValue);
+        }
+        else if (DOMValue.length === 0) {
+          // the DOM seems empty, set the DOM value to the model value
+          _.each(this.optionViews, function(view, index) {
+            if (modelValueArray.indexOf(view.options.value) !== -1) {
+              // this option is in the modelValue, check the dom element
+              view.$el.prop('checked', true);
+            }
+          });
+        }
+        else if (! _.isEqual(DOMValue.sort(), modelValueArray.sort())) {
+          console.error(this.model.id + ': The DOM and the API show a different initial value!!', {modelValue:modelValue, DOMValue:DOMValue});
+        }
+      }
 
       // *** ATTACH TO SOME MODEL EVENTS ***
       this.listenTo(this.model, 'change:validationError', this.onValidation);
 
-      // Set events depending on the root element
-      var elementSelector = (this.input === this.el) ? '' : ' input,select,textarea';
       // Set events depending on validateOn setting of the form
       var validateOn = this.model.parentModel.get('settings').validateOn; // blur, change
 
-      this.events = {};
-      this.events['keypress' + elementSelector] = 'handleKey';
-      this.events[validateOn + elementSelector] = 'updateModel';
+      // Add events to this view or to the optionsviews
+      if (this.optionViews.length > 0) {
+        _.each(this.optionViews, function(view, index) {
 
-      // activate the event handlers
-      this.delegateEvents();
+          // Set events depending on the root element
+          var elementSelector = (view.input === view.el) ? '' : ' input,textarea';
+
+          view.events = {};
+          view.events['change' + elementSelector] = 'updateModel';
+
+          // activate the event handlers
+          view.delegateEvents();        
+        });
+      
+      }
+      else {
+        // Set events depending on the root element
+        var elementSelector = (this.input === this.el) ? '' : ' input,textarea';
+
+        this.events = {};
+        this.events['keypress' + elementSelector] = 'handleKey';
+        this.events[validateOn + elementSelector] = 'updateModel';
+
+        // activate the event handlers
+        this.delegateEvents();
+      }
+
+  
     },
 
     events: {
@@ -915,14 +972,19 @@ var Ultraform = function(ultraformOptions) {
     // if the view contains a single input element (has an empty collection), get the value from the input
     // if the view contains subview (a collection with models with subviews), get the value from the subviews
     getValue: function() {
-      if (this.collection.length === 0) {
-        return $elFind(this.$el, 'input, select').val();
+      if (this.optionViews.length === 0) {
+        // get the value of the one input element as a string
+        return this.$input.val();
       }
       else {
-        var chk = this.collection.where({checked: true});
-        var value = chk.length===0 ? '' : chk[0].get('value');
+        // get the values of the option elements as an array
+        var result = [];
+        _.each(this.optionViews, function(view, index) {
+          var value = view.getValue();
+          if (value) result.push(value);
+        });
 
-        return value;
+        return result;
       }
     },
 
@@ -997,8 +1059,8 @@ var Ultraform = function(ultraformOptions) {
     },
 
     // sync the model with the UI
-    updateModel: function(event) {
-      this.model.setValueAndValidate( $(event.target).val() );
+    updateModel: function() {
+      this.model.setValueAndValidate( this.getValue() );
     },
 
     // to be run when validation was performed
@@ -1040,75 +1102,29 @@ var Ultraform = function(ultraformOptions) {
 
     initialize: function() {
 
-      var modelChecked = this.options.checked;
-      var $input = $elFind(this.$el, 'option, input[type="radio"], input[type="checkbox"]');
-      var domChecked = $input.is(':checked');
-
-      if (!domChecked && modelChecked) {
-        // dom was not checked, check the dom
-        $input.prop('checked', true);
-      }
-      else if (domChecked) {
-        // check the model during initialization, so that the elementview
-        // can than compare the checked options with the model value(s)
-        this.model.set({'checked':true}, {silent:true});
-        // the optionModel is unchecked by default
-      }
+      this.$input = $elFind(this.$el, 'option, input[type="radio"], input[type="checkbox"]');
+      this.input = this.$input.get(0);
 
     },
 
-    events: {
-      change: 'updateModel'
+    getValue: function() {
+      return this.$input.is(':checked') ? this.$input.val() : null;
     },
 
     updateModel: function() {
-
-      var $input = $elFind(this.$el, 'option, input[type="radio"], input[type="checkbox"]');
-      var checked = $input.is(':checked');
-
-      // in case of NOT-radiobutton, the checked value will be used by the element-model to get the value
-      // this way, selectboxes and checkboxes can return an array of values
-      this.model.set( 'checked', checked );
-
-      // in case of Radiobutton, there is only one value and no uncheck event
-      // therefor we directly trigger the change even on the element-view
-      if (checked && this.$el.is('input[type="radio"]')) {
-        this.options.elementView.model.setValueAndValidate(this.model.attributes['value']);
-      }
-
+      this.options.elementView.updateModel.call(this.options.elementView);
     }
 
-  }));
-
-  var OptionModel = Backbone.Model.extend(Ultraform.beforeExtend.OptionModel.call(this, {
-    initialize: function(attributes, options) {
-
-      // selector of radio-inputs are combination of radio-input-group + radio-input value
-      var selector = options.parentDomSelector+'-'+attributes.value;
-
-      // get the dom element for this option
-      var $domElement = $(selector);
-
-      // create view for this models element
-      var view = new OptionView({
-        elementView: options.parentView,
-        model: this,
-        el: $domElement,
-        checked: attributes.checked
-      });
-
-      var that = this;
-
-    }
-  }));
-
-  var OptionCollection = Backbone.Collection.extend(Ultraform.beforeExtend.OptionCollection.call(this, {
-    model: OptionModel
   }));
 
   // like $().find, but also checks the element itself for a match
   var $elFind = function($el, selector) {
     return $el.is(selector) ? $el : $el.find(selector);
+  };
+
+  // if input is an array, concatenate it with , to create a string to compare against
+  var serialize = function(input) {
+    return _.isArray(input) ? input.sort().join(',') : input;
   };
 
 
@@ -1152,8 +1168,6 @@ Ultraform.beforeExtend = {
   ElementModel: function(obj)      {return obj;},
   ElementView: function(obj)       {return obj;},
   ElementErrorView: function(obj)  {return obj;},
-  OptionCollection: function(obj) {return obj;},
-  OptionModel: function(obj)      {return obj;},
   OptionView: function(obj)       {return obj;},
   ErrorView: function(obj)         {return obj;},
   ErrorBlockView: function(obj)    {return obj;}
