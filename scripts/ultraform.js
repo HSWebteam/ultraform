@@ -149,7 +149,7 @@ var Ultraform = function(ultraformOptions) {
     validate: function(attributes) {
 
       // in case of an array, make a concatenated string of it
-      var concatvalue = concat(attributes.value);
+      var serializedValue = serialize(attributes.value);
 
       var rules = this.getRules();
 
@@ -168,7 +168,7 @@ var Ultraform = function(ultraformOptions) {
         if (rule.name in model.validations) {
 
           // execute the validation
-          var validationResult = model.validations[rule.name].call(model, concatvalue, rule, model);
+          var validationResult = model.validations[rule.name].call(model, serializedValue, rule, model);
 
           if (validationResult === false) {
             // inValid
@@ -213,7 +213,7 @@ var Ultraform = function(ultraformOptions) {
             rule: rule.rule,
             //action: rule.name,
             //args: rule.args,
-            value: concatvalue,
+            value: serializedValue,
             name: model.get('name'),
             label: model.get('label')
           };
@@ -411,7 +411,7 @@ var Ultraform = function(ultraformOptions) {
       matches: function(value, rule){
 
         var matchWithModel = this.collection.findWhere({name:rule.args[0]});
-        var matchWithValue = concat(matchWithModel.attributes.value);
+        var matchWithValue = serialize(matchWithModel.attributes.value);
 
         // change the args[0] to the label of the field, for when the message gets generated
         rule.args[0] = matchWithModel.attributes.label;
@@ -1124,7 +1124,7 @@ var Ultraform = function(ultraformOptions) {
   };
 
   // if input is an array, concatenate it with , to create a string to compare against
-  var concat = function(input) {
+  var serialize = function(input) {
     return _.isArray(input) ? input.sort().join(',') : input;
   };
 
