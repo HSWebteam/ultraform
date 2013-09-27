@@ -37,15 +37,5 @@
         <script src="<?php echo base_url('scripts/bootstrap.js'); ?>"></script>
         <!-- Your application -->
         <script src="<?php echo base_url('scripts/ultraform.js'); ?>"></script>
-        <script>
-
-            // initialize
-            var ultraform = new Ultraform({
-                apiUrl: "<?php echo base_url();?>api/",
-                validateUrl: "<?php echo base_url();?>api/validate/"
-            });
-
-        </script>
-
     </body>
 </html>
