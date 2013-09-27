@@ -4,17 +4,43 @@
         	"name": "open",
         	"type": "open"
         },
+        "format": {
+            "name": "card_format",
+            "type": "radio",
+            "label": "Legal in format",
+            "options": {
+                "T1"    :   "Vintage",
+                "T1.5"  :   "Legacy",
+                "T1.75" :   "Modern",
+                "T2"    :   "Standard",
+                "Casual":   "Casual",
+                "EDH"   :   "Commmander"
+            }
+        },
         "card_name": {
         	"name": "cardname",
         	"type": "text"
+        },
+        "card_supertype": {
+            "name": "supertype",
+            "type": "checkgroup",
+            "options": [
+                "Basic",
+                "Elite",
+                "Legendary",
+                "Ongoing",
+                "Snow",
+                "World"
+            ]
         },
         "card_type": {
             "name": "type",
             "type": "checkgroup"
         },
-        "creature_type": {
+        "card_creaturetype": {
             "name": "creature_type",
-            "type": "dropdown"
+            "type": "text",
+            "label": "creature type (autocomplete)"
         },
         "submit": {
         	"name": "search",
