@@ -445,6 +445,18 @@ The following errors were encountered in the form:<br>
 		<span class="red">(what kind of sauce would you like with your sushi?)</span>
 	</div>
 	<div>
+		<label for="sushitype">Sushi type: </label>
+		<select name="sushitype" id="ufo-forms-33-sushitype">
+			<option value=""></option>
+			<option value="makizushi">Makizushi</option>
+			<option value="hosomaki">Hosomaki</option>
+			<option value="temaki">Temaki</option>
+			<option value="uramaki">Uramaki</option>
+  		</select>
+		<div class="validationError" id="ufo-forms-33-sushitype_error"></div>
+		<span class="red">(and now choose your favourite kind of sushi!)</span>
+	</div>
+	<div>
 		<input type="submit" name="submit_2" value="Submit" />
 		<input type="reset" name="reset_2" value="Reset" />
 	</div>

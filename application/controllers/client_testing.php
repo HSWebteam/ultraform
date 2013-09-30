@@ -206,7 +206,20 @@ class Client_Testing extends CI_Controller {
 							'nantua' => 'Nantua sauce',
 							'cheddar_cheese' => 'Cheddar cheese sauce',
 							'mustard' => 'Mustard sauce'
-						))
+						)),
+					array(
+						'name' => 'sushitype',
+						'label' => 'Sushi type',
+						'value' => '',
+						'rules' => 'ohlala|ohla|required', // not required, so empty option should allways be available
+						'options' => array(
+							'makizushi' => 'Makizushi',
+							'hosomaki' => 'Hosomaki',
+							'temaki' => 'Temaki',
+							'uramaki' => 'Uramaki',
+							'' => ''
+						)
+					)
 				),
 				'messages' => array(
 					'required' => 'Het %s veld mag niet leeg blijven.',
