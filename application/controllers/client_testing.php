@@ -126,7 +126,7 @@ class Client_Testing extends CI_Controller {
 					array(
 						'name'  => 'alpha',
 						'label' => 'Alpha',
-						'value' => 'abc',
+						'value' => 'yellow',
 						'rules' => 'alpha'),
 					array(
 						'name'  => 'alphanumeric',

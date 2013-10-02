@@ -88,7 +88,7 @@ var Ultraform = function(ultraformOptions) {
 
     // first set the value, then validate
     // (this differs from set('value',value,{validate:true})) in that
-    // the an invalid validation will not prevent setting the value
+    // an invalid validation will not prevent setting the value
     setValueAndValidate: function(value) {
 
       // set the value, regardless of the validation results
@@ -854,7 +854,7 @@ var Ultraform = function(ultraformOptions) {
       var that = this;
 
       // list of empty options
-      var emptyOptions = [];
+      this.emptyOptions = [];
 
       // *** CREATE AN ARRAY OPTION VIEWS FOR RADIOBUTTONGROUP, CHECKBOXGROUP AND SELECT ***
       // the server gives us something like: {"color1":"Red", "color2":"Blue", "anotherkey":"anothervalue"}
@@ -881,7 +881,7 @@ var Ultraform = function(ultraformOptions) {
           value: key
         });
 
-        if (key==='') emptyOptions.push(view);
+        if (key==='') that.emptyOptions.push(view);
 
         return view;
       }), function(val) {
@@ -949,7 +949,7 @@ var Ultraform = function(ultraformOptions) {
             // the select is required AND the value is not empty
             // so the user has no need anymore (should not be able to) choose <empty>
             // therefore remove the empty option
-            _.each(emptyOptions, function(view, index) {
+            _.each(that.emptyOptions, function(view, index) {
               view.remove();
             });
           }
@@ -973,7 +973,7 @@ var Ultraform = function(ultraformOptions) {
       var elementSelector;
 
       // Add events to this view or to the optionsviews
-      if (this.$el.is('select')) {
+      if (this.$input.is('select')) {
         // selectbox triggers changes on the select element and not on the options
         elementSelector = (this.input === this.el) ? '' : ' select';
 
@@ -993,6 +993,7 @@ var Ultraform = function(ultraformOptions) {
 
           view.events = {};
           view.events['change' + elementSelector] = 'updateModel';
+          view.events[validateOn + elementSelector] = 'updateModel';
 
           // activate the event handlers
           view.delegateEvents();        
@@ -1023,10 +1024,13 @@ var Ultraform = function(ultraformOptions) {
     // - if selectbox is required and a non-empty option is allready chosen -> remove the empty option
     // - if selectbox is not-required and there is no empty option -> add the empty option and choose the empty option if the model has no value set
     checkSelectRequired: function() {
-      if (this.model.get('value') !== '') {
+      var value = this.model.get('value');
+      if (value && value.length > 0) {
         // remove the empty option
+        _.each(this.emptyOptions, function(view, index) {
+          view.remove();
+        });
       }
-      console.log('model', this.model);
     },
 
     // get the value of the view
