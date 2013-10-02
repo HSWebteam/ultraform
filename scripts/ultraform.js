@@ -1020,9 +1020,7 @@ var Ultraform = function(ultraformOptions) {
       // slightly depending on which element was found
     },
 
-    // Make sure of the following:
-    // - if selectbox is required and a non-empty option is allready chosen -> remove the empty option
-    // - if selectbox is not-required and there is no empty option -> add the empty option and choose the empty option if the model has no value set
+    // If selectbox is required and a non-empty option is chosen -> remove the empty option
     checkSelectRequired: function() {
       var value = this.model.get('value');
       if (value && value.length > 0) {
