@@ -1,4 +1,4 @@
-<div>
+<div class="radio">
 	<label for="<?php echo $name;?>"><?php echo $label?>: </label>
 	<?php foreach($options as $key => $option):?>
 	

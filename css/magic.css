@@ -26,3 +26,12 @@ h3 {
 h3 {
 	font-size: 1.3em;
 }
+
+.success {
+	color: green;
+	border-color: lightgreen;
+}
+
+.error {
+	border-color: red;
+}
