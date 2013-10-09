@@ -1,4 +1,7 @@
 {
+	"config": {
+		"hide_empty": "true"
+	},
     "elements": {
         "open": {
         	"name": "open",
@@ -35,7 +38,8 @@
 				"hosomaki": "Hosomaki",
 				"temaki": "Temaki",
 				"uramaki": "Uramaki"
-			}
+			},
+			"hide_empty": "true"
 		},
 		"fish": {
 			"name": "fish",

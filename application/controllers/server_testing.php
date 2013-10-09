@@ -11,6 +11,9 @@ class Server_Testing extends MY_Controller {
 		
 		$form = new Ultraform('contact');
 		$this->data['contact_form'] = $form;
+	
+		$config_form = array('hide_empty' => 'true');
+		$form->set_config($config_form);
 		
 		$form2 = new Ultraform('m_login', 'login');
 		$this->data['login_form'] = $form2;
