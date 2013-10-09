@@ -577,6 +577,7 @@ class Element {
 		$export['label'] = $this->label;
 		$export['value'] = $this->value;
 		$export['rules'] = $this->rules;
+		$export['placeholder'] = $this->placeholder;
 		
 		// Add options if this element has them
 		if($this->options != NULL)
