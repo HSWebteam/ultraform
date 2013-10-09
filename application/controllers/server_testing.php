@@ -11,7 +11,7 @@ class Server_Testing extends MY_Controller {
 		
 		$form = new Ultraform('contact');
 		$this->data['contact_form'] = $form;
-	
+		
 		$form2 = new Ultraform('m_login', 'login');
 		$this->data['login_form'] = $form2;
 		
@@ -28,10 +28,10 @@ class Server_Testing extends MY_Controller {
 		
 // 		if(!empty($_POST))
 // 		{
-// 			echo '<pre>';
-// 			print_r($_POST);
-// 			echo '</pre>';
-// 			exit;
+			echo '<pre>';
+			print_r($form->config);
+			echo '</pre>';
+			exit;
 // 		}
 		
 		if($form->request == 'callback' || $form->request == 'json')

@@ -236,6 +236,24 @@ class Ultraform {
 			return 'ERROR: No element with that name';
 		}
 	}
+	
+	/**
+	 * Sets the config of the form on runtime
+	 * 
+	 * @param array $config Array of config items key/value
+	 */
+	public function set_config($config)
+	{
+		// Set config variables
+		foreach ($config as $key=>$value)
+		{
+			if ($value) 
+			{
+				// Set the value to the key variable
+				$this->config[$key] = $value;
+			}
+		}
+	}
 
 	/**
 	 * Renders a specific element or the entire form.
