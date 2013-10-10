@@ -9,6 +9,11 @@
         	"type": "text",
         	"rules": "required|min_length[5]|max_length[12]"
         },
+        "hiddentest": {
+            "name": "hiddentest",
+            "type": "hidden",
+            "rules": "required|min_length[5]|max_length[12]"
+        },
         "email": {
             "name": "email",
             "type": "text",
