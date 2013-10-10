@@ -40,7 +40,9 @@
 				"temaki": "Temaki",
 				"uramaki": "Uramaki"
 			},
-			"hide_empty": "true"
+			"config": {
+				"hide_empty": "true"
+			}
 		},
 		"fish": {
 			"name": "fish",
@@ -56,7 +58,11 @@
 				"green",
 				"blue",
 				"purple"
-			]
+			],
+			"config": {
+				"hide_empty": false,
+				"submit_change": "yesindeed"
+			}
 		},
 		"sauce": {
 			"name": "sauce",

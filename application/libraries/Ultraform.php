@@ -270,7 +270,7 @@ class Ultraform {
 	 * @param string $element_name Element name
 	 * @param array $config Array of config items key/value
 	 */
-	public function set_element_config($element, $config)
+	public function set_element_config($element_name, $config)
 	{
 		// See if the element exists
 		if(array_key_exists($element_name, $this->elements))
@@ -573,9 +573,21 @@ class Element {
 		
 		foreach($data as $key => $value)
 		{
-			$this->$key = $value;
+			if($key == 'config')
+			{
+				// Set config variables from JSON
+				foreach($value as $config => $item)
+				{
+					$this->config[$config] = $item;
+				}
+			}
+			else
+			{
+				// Not a config variable, just assign it
+				$this->$key = $value;
+			}
 		}
-	
+		
 		$this->uniquename = 'ufo-' . $this->form->name . '-' . $this->name;
 		$this->id = $this->uniquename;
 		
@@ -649,6 +661,20 @@ class Element {
 		{
 			$export['options'] = $this->options;
 		}
+		
+		// Export config if this element has any
+		if(!empty($this->config))
+		{
+			$export['config'] = array();
+			foreach($this->config as $key => $value)
+			{
+				// If we are allowed to pass this value to the client
+				if(in_array($key, $this->form->config['export_array']))
+				{
+					$export['config'][$key] = $value;
+				}
+			}
+		}	
 
 		return $export;
 	}
