@@ -1,0 +1,70 @@
+{
+    "elements": {
+        "open": {
+            "name": "open",
+            "type": "open"
+        }, 
+        "checkbox": {
+            "name": "checkbox",
+            "type": "checkbox"
+        },
+        "checkgroup": {
+            "name": "checkgroup",
+            "type": "checkgroup",
+            "options": [
+                "check",
+                "group",
+                "options"
+            ]
+        },
+        "date": {
+            "name": "date",
+            "type": "date"
+        },
+        "dropdown": {
+            "name": "dropdown",
+            "type": "dropdown",
+            "options": [
+                "drop",
+                "down",
+                "options"
+            ]
+        },
+        "hidden": {
+            "name": "hidden",
+            "type": "hidden"
+        },
+        "password": {
+            "name": "password",
+            "type": "password"
+        },
+        "radio": {
+            "name": "radio",
+            "type": "radio",
+            "options": [
+                "radio",
+                "options"
+            ]
+        },
+        "text": {
+            "name": "text",
+            "type": "text"
+        },
+        "textarea": {
+            "name": "textarea",
+            "type": "textarea"
+        },
+        "upload": {
+            "name": "upload",
+            "type": "upload"
+        },
+        "close": {
+            "name": "close",
+            "type": "close"
+        },
+        "submit": {
+            "name": "submit",
+            "type": "submit"
+        }
+    }
+}
