@@ -8,14 +8,7 @@
     			<h3 class="panel-title">Login</h3>
   			</div>
 
-			<?php echo $login_form->render('open');?>
-
-				<?php echo $login_form->render('username');?>
-				<?php echo $login_form->render('password');?>
-				<?php echo $login_form->render('remember_me');?>
-				<?php echo $login_form->render('submit');?>
-
-			<?php echo $login_form->render('close');?>
+			<?php echo $login_form->render();?>
 			
 		</div>
 
@@ -26,6 +19,7 @@
   			</div>
 
 			<?php echo $register_form->render(); ?>
+			
 		</div>
 
 	</div>
