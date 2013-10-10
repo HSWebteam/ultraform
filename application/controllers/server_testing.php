@@ -12,8 +12,8 @@ class Server_Testing extends MY_Controller {
 		$form = new Ultraform('contact');
 		$this->data['contact_form'] = $form;
 	
-		$config_form = array('hide_empty' => 'true');
-		$form->set_config($config_form);
+		//$config_form = array('hide_empty' => true);
+		//$form->set_config($config_form);
 		
 		$form2 = new Ultraform('m_login', 'login');
 		$this->data['login_form'] = $form2;
@@ -29,13 +29,11 @@ class Server_Testing extends MY_Controller {
 		
 		$form->set_options('fish', $fish);
 		
-// 		if(!empty($_POST))
-// 		{
-			echo '<pre>';
-			print_r($form->config);
-			echo '</pre>';
-			exit;
-// 		}
+		echo '<pre>';
+		print_r($form->config);
+		print_r($form->export());
+		echo '</pre>';
+		exit;
 		
 		if($form->request == 'callback' || $form->request == 'json')
 		{
