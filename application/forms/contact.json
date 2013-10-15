@@ -1,4 +1,8 @@
 {
+	"config": {
+		"hide_empty": false,
+		"boolean": false
+	},
     "elements": {
         "open": {
         	"name": "open",
@@ -8,7 +12,7 @@
         	"name": "username",
         	"type": "text",
         	"rules": "required|min_length[5]|max_length[12]"
-        },        
+        },
         "address": {
         	"name": "address",
         	"type": "text"
@@ -35,6 +39,9 @@
 				"hosomaki": "Hosomaki",
 				"temaki": "Temaki",
 				"uramaki": "Uramaki"
+			},
+			"config": {
+				"hide_empty": "true"
 			}
 		},
 		"fish": {
@@ -51,7 +58,11 @@
 				"green",
 				"blue",
 				"purple"
-			]
+			],
+			"config": {
+				"hide_empty": false,
+				"submit_change": "yesindeed"
+			}
 		},
 		"sauce": {
 			"name": "sauce",
