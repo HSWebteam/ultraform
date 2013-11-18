@@ -3,7 +3,7 @@
 	<head>
 		<title>Contact form test</title>
 		
-        <link type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/bootstrap.css">
+        <link type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/bootstrap-3.0/bootstrap.min.css">
 		<style>
 		input.error {
 			background-color: #FFAAAA;
@@ -24,7 +24,7 @@
 	<body>
 		<div class="container maincontent">
 			<div class="row">
-				<div class="span8">
+				<div class="col-md-8">
 					<h1>Really bloated contact form</h1>
 			
 					<p>If you would like to contact us, please fill out the following form.</p>
@@ -60,7 +60,7 @@
 						<?php echo $contact_form->render('close');?>
 					</div>
 				</div>
-				<div class="span4">
+				<div class="col-md-4">
 					<h1>Login form</h1>
 					<p>Please login and stuff</p>
 					<?php echo $login_form; ?>
@@ -72,7 +72,7 @@
         <script src="<?php echo base_url('scripts/jquery-1.8.3.min.js'); ?>"></script>
         <script src="<?php echo base_url('scripts/underscore.js'); ?>"></script>
         <script src="<?php echo base_url('scripts/backbone.js'); ?>"></script>
-        <script src="<?php echo base_url('scripts/bootstrap.js'); ?>"></script>
+        <script src="<?php echo base_url('scripts/bootstrap-3.0/bootstrap.min.js'); ?>"></script>
         <!-- Your application -->
         <script src="<?php echo base_url('scripts/ultraform.js'); ?>"></script>
 
