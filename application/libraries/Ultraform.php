@@ -224,6 +224,29 @@ class Ultraform {
 	}
 	
 	/**
+	 * Sets the value of a element on runtime
+	 *
+	 * @param string $element_name Element name
+	 * @param array $value String value
+	 */
+	public function set_value($element_name, $value)
+	{
+		// See if the element exists
+		if(array_key_exists($element_name, $this->elements))
+		{
+			// Set value of element object
+			$this->elements[$element_name]->value = $value;
+	
+			return TRUE;
+		}
+		else
+		{
+			// Return error if the element does not exist
+			return 'ERROR: No element with that name';
+		}
+	}	
+	
+	/**
 	 * Sets the options of a element on runtime
 	 * 
 	 * @param string $element_name Element name
