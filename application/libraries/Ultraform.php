@@ -224,6 +224,37 @@ class Ultraform {
 	}
 	
 	/**
+	 * Sets the value of a element on runtime
+	 *
+	 * @param string $element_name name
+	 * @param array $value value
+	 */
+	public function set_value($element_name, $value)
+	{
+		// See if the element exists
+		if(array_key_exists($element_name, $this->elements))
+		{
+			// If this is a checkgroup then we use a different assignment method
+			if($this->elements[$element_name]->type == 'checkgroup')
+			{
+				$this->elements[$element_name]->set_checkgroup_values($value);
+			}
+			else
+			{
+				// Set value of element object
+				$this->elements[$element_name]->value = $value;
+			}
+	
+			return TRUE;
+		}
+		else
+		{
+			// Return error if the element does not exist
+			return 'ERROR: No element with that name';
+		}
+	}	
+	
+	/**
 	 * Sets the options of a element on runtime
 	 * 
 	 * @param string $element_name Element name
@@ -768,6 +799,20 @@ class Element {
 		$this->options = $options;
 		
 		return TRUE;
+	}
+	
+	/**
+	 * Sets the selected states of a checkgroup.
+	 * 
+	 * @param array $values Array of values
+	 */
+	public function set_checkgroup_values($values)
+	{
+		foreach($values as $key => $value)
+		{
+			// Assign to selected array
+			$this->selected[] = $value;
+		}
 	}
 	
 	/**

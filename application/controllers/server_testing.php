@@ -30,6 +30,13 @@ class Server_Testing extends MY_Controller {
 		
 		$form->set_options('fish', $fish);
 		
+		// Populate form if neccesary
+		if($this->input->post() == FALSE)
+		{
+			$form->set_value('username', 'Bob');
+			$form->set_value('sauce', array('creme', 'mustard'));
+		}		
+		
 		if($form->request == 'callback' || $form->request == 'json')
 		{
 			echo $form->ajax();

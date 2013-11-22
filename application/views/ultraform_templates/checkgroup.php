@@ -7,7 +7,7 @@
 			
 				<div class="checkbox">
 					<label>
-						<input id="ufo-<?php echo $formname;?>-<?php echo $name;?>-<?php echo $key;?>" type="checkbox" name="<?php echo $name;?>[<?php echo $key;?>]" value="<?php echo $option; ?>"<?php if(in_array($option, $selected)):?> checked<?php endif;?>>
+						<input id="ufo-<?php echo $formname;?>-<?php echo $name;?>-<?php echo $key;?>" type="checkbox" name="<?php echo $name;?>[<?php echo $key;?>]" value="<?php echo $key; ?>"<?php if(in_array($key, $selected)):?> checked<?php endif;?>>
 						<?php echo $option;?> 
 					</label>
 				</div>
