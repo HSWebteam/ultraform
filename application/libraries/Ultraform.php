@@ -178,6 +178,9 @@ class Ultraform {
 	 */
 	public function ajax()
 	{
+		// Turn off the profiler if it is on
+		$this->CI->output->enable_profiler(FALSE);
+		
 		if($this->request == 'callback')
 		{
 			// Do callback
