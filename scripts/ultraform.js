@@ -210,12 +210,12 @@ var Ultraform = function(ultraformOptions) {
           // this is a callback function, send the validation request to the server
           var data = {
             "ufo-action": "callback",
-            rule: rule.rule,
+            "ufo-rule": rule.rule,
             //action: rule.name,
             //args: rule.args,
-            value: serializedValue,
-            name: model.get('name'),
-            label: model.get('label')
+            "ufo-value": serializedValue,
+            "ufo-name": model.get('name'),
+            "ufo-label": model.get('label')
           };
 
           // prepare the result
@@ -944,9 +944,9 @@ var Ultraform = function(ultraformOptions) {
           view.events['change' + elementSelector] = 'updateModel';
 
           // activate the event handlers
-          view.delegateEvents();        
+          view.delegateEvents();
         });
-      
+
       }
       else {
         // Set events depending on the root element
@@ -960,7 +960,7 @@ var Ultraform = function(ultraformOptions) {
         this.delegateEvents();
       }
 
-  
+
     },
 
     events: {
@@ -1087,7 +1087,7 @@ var Ultraform = function(ultraformOptions) {
     },
 
     onValidationPending: function(model) {
-      this.$el.removeClass('success').removeClass('error');      
+      this.$el.removeClass('success').removeClass('error');
       // actions to perform while waiting for validation
     }
 
