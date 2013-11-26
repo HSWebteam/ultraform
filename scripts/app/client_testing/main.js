@@ -4,7 +4,7 @@ requirejs.config({
     jquery: 'jquery/jquery',
     underscore: 'underscore/underscore',
     backbone: 'backbone/backbone',
-    ultraform: 'ultraform/ultraform'
+    ultraform: 'ultraform'
   },
   shim: {
     'underscore': {
@@ -19,7 +19,7 @@ requirejs.config({
 
 
 define(
-  ['ultraform'],
+  ['ultraform/ultraform'],
 
   function (Ultraform) {
 

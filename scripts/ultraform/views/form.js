@@ -1,11 +1,15 @@
 //Filename: ultraform/views/form.js
 
 define([
-  'jquery',
-  'underscore',
   'backbone'
-], function($, _, Backbone){
+], function(Backbone){
+
+	console.log('loading views/form.js');
+
+	var FormView = Backbone.View.extend({
+  });
+
 
   // What we return here will be used by other modules
-  return {};
+  return FormView;
 });

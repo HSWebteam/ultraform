@@ -4,13 +4,13 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'collections/form'
+  'ultraform/collections/form'
 ], function($, _, Backbone, FormCollection){
+
+  console.log('loading ultraform.js');
 
   // initialize the FormModels
   var initialize = function() {
-
-    console.log('initialize ULTRAFORM');
 
     // for every ufo-* form in the document gather some information
     var collectionData = $('form[id^="ufo-"]').map(function(index, value){
