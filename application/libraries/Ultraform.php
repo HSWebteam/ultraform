@@ -196,7 +196,7 @@ class Ultraform {
 			// Unknown request
 			return 'Request type unknown, run preprocess or check your request POST variable.';
 		}
-		
+
 		return json_encode($ajax);
 	}
 

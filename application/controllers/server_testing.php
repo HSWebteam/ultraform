@@ -47,8 +47,8 @@ class Server_Testing extends MY_Controller {
 			echo 'Form is valid';
 		}
 
-		if($form2->request == 'callback' || $form2->request == 'json')
-		{
+		if($form2->request == 'json')
+		{	
 			echo $form2->ajax();
 		}
 		elseif($form2->valid)
