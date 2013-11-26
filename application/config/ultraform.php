@@ -29,6 +29,8 @@ $config['template_dir'] = '/ultraform_templates/';
 
 // Client starts validating on
 $config['validate_on'] = 'keyup'; // Default: keyup
+// Client removes empty options from dropdowns when the dropdown is required
+$config['remove_empty'] = FALSE; // Default: FALSE
 
 // Hides the empty select field after a option is chosen in a dropdown element
 $config['hide_empty'] = FALSE; // Default: FALSE

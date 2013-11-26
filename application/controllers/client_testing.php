@@ -242,7 +242,8 @@ class Client_Testing extends CI_Controller {
 					'valid_emails' => '%s veld moet geldige emailadressen bevatten, gescheiden door komma\'s'
 				),
 				'settings' => array(
-					'validateOn' => 'keyup'
+					'validateOn' => 'keyup',
+					'removeEmpty' => TRUE,
 				)
 			);
 

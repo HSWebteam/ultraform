@@ -944,18 +944,21 @@ var Ultraform = function(ultraformOptions) {
         var rules = this.model.getRules();
         var requiredRule = _.where(rules, {'name' : 'required'});
         if (requiredRule.length > 0) {
-          
-          if (this.model.attributes.value !== '') {
-            // the select is required AND the value is not empty
-            // so the user has no need anymore (should not be able to) choose <empty>
-            // therefore remove the empty option
-            _.each(that.emptyOptions, function(view, index) {
-              view.remove();
-            });
-          }
-          else {
-            // on change remove the empty option, 
-            this.listenTo(this.model, 'change', this.checkSelectRequired);            
+
+          var removeEmpty = this.model.parentModel.get('settings').removeEmpty || false; // if true, remove empty options from selectboxes
+          if (removeEmpty) {
+            if (this.model.attributes.value !== '') {
+              // the select is required AND the value is not empty
+              // so the user has no need anymore (should not be able to) choose <empty>
+              // therefore remove the empty option
+              _.each(that.emptyOptions, function(view, index) {
+                view.remove();
+              });
+            }
+            else {
+              // on change remove the empty option,
+              this.listenTo(this.model, 'change', this.checkSelectRequired);
+            }
           }
 
         }
@@ -996,9 +999,9 @@ var Ultraform = function(ultraformOptions) {
           view.events[validateOn + elementSelector] = 'updateModel';
 
           // activate the event handlers
-          view.delegateEvents();        
+          view.delegateEvents();
         });
-      
+
       }
       else {
         // Set events depending on the root element
@@ -1012,7 +1015,7 @@ var Ultraform = function(ultraformOptions) {
         this.delegateEvents();
       }
 
-  
+
     },
 
     events: {
@@ -1150,7 +1153,7 @@ var Ultraform = function(ultraformOptions) {
     },
 
     onValidationPending: function(model) {
-      this.$el.removeClass('success').removeClass('error');      
+      this.$el.removeClass('success').removeClass('error');
       // actions to perform while waiting for validation
     }
 
