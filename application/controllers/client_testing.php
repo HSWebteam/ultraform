@@ -41,14 +41,14 @@ class Client_Testing extends CI_Controller {
 	public function validate()
 	{
 		// get the rule, like callback_sushi[wasabi]
-		$rule = $this->input->post('rule');
+		$rule = $this->input->post('ufo-rule');
 		// split the rule, like array('callback_sushi', 'wasabi]')
 		$rule_e = explode('[', $rule);
 		// get the action part, like 'callback_sushi'
 		$action = $rule_e[0];
 		// get the arguments, like 'wasabi'
 		$args   = isset($rule_e[1]) ? array(substr($rule_e[1], 0, strlen($rule_e[1])-1)) : array();
-		$value  = $this->input->post('value');
+		$value  = $this->input->post('ufo-value');
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST')
 		{
