@@ -69,12 +69,12 @@ class Magic extends MY_Controller
 		}
 	}
 
-	public function register()
+	public function all_fields()
 	{
 		$this->load->library('ultraform');
 
-		$form = new Ultraform('m_register');
-		$this->data['register_form'] = $form;
+		$form = new Ultraform('all_fields');
+		$this->data['all_fields'] = $form;
 
 		if($form->request == 'callback' || $form->request == 'json')
 		{
@@ -88,9 +88,9 @@ class Magic extends MY_Controller
 
 		if($form->request == 'html')
 		{
-			$this->data['title'] 	= 'Register';
+			$this->data['title'] 	= 'All fields';
 			$this->data['header'] 	= $this->load->view('magic/header.php', $this->data, TRUE);
-			$this->data['content'] 	= $this->load->view('magic/register/register.php', $this->data, TRUE);
+			$this->data['content'] 	= $this->load->view('magic/all_fields/all_fields.php', $this->data, TRUE);
 			$this->data['footer'] 	= $this->load->view('magic/footer.php', $this->data, TRUE);
 
 			$this->load->view('magic/template.php', $this->data);

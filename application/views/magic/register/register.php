@@ -12,6 +12,3 @@
 		<img src="<?php echo base_url();?>images/magic/scroll_rack.jpg">
 	</div>
 </div>
-
-	</body>
-</html>

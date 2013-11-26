@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * This class manages, records, validates and handles one form.
+ * @file This class manages, records, validates and handles one form.
  *
  * @author Simon Kort <simon.kort@gmail.com>
  *
@@ -145,6 +145,15 @@ class Ultraform {
 			$this->lang = $this->CI->lang->load('ufo_' . $this->source, '' , TRUE);
 		}	
 		
+		// Load config for this form
+		if(isset($data->config))
+		{
+			foreach($data->config as $key => $value)
+			{
+				$this->config[$key] = $value;
+			}
+		}
+		
 		// Build elements from data objects
 		foreach($data->elements as $element)
 		{
@@ -215,6 +224,37 @@ class Ultraform {
 	}
 	
 	/**
+	 * Sets the value of a element on runtime
+	 *
+	 * @param string $element_name name
+	 * @param array $value value
+	 */
+	public function set_value($element_name, $value)
+	{
+		// See if the element exists
+		if(array_key_exists($element_name, $this->elements))
+		{
+			// If this is a checkgroup then we use a different assignment method
+			if($this->elements[$element_name]->type == 'checkgroup')
+			{
+				$this->elements[$element_name]->set_checkgroup_values($value);
+			}
+			else
+			{
+				// Set value of element object
+				$this->elements[$element_name]->value = $value;
+			}
+	
+			return TRUE;
+		}
+		else
+		{
+			// Return error if the element does not exist
+			return 'ERROR: No element with that name';
+		}
+	}	
+	
+	/**
 	 * Sets the options of a element on runtime
 	 * 
 	 * @param string $element_name Element name
@@ -236,6 +276,47 @@ class Ultraform {
 			return 'ERROR: No element with that name';
 		}
 	}
+	
+	/**
+	 * Sets the config of the form on runtime
+	 * 
+	 * @param array $config Array of config items key/value
+	 */
+	public function set_config($config)
+	{
+		// Set config variables
+		foreach ($config as $key=>$value)
+		{
+			if ($value) 
+			{
+				// Set the value to the key variable
+				$this->config[$key] = $value;
+			}
+		}
+	}
+	
+	/**
+	 * Sets the config of a element on runtime
+	 *
+	 * @param string $element_name Element name
+	 * @param array $config Array of config items key/value
+	 */
+	public function set_element_config($element_name, $config)
+	{
+		// See if the element exists
+		if(array_key_exists($element_name, $this->elements))
+		{
+			// Run set_config of element object
+			$element = $this->elements[$element_name]->set_config($config);
+			
+			return TRUE;
+		}
+		else
+		{
+			// Return error if the element does not exist
+			return 'ERROR: No element with that name';
+		}
+	}	
 
 	/**
 	 * Renders a specific element or the entire form.
@@ -384,9 +465,21 @@ class Ultraform {
 	{
 		// If the profiler is on, turn it off
 		$this->CI->output->enable_profiler(FALSE);
-		
+
+		// Create the export array
 		$export = array();
 
+		// Export config
+		$export['config'] = array();
+		foreach($this->config as $key => $value)
+		{
+			// If we are allowed to pass this value to the client
+			if(in_array($key, $this->config['export_array']))
+			{
+				$export['config'][$key] = $value;
+			}
+		}
+		
 		// Export elements
 		$export['elements'] = array();
 		foreach($this->elements as $element)
@@ -396,15 +489,16 @@ class Ultraform {
 				$export['elements'][] = $element->export();
 			}
 		}
-
-		// Set output type to json
-		$this->CI->output->set_content_type('application/json');
 		
 		// Export messages
 		$messages = $this->CI->lang->load('form_validation', '' , TRUE);
 		$export['messages'] = $messages;
 		
-		return json_encode($export);
+		// Set output type to json
+		$this->CI->output->set_content_type('application/json');
+		
+		//return json_encode($export);
+		return $export;
 	}
 	
 	/**
@@ -479,6 +573,8 @@ class Element {
 	public $uniquename; // Used when we need a unique reference to this element
 	public $label;
 	
+	public $config = array();
+	
 	// A refrence back to its parent Ultraform object
 	public $form;
 
@@ -508,9 +604,21 @@ class Element {
 		
 		foreach($data as $key => $value)
 		{
-			$this->$key = $value;
+			if($key == 'config')
+			{
+				// Set config variables from JSON
+				foreach($value as $config => $item)
+				{
+					$this->config[$config] = $item;
+				}
+			}
+			else
+			{
+				// Not a config variable, just assign it
+				$this->$key = $value;
+			}
 		}
-	
+		
 		$this->uniquename = 'ufo-' . $this->form->name . '-' . $this->name;
 		$this->id = $this->uniquename;
 		
@@ -577,12 +685,27 @@ class Element {
 		$export['label'] = $this->label;
 		$export['value'] = $this->value;
 		$export['rules'] = $this->rules;
+		$export['placeholder'] = $this->placeholder;
 		
 		// Add options if this element has them
 		if($this->options != NULL)
 		{
 			$export['options'] = $this->options;
 		}
+		
+		// Export config if this element has any
+		if(!empty($this->config))
+		{
+			$export['config'] = array();
+			foreach($this->config as $key => $value)
+			{
+				// If we are allowed to pass this value to the client
+				if(in_array($key, $this->form->config['export_array']))
+				{
+					$export['config'][$key] = $value;
+				}
+			}
+		}	
 
 		return $export;
 	}
@@ -677,6 +800,38 @@ class Element {
 		
 		return TRUE;
 	}
+	
+	/**
+	 * Sets the selected states of a checkgroup.
+	 * 
+	 * @param array $values Array of values
+	 */
+	public function set_checkgroup_values($values)
+	{
+		foreach($values as $key => $value)
+		{
+			// Assign to selected array
+			$this->selected[] = $value;
+		}
+	}
+	
+	/**
+	 * Sets the config of the element on runtime
+	 *
+	 * @param array $config Array of config items key/value
+	 */
+	public function set_config($config)
+	{
+		// Set config variables
+		foreach ($config as $key=>$value)
+		{
+			if ($value)
+			{
+				// Set the value to the key variable
+				$this->config[$key] = $value;
+			}
+		}
+	}	
 	
 	/**
 	 * To string
