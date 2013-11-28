@@ -126,7 +126,7 @@ class Client_Testing extends CI_Controller {
 					array(
 						'name'  => 'alpha',
 						'label' => 'Alpha',
-						'value' => 'abc',
+						'value' => 'yellow',
 						'rules' => 'alpha'),
 					array(
 						'name'  => 'alphanumeric',
@@ -206,7 +206,20 @@ class Client_Testing extends CI_Controller {
 							'nantua' => 'Nantua sauce',
 							'cheddar_cheese' => 'Cheddar cheese sauce',
 							'mustard' => 'Mustard sauce'
-						))
+						)),
+					array(
+						'name' => 'sushitype',
+						'label' => 'Sushi type',
+						'value' => '',
+						'rules' => 'ohlala|ohla|required', // not required, so empty option should allways be available
+						'options' => array(
+							'makizushi' => 'Makizushi',
+							'hosomaki' => 'Hosomaki',
+							'temaki' => 'Temaki',
+							'uramaki' => 'Uramaki',
+							'' => ''
+						)
+					)
 				),
 				'messages' => array(
 					'required' => 'Het %s veld mag niet leeg blijven.',
@@ -229,7 +242,8 @@ class Client_Testing extends CI_Controller {
 					'valid_emails' => '%s veld moet geldige emailadressen bevatten, gescheiden door komma\'s'
 				),
 				'settings' => array(
-					'validateOn' => 'keyup'
+					'validateOn' => 'keyup',
+					'removeEmpty' => TRUE,
 				)
 			);
 

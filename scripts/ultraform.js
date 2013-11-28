@@ -88,7 +88,7 @@ var Ultraform = function(ultraformOptions) {
 
     // first set the value, then validate
     // (this differs from set('value',value,{validate:true})) in that
-    // the an invalid validation will not prevent setting the value
+    // an invalid validation will not prevent setting the value
     setValueAndValidate: function(value) {
 
       // set the value, regardless of the validation results
@@ -210,12 +210,12 @@ var Ultraform = function(ultraformOptions) {
           // this is a callback function, send the validation request to the server
           var data = {
             "ufo-action": "callback",
-            rule: rule.rule,
+            "ufo-rule": rule.rule,
             //action: rule.name,
             //args: rule.args,
-            value: serializedValue,
-            name: model.get('name'),
-            label: model.get('label')
+            "ufo-value": serializedValue,
+            "ufo-name": model.get('name'),
+            "ufo-label": model.get('label')
           };
 
           // prepare the result
@@ -853,6 +853,9 @@ var Ultraform = function(ultraformOptions) {
 
       var that = this;
 
+      // list of empty options
+      this.emptyOptions = [];
+
       // *** CREATE AN ARRAY OPTION VIEWS FOR RADIOBUTTONGROUP, CHECKBOXGROUP AND SELECT ***
       // the server gives us something like: {"color1":"Red", "color2":"Blue", "anotherkey":"anothervalue"}
       this.optionViews = _.sortBy(_.map(this.options.options, function(value, key){
@@ -864,6 +867,11 @@ var Ultraform = function(ultraformOptions) {
 
         // get the dom element for this option
         var $domElement = $(selector);
+        // in case of selectbox, the options might not have an id, get by value
+        if ($domElement.length === 0) {
+          selector = that.options.selector+' option[value="'+key+'"]';
+          $domElement = $(selector);
+        }
 
         // create view
         var view = new OptionView({
@@ -872,6 +880,8 @@ var Ultraform = function(ultraformOptions) {
           checked: checked,
           value: key
         });
+
+        if (key==='') that.emptyOptions.push(view);
 
         return view;
       }), function(val) {
@@ -915,7 +925,8 @@ var Ultraform = function(ultraformOptions) {
         }
         else if (DOMValue.length === 0) {
           // the DOM seems empty, set the DOM value to the model value
-          _.each(this.optionViews, function(view, index) {
+          this.$el.val(modelValue); // for selectbox
+          _.each(this.optionViews, function(view, index) { // for radio and checkbox
             if (modelValueArray.indexOf(view.options.value) !== -1) {
               // this option is in the modelValue, check the dom element
               view.$el.prop('checked', true);
@@ -927,30 +938,74 @@ var Ultraform = function(ultraformOptions) {
         }
       }
 
+      // some special care for select inputs
+      if (this.$input.is('select') || this.$input.find('select').length > 0) {
+        // it is a selectbox
+        var rules = this.model.getRules();
+        var requiredRule = _.where(rules, {'name' : 'required'});
+        if (requiredRule.length > 0) {
+
+          var removeEmpty = this.model.parentModel.get('settings').removeEmpty || false; // if true, remove empty options from selectboxes
+          if (removeEmpty) {
+            if (this.model.attributes.value !== '') {
+              // the select is required AND the value is not empty
+              // so the user has no need anymore (should not be able to) choose <empty>
+              // therefore remove the empty option
+              _.each(that.emptyOptions, function(view, index) {
+                view.remove();
+              });
+            }
+            else {
+              // on change remove the empty option,
+              this.listenTo(this.model, 'change', this.checkSelectRequired);
+            }
+          }
+
+        }
+        else {
+          // this value is not required -- make sure there is an empty option
+        }
+      }
+
       // *** ATTACH TO SOME MODEL EVENTS ***
       this.listenTo(this.model, 'change:validationError', this.onValidation);
 
       // Set events depending on validateOn setting of the form
       var validateOn = this.model.parentModel.get('settings').validateOn; // blur, change
 
+      var elementSelector;
+
       // Add events to this view or to the optionsviews
+      if (this.$input.is('select')) {
+        // selectbox triggers changes on the select element and not on the options
+        elementSelector = (this.input === this.el) ? '' : ' select';
+
+        this.events = {};
+        this.events['change' + elementSelector] = 'updateModel';
+        this.events[validateOn + elementSelector] = 'updateModel';
+
+        // activate the event handlers
+        this.delegateEvents();
+      }
       if (this.optionViews.length > 0) {
+
         _.each(this.optionViews, function(view, index) {
 
           // Set events depending on the root element
-          var elementSelector = (view.input === view.el) ? '' : ' input,textarea';
+          var elementSelector = (view.input === view.el) ? '' : ' input';
 
           view.events = {};
           view.events['change' + elementSelector] = 'updateModel';
+          view.events[validateOn + elementSelector] = 'updateModel';
 
           // activate the event handlers
-          view.delegateEvents();        
+          view.delegateEvents();
         });
-      
+
       }
       else {
         // Set events depending on the root element
-        var elementSelector = (this.input === this.el) ? '' : ' input,textarea';
+        elementSelector = (this.input === this.el) ? '' : ' input,textarea';
 
         this.events = {};
         this.events['keypress' + elementSelector] = 'handleKey';
@@ -960,12 +1015,23 @@ var Ultraform = function(ultraformOptions) {
         this.delegateEvents();
       }
 
-  
+
     },
 
     events: {
       // no events here, they are initialized in the initialize method and may differ
       // slightly depending on which element was found
+    },
+
+    // If selectbox is required and a non-empty option is chosen -> remove the empty option
+    checkSelectRequired: function() {
+      var value = this.model.get('value');
+      if (value && value.length > 0) {
+        // remove the empty option
+        _.each(this.emptyOptions, function(view, index) {
+          view.remove();
+        });
+      }
     },
 
     // get the value of the view
@@ -1087,7 +1153,7 @@ var Ultraform = function(ultraformOptions) {
     },
 
     onValidationPending: function(model) {
-      this.$el.removeClass('success').removeClass('error');      
+      this.$el.removeClass('success').removeClass('error');
       // actions to perform while waiting for validation
     }
 

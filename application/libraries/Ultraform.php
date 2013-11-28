@@ -16,22 +16,22 @@ class Ultraform {
 
 	// Name of the form
 	public $name = NULL;
-	
+
 	// JSON source of the form
 	public $source = NULL;
 
 	// Language data
 	public $lang = NULL;
-	
+
 	// The set of elements in the form
 	private $elements = array();
 
 	// Type of request, valid: html|json|validate
 	public $request = 'Not initialized';
-	
+
 	// Is the form considered valid
 	public $valid = FALSE;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -42,7 +42,7 @@ class Ultraform {
 			// This is the codeigniter loader, ignore it
 			return FALSE;
 		}
-		
+
 		$this->source = $form;
 
 		// Assign name if set
@@ -62,7 +62,7 @@ class Ultraform {
 
 		// Load the config
 		$this->config();
-		
+
 		// Preprocess the form
 		$this->preprocess($form);
 	}
@@ -90,10 +90,10 @@ class Ultraform {
 	{
 		// See if the 'ufo-action' POST is present
 		if($this->CI->input->post('ufo-action'))
-		{	
+		{
 			// This is a JSON request
 			$this->request = 'json';
-			
+
 			// This is a AJAX call from the client
 			if($this->CI->input->post('ufo-action') == 'callback')
 			{
@@ -104,7 +104,7 @@ class Ultraform {
 			elseif($this->CI->input->post('ufo-form') != $this->name)
 			{
 				// The POST is not meant for this form
-				$this->request = 'none';				
+				$this->request = 'none';
 				return FALSE;
 			}
 		}
@@ -113,12 +113,12 @@ class Ultraform {
 			// Just preprocess the form without any AJAX
 			$this->request = 'html';
 		}
-		
+
 		$this->load();
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * Load a form from a JSON file in the forms directory.
 	 * Load() will try to load the $source of the form.
@@ -130,7 +130,7 @@ class Ultraform {
 
 		// Decode the JSON, return objects
 		$data = json_decode($data);
-		
+
 		// See if the form is empty
 		if(empty($data))
 		{
@@ -138,13 +138,13 @@ class Ultraform {
 			echo 'Form ' . $this->name . ' was empty.';
 			exit;
 		}
-		
+
 		// Try to load a language file for this form
 		if(file_exists($this->CI->input->server('DOCUMENT_ROOT') . '/' . APPPATH . 'language/' . $this->CI->config->item('language') . '/ufo_' . $this->source . '_lang.php'))
 		{
 			$this->lang = $this->CI->lang->load('ufo_' . $this->source, '' , TRUE);
-		}	
-		
+		}
+
 		// Load config for this form
 		if(isset($data->config))
 		{
@@ -153,7 +153,7 @@ class Ultraform {
 				$this->config[$key] = $value;
 			}
 		}
-		
+
 		// Build elements from data objects
 		foreach($data->elements as $element)
 		{
@@ -166,18 +166,21 @@ class Ultraform {
 		{
 			$this->validate();
 		}
-		
+
 		return TRUE;
 	}
-	
+
 	/**
 	 * Ajax
-	 * 
+	 *
 	 * This function handles all the ajax output the form can be required to generate.
 	 * It bases the output on the $this->request variable.
 	 */
 	public function ajax()
 	{
+		// Turn off the profiler if it is on
+		$this->CI->output->enable_profiler(FALSE);
+		
 		if($this->request == 'callback')
 		{
 			// Do callback
@@ -191,10 +194,10 @@ class Ultraform {
 		else
 		{
 			// Unknown request
-			$ajax = 'Request type unknown, run preprocess or check your request POST variable.';
+			return 'Request type unknown, run preprocess or check your request POST variable.';
 		}
-		
-		return $ajax;
+
+		return json_encode($ajax);
 	}
 
 	/**
@@ -209,7 +212,7 @@ class Ultraform {
 
 		// Assign the new element to the elements array
 		$this->elements[$element->name] = $element;
-		
+
 		return TRUE;
 	}
 
@@ -222,7 +225,7 @@ class Ultraform {
 	{
 		return $this->elements;
 	}
-	
+
 	/**
 	 * Sets the value of a element on runtime
 	 *
@@ -244,7 +247,7 @@ class Ultraform {
 				// Set value of element object
 				$this->elements[$element_name]->value = $value;
 			}
-	
+
 			return TRUE;
 		}
 		else
@@ -252,11 +255,11 @@ class Ultraform {
 			// Return error if the element does not exist
 			return 'ERROR: No element with that name';
 		}
-	}	
-	
+	}
+
 	/**
 	 * Sets the options of a element on runtime
-	 * 
+	 *
 	 * @param string $element_name Element name
 	 * @param array $options Array of options key/value
 	 */
@@ -267,7 +270,7 @@ class Ultraform {
 		{
 			// Run set_options of element object
 			$element = $this->elements[$element_name]->set_options($options);
-			
+
 			return TRUE;
 		}
 		else
@@ -276,10 +279,10 @@ class Ultraform {
 			return 'ERROR: No element with that name';
 		}
 	}
-	
+
 	/**
 	 * Sets the config of the form on runtime
-	 * 
+	 *
 	 * @param array $config Array of config items key/value
 	 */
 	public function set_config($config)
@@ -287,14 +290,14 @@ class Ultraform {
 		// Set config variables
 		foreach ($config as $key=>$value)
 		{
-			if ($value) 
+			if ($value)
 			{
 				// Set the value to the key variable
 				$this->config[$key] = $value;
 			}
 		}
 	}
-	
+
 	/**
 	 * Sets the config of a element on runtime
 	 *
@@ -308,7 +311,7 @@ class Ultraform {
 		{
 			// Run set_config of element object
 			$element = $this->elements[$element_name]->set_config($config);
-			
+
 			return TRUE;
 		}
 		else
@@ -316,7 +319,7 @@ class Ultraform {
 			// Return error if the element does not exist
 			return 'ERROR: No element with that name';
 		}
-	}	
+	}
 
 	/**
 	 * Renders a specific element or the entire form.
@@ -366,7 +369,7 @@ class Ultraform {
 				// This is not meant for this form
 				return FALSE;
 			}
-			
+
 			// Load CI form validation library
 			$this->CI->load->library('form_validation');
 
@@ -375,7 +378,7 @@ class Ultraform {
 			{
 				$this->CI->form_validation->set_rules($element->name, $element->name, $element->rules); //TODO: See if we don't need to get some sort of string for human readable error message
 			}
-			
+
 			// Run validation
 			if ($this->CI->form_validation->run() == FALSE)
 			{
@@ -408,7 +411,7 @@ class Ultraform {
 			$post = $this->CI->input->post();
 
 			// Create validation rules for this request
-			$this->CI->form_validation->set_rules($post['ufo-name'], $post['ufo-label'], $post['uf-rule']);
+			$this->CI->form_validation->set_rules($post['ufo-name'], $post['ufo-label'], $post['ufo-rule']);
 
 			// Create proper POST value for the field to validate
 			$_POST[$post['ufo-name']] = $post['ufo-value'];
@@ -420,11 +423,11 @@ class Ultraform {
 			if($this->CI->form_validation->run() == FALSE)
 			{
 				// Return error message
-				return json_encode(array('valid' => FALSE, 'error' => form_error($post['ufo-name'])));
+				return array('valid' => FALSE, 'error' => form_error($post['ufo-name']));
 			}
 			else
 			{
-				return json_encode(array('valid' => TRUE));
+				return array('valid' => TRUE);
 			}
 		}
 	}
@@ -479,7 +482,7 @@ class Ultraform {
 				$export['config'][$key] = $value;
 			}
 		}
-		
+
 		// Export elements
 		$export['elements'] = array();
 		foreach($this->elements as $element)
@@ -489,18 +492,18 @@ class Ultraform {
 				$export['elements'][] = $element->export();
 			}
 		}
-		
+
 		// Export messages
 		$messages = $this->CI->lang->load('form_validation', '' , TRUE);
 		$export['messages'] = $messages;
-		
+
 		// Set output type to json
 		$this->CI->output->set_content_type('application/json');
-		
+
 		//return json_encode($export);
 		return $export;
 	}
-	
+
 	/**
 	 * Handles repopulating the form based on the POST array.
 	 */
@@ -533,12 +536,12 @@ class Ultraform {
 						// Default case, includes: most text fields, custom types, radiobuttons, checkboxes and dropdowns
 						$element->value = $_POST[$element->name];
 				}
-		
+
 				// Set the error message
 				$error = form_error($element->name, '', '');
-				
+
 				//TODO: Add open/close error tags
-		
+
 				if ($error)
 				{
 					$element->error = TRUE;
@@ -547,7 +550,7 @@ class Ultraform {
 			}
 		}
 	}
-	
+
 	/**
 	 * To string
 	 */
@@ -572,9 +575,9 @@ class Element {
 	public $name;
 	public $uniquename; // Used when we need a unique reference to this element
 	public $label;
-	
+
 	public $config = array();
-	
+
 	// A refrence back to its parent Ultraform object
 	public $form;
 
@@ -584,7 +587,7 @@ class Element {
 	public $value;
 	public $options = array();
 	public $selected = array();
-	
+
 	public $rules;
 	public $placeholder;
 
@@ -601,7 +604,7 @@ class Element {
 
 		// Assign parent form
 		$this->form = $form;
-		
+
 		foreach($data as $key => $value)
 		{
 			if($key == 'config')
@@ -618,14 +621,14 @@ class Element {
 				$this->$key = $value;
 			}
 		}
-		
+
 		$this->uniquename = 'ufo-' . $this->form->name . '-' . $this->name;
 		$this->id = $this->uniquename;
-		
+
 		// Set the label and placeholder for this element
 		$this->generate_label();
 		$this->generate_placeholder();
-		
+
 		// Generate any options this element has
 		if(!empty($this->options))
 		{
@@ -643,7 +646,7 @@ class Element {
 
 		// View data
 		$data = (array)$this;
-		
+
 		// Create a data array to pass to the element view
 		$data['label'] = $this->label;
 		$data['placeholder'] = $this->placeholder;
@@ -686,13 +689,13 @@ class Element {
 		$export['value'] = $this->value;
 		$export['rules'] = $this->rules;
 		$export['placeholder'] = $this->placeholder;
-		
+
 		// Add options if this element has them
 		if($this->options != NULL)
 		{
 			$export['options'] = $this->options;
 		}
-		
+
 		// Export config if this element has any
 		if(!empty($this->config))
 		{
@@ -705,7 +708,7 @@ class Element {
 					$export['config'][$key] = $value;
 				}
 			}
-		}	
+		}
 
 		return $export;
 	}
@@ -717,10 +720,10 @@ class Element {
 	{
 		// Assign the element's options array to a local variable
 		$options = $this->options;
-		
+
 		// Reset options
 		$this->options = array();
-		
+
 		foreach($options as $key => $option)
 		{
 			// See if there is a language file translation
@@ -740,10 +743,10 @@ class Element {
 				$this->options[$option] = $option;
 			}
 		}
-		
+
 		return $this->options;
 	}
-	
+
 	/**
 	 * Determines what the human readable label should be set to for this element
 	 */
@@ -765,10 +768,10 @@ class Element {
 		{
 			$this->label = $this->name;
 		}
-		
+
 		return $this->label;
 	}
-	
+
 	/**
 	 * Determines what the human readable placeholder should be set to for this element
 	 */
@@ -785,25 +788,25 @@ class Element {
 		{
 			// Do nothing, we use the placeholder from the JSON
 		}
-	
+
 		return $this->placeholder;
-	}	
-	
+	}
+
 	/**
 	 * Sets options of the element.
-	 * 
+	 *
 	 * @param array $options Array of options key/value
 	 */
 	public function set_options($options)
 	{
 		$this->options = $options;
-		
+
 		return TRUE;
 	}
-	
+
 	/**
 	 * Sets the selected states of a checkgroup.
-	 * 
+	 *
 	 * @param array $values Array of values
 	 */
 	public function set_checkgroup_values($values)
@@ -814,7 +817,7 @@ class Element {
 			$this->selected[] = $value;
 		}
 	}
-	
+
 	/**
 	 * Sets the config of the element on runtime
 	 *
@@ -831,8 +834,8 @@ class Element {
 				$this->config[$key] = $value;
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * To string
 	 */
