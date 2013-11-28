@@ -11,12 +11,14 @@ define([
 
   var ElementView = Backbone.View.extend({
 
-  	initialize: function() {
+  	initialize: function(options) {
+      this.options = options; // fix upgrade to 1.1.0 from 1.0.0
 
       var that = this;
 
       // *** CREATE AN ARRAY OPTION VIEWS FOR RADIOBUTTONGROUP, CHECKBOXGROUP AND SELECT ***
       // the server gives us something like: {"color1":"Red", "color2":"Blue", "anotherkey":"anothervalue"}
+
       this.optionViews = _.sortBy(_.map(this.options.options, function(value, key){
         var modelValue = that.model.attributes.value;
         var checked = (_.isArray(modelValue) ? modelValue.indexOf(key) !== -1 : modelValue == key);

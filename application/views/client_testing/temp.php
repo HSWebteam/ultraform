@@ -475,7 +475,8 @@ The following errors were encountered in the form:<br>
 	<div id="qunit-fixture"></div>
 
 	<!-- load main.js via requireJS -->
-	<script data-main="scripts/app/client_testing/main" src="scripts/require/require.js"></script>
+	<!-- <script data-main="scripts/ultraform/ultraform.js" src="scripts/require/require.js"></script> -->
+	<script src="scripts/ultraform/ultraform-min.js"></script>
 
 
 	<script>var $base_url = "<?php echo base_url(); ?>"</script>

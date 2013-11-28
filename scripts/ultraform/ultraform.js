@@ -1,4 +1,17 @@
 //Filename: ultraform/ultraform.js
+require.config({
+  baseUrl: 'scripts',
+  paths: {
+    jquery: 'jquery/jquery',
+    underscore: 'underscore-amd/underscore',
+    backbone: 'backbone-amd/backbone',
+    ultraform: 'ultraform',
+    almond: 'almond/almond',
+    require: 'require/require'
+  },
+  name: 'ultraform/ultraform'
+});
+
 
 define([
   'jquery',
@@ -27,12 +40,10 @@ define([
     }).get(); // $().map().get() creates an array of return values
 
     // create a FormModel for every form while adding it to a new FormCollection
-    return new FormCollection( collectionData );
+    new FormCollection( collectionData );
 
   };
 
-  // What we return here will be used by other modules
-  return {
-  	initialize: initialize
-  };
+  initialize();
+
 });

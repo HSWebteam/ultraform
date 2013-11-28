@@ -10,7 +10,8 @@ define([
 
   var OptionView = Backbone.View.extend({
 
-    initialize: function() {
+    initialize: function(options) {
+      this.options = options; // fix upgrade to 1.1.0 from 1.0.0
 
       this.$input = this.$elFind(this.$el, 'option, input[type="radio"], input[type="checkbox"]');
       this.input = this.$input.get(0);

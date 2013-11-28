@@ -1,11 +1,16 @@
 ({
-  baseUrl: '.',
+  baseUrl: '..',
   paths: {
     jquery: 'jquery/jquery',
-    underscore: 'underscore/underscore',
-    backbone: 'backbone/backbone',
-    ultraform: 'ultraform'
+    underscore: 'underscore-amd/underscore',
+    backbone: 'backbone-amd/backbone',
+    ultraform: 'ultraform',
+    almond: 'almond/almond',
+    require: 'require/require'
   },
-  name: 'test',
-  out: 'test.js'
+  modules: [
+  ],
+  include: 'almond',
+  name: 'ultraform/ultraform',
+  out: 'ultraform-min.js'
 })
