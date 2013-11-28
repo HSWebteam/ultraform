@@ -178,6 +178,9 @@ class Ultraform {
 	 */
 	public function ajax()
 	{
+		// Turn off the profiler if it is on
+		$this->CI->output->enable_profiler(FALSE);
+		
 		if($this->request == 'callback')
 		{
 			// Do callback
@@ -191,10 +194,10 @@ class Ultraform {
 		else
 		{
 			// Unknown request
-			$ajax = 'Request type unknown, run preprocess or check your request POST variable.';
+			return 'Request type unknown, run preprocess or check your request POST variable.';
 		}
 
-		return $ajax;
+		return json_encode($ajax);
 	}
 
 	/**
@@ -408,7 +411,7 @@ class Ultraform {
 			$post = $this->CI->input->post();
 
 			// Create validation rules for this request
-			$this->CI->form_validation->set_rules($post['ufo-name'], $post['ufo-label'], $post['uf-rule']);
+			$this->CI->form_validation->set_rules($post['ufo-name'], $post['ufo-label'], $post['ufo-rule']);
 
 			// Create proper POST value for the field to validate
 			$_POST[$post['ufo-name']] = $post['ufo-value'];
@@ -420,11 +423,11 @@ class Ultraform {
 			if($this->CI->form_validation->run() == FALSE)
 			{
 				// Return error message
-				return json_encode(array('valid' => FALSE, 'error' => form_error($post['ufo-name'])));
+				return array('valid' => FALSE, 'error' => form_error($post['ufo-name']));
 			}
 			else
 			{
-				return json_encode(array('valid' => TRUE));
+				return array('valid' => TRUE);
 			}
 		}
 	}

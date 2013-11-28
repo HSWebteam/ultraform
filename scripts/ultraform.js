@@ -210,12 +210,12 @@ var Ultraform = function(ultraformOptions) {
           // this is a callback function, send the validation request to the server
           var data = {
             "ufo-action": "callback",
-            rule: rule.rule,
+            "ufo-rule": rule.rule,
             //action: rule.name,
             //args: rule.args,
-            value: serializedValue,
-            name: model.get('name'),
-            label: model.get('label')
+            "ufo-value": serializedValue,
+            "ufo-name": model.get('name'),
+            "ufo-label": model.get('label')
           };
 
           // prepare the result
