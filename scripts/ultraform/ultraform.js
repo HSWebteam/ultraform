@@ -32,21 +32,26 @@ require([
 
   console.log('loading ultraform.js');
 
-  // for every ufo-* form in the document gather some information
-  var collectionData = $('form[id^="ufo-"]').map(function(index, value){
+  $(document).ready(function(){
 
-    var idParts = this.id.split('-');
+    // for every ufo-* form in the document gather some information
+    var collectionData = $('form[id^="ufo-"]').map(function(index, value){
 
-    // return the object to create a form of
-    return {
-      domid: this.id,
-      id: idParts[2],
-      name: idParts[1]
-    };
+      var idParts = this.id.split('-');
 
-  }).get(); // $().map().get() creates an array of return values
+      // return the object to create a form of
+      return {
+        domid: this.id,
+        id: idParts[2],
+        name: idParts[1]
+      };
 
-  // create a FormModel for every form while adding it to a new FormCollection
-  new FormCollection( collectionData );
+    }).get(); // $().map().get() creates an array of return values
+
+    // create a FormModel for every form while adding it to a new FormCollection
+    new FormCollection( collectionData );
+  });
+
+
 
 });

@@ -13,7 +13,6 @@ define([
   var ElementModel = Backbone.Model.extend({
 
     initialize: function(attributes, options) {
-
       // set parents
       this.parentModel = options.parentModel;
 
