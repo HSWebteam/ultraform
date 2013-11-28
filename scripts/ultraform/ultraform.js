@@ -1,8 +1,18 @@
 //Filename: ultraform/ultraform.js
 require.config({
   baseUrl: 'scripts',
+  map: {
+    // '*' means all modules will get 'jquery-private'
+    // for their 'jquery' dependency.
+    '*': { 'jquery': 'jquery/jquery-private' },
+
+    // 'jquery-private' wants the real jQuery module
+    // though. If this line was not here, there would
+    // be an unresolvable cyclic dependency.
+    'jquery-private': { 'jquery': 'jquery' }
+  },
   paths: {
-    jquery: 'jquery/jquery',
+//    jquery: 'jquery/jquery',
     underscore: 'underscore-amd/underscore',
     backbone: 'backbone-amd/backbone',
     ultraform: 'ultraform',
@@ -13,7 +23,7 @@ require.config({
 });
 
 
-define([
+require([
   'jquery',
   'underscore',
   'backbone',
@@ -22,28 +32,21 @@ define([
 
   console.log('loading ultraform.js');
 
-  // initialize the FormModels
-  var initialize = function() {
+  // for every ufo-* form in the document gather some information
+  var collectionData = $('form[id^="ufo-"]').map(function(index, value){
 
-    // for every ufo-* form in the document gather some information
-    var collectionData = $('form[id^="ufo-"]').map(function(index, value){
+    var idParts = this.id.split('-');
 
-      var idParts = this.id.split('-');
+    // return the object to create a form of
+    return {
+      domid: this.id,
+      id: idParts[2],
+      name: idParts[1]
+    };
 
-      // return the object to create a form of
-      return {
-        domid: this.id,
-        id: idParts[2],
-        name: idParts[1]
-      };
+  }).get(); // $().map().get() creates an array of return values
 
-    }).get(); // $().map().get() creates an array of return values
-
-    // create a FormModel for every form while adding it to a new FormCollection
-    new FormCollection( collectionData );
-
-  };
-
-  initialize();
+  // create a FormModel for every form while adding it to a new FormCollection
+  new FormCollection( collectionData );
 
 });
