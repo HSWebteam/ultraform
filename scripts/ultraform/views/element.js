@@ -7,8 +7,6 @@ define([
   'ultraform/views/option'
 ], function($, _, Backbone, OptionView){
 
-	console.log('loading views/element.js');
-
   var ElementView = Backbone.View.extend({
 
   	initialize: function(options) {

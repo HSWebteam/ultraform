@@ -2,7 +2,5 @@
 // jquery-private.js file:
 define(['jquery'], function (jq) {
 
-		console.log('loading jquery module');
-
     return jQuery.noConflict( true );
 });

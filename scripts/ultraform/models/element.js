@@ -8,8 +8,6 @@ define([
   'ultraform/views/elementError'
 ], function($, _, Backbone, ElementView, ElementErrorView){
 
-	console.log('loading models/element.js');
-
   var ElementModel = Backbone.Model.extend({
 
     initialize: function(attributes, options) {

@@ -6,8 +6,6 @@ define([
   'backbone'
 ], function($, _, Backbone){
 
-	console.log('loading views/option.js');
-
   var OptionView = Backbone.View.extend({
 
     initialize: function(options) {

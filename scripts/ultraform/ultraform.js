@@ -30,8 +30,6 @@ require([
   'ultraform/collections/form'
 ], function($, _, Backbone, FormCollection){
 
-  console.log('loading ultraform.js');
-
   $(document).ready(function(){
 
     // for every ufo-* form in the document gather some information

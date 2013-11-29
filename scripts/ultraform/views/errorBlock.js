@@ -7,8 +7,6 @@ define([
   'ultraform/views/error'
 ], function($, _, Backbone, ErrorView){
 
-	console.log('loading view/errorBlock.js');
-
   var ErrorBlockView = Backbone.View.extend({
 
     initialize: function(){

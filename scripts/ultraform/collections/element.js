@@ -5,8 +5,6 @@ define([
   'ultraform/models/element'
 ], function(Backbone, ElementModel){
 
-	console.log('loading collections/element.js');
-
   var ElementCollection = Backbone.Collection.extend({
     model: ElementModel
   });

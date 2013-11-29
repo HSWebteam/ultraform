@@ -9,8 +9,6 @@ define([
   'ultraform/views/errorBlock'
 ], function($, _, Backbone, FormView, ElementCollection, ErrorBlockView){
 
-	console.log('loading models/form.js');
-
   var FormModel = Backbone.Model.extend({
 
     initialize: function(initoptions) {

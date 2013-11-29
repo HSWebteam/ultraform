@@ -5,8 +5,6 @@ define([
   'ultraform/models/form'
 ], function(Backbone, FormModel){
 
-	console.log('loading collections/form.js');
-
   var FormCollection = Backbone.Collection.extend({
     model: FormModel
   });

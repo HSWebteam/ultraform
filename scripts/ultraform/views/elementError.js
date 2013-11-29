@@ -6,8 +6,6 @@ define([
   'backbone'
 ], function($, _, Backbone){
 
-	console.log('loading views/elementError.js');
-
   var ElementErrorView = Backbone.View.extend({
 
     initialize: function( attributes, options ){
