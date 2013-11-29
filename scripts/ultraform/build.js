@@ -19,5 +19,6 @@
   },
   include: 'almond',
   name: 'ultraform/ultraform',
-  out: 'ultraform-min.js'
+  out: 'ultraform-min.js',
+  optimize: "uglify2"
 })
