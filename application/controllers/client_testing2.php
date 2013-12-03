@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Client_Testing extends CI_Controller {
+class Client_Testing2 extends CI_Controller {
 
 	/**
 	* QUnit test page for Javascript testing on the client
@@ -23,7 +23,7 @@ class Client_Testing extends CI_Controller {
 		}
 
 		$this->load->helper('url');
-		$this->load->view('client_testing/temp');
+		$this->load->view('client_testing/temp2');
 	}
 
 	/**
