@@ -476,8 +476,8 @@ The following errors were encountered in the form:<br>
 
 	<!-- load main.js via requireJS -->
 	<script src="scripts/jquery/jquery.js"></script>
-	<script data-main="scripts/ultraform/ultraform.js" src="scripts/require/require.js"></script>
-	<!--<script src="scripts/ultraform/ultraform-min.js"></script>-->
+	<!--<script data-main="scripts/ultraform/ultraform.js" src="scripts/require/require.js"></script>-->
+	<script src="scripts/ultraform/ultraform-min.js"></script>
 
 
 	<script>var $base_url = "<?php echo base_url(); ?>"</script>

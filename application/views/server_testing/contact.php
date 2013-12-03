@@ -69,12 +69,10 @@
 		</div>
 
         <script>var $base_url = "<?php echo base_url(); ?>"</script>
-        <script src="<?php echo base_url('scripts/jquery-1.8.3.min.js'); ?>"></script>
-        <script src="<?php echo base_url('scripts/underscore.js'); ?>"></script>
-        <script src="<?php echo base_url('scripts/backbone.js'); ?>"></script>
+        <script src="<?php echo base_url('scripts/jquery/jquery-1.8.3.min.js'); ?>"></script>
         <script src="<?php echo base_url('scripts/bootstrap-3.0/bootstrap.min.js'); ?>"></script>
         <!-- Your application -->
-        <script src="<?php echo base_url('scripts/ultraform.js'); ?>"></script>
+        <script src="<?php echo base_url('scripts/ultraform/ultraform-min.js'); ?>"></script>
 
 	</body>
 </html>
