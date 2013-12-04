@@ -61,7 +61,7 @@ define([
 
     defaults: {
       settings: {
-        validateOn: 'blur'
+        validate_on: 'blur'
       }
     },
 

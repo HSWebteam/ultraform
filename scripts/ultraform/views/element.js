@@ -7,6 +7,12 @@ define([
   'ultraform/views/option'
 ], function($, _, Backbone, OptionView){
 
+  // check for ie8
+  var dummy = document.createElement('div');
+  dummy.innerHTML = '<!' + '--[if IE 8]>x<![endif]-->';
+  var isIE8 = dummy.innerHTML === 'x';
+
+
   var ElementView = Backbone.View.extend({
 
   	initialize: function(options) {
@@ -18,11 +24,13 @@ define([
       // the server gives us something like: {"color1":"Red", "color2":"Blue", "anotherkey":"anothervalue"}
 
       this.optionViews = _.sortBy(_.map(this.options.options, function(value, key){
-        var modelValue = that.model.attributes.value;
-        var checked = (_.isArray(modelValue) ? modelValue.indexOf(key) !== -1 : modelValue == key);
+
+
+        var modelValue = that.model.attributes.value || [];
+        var checked = (_.isArray(modelValue) ? _.indexOf(modelValue, key) !== -1 : modelValue == key);
 
         // selector of radio-inputs are combination of radio-input-group + radio-input value
-        var selector = that.options.selector+'-'+key;
+        var selector = that.options.selector+'-'+key+', '+that.options.selector+' option[value="'+key+'"]';
 
         // get the dom element for this option
         var $domElement = $(selector);
@@ -74,11 +82,12 @@ define([
           // the model did not give a value
           // fill the model with the values from the DOM
           this.model.set('value', DOMValue);
+
         }
         else if (DOMValue.length === 0) {
           // the DOM seems empty, set the DOM value to the model value
           _.each(this.optionViews, function(view, index) {
-            if (modelValueArray.indexOf(view.options.value) !== -1) {
+            if (_.indexOf(modelValueArray, view.options.value) !== -1) {
               // this option is in the modelValue, check the dom element
               view.$el.prop('checked', true);
             }
@@ -87,14 +96,40 @@ define([
         else if (! _.isEqual(DOMValue.sort(), modelValueArray.sort())) {
           console.error(this.model.id + ': The DOM and the API show a different initial value!!', {modelValue:modelValue, DOMValue:DOMValue});
         }
+
+        // if selectbox is empty show placeholder
+        if (this.$elFind(this.$el, 'select').length > 0 && this.getValue().length === 0 && this.model.attributes.placeholder) {
+
+        }
+      }
+
+      // some more special care for select inputs
+      if (this.$input.is('select') || this.$input.find('select').length > 0) {
+        // it is a selectbox
+        // on change remove the empty option and change colors and placeholder,
+        this.listenTo(this.model, 'change', this.checkSelectRequired);
+        this.checkSelectRequired();
+
       }
 
       // *** ATTACH TO SOME MODEL EVENTS ***
       this.listenTo(this.model, 'change:validationError', this.onValidation);
 
       // Set events depending on validateOn setting of the form
-      var validateOn = this.model.parentModel.get('settings').validateOn; // blur, change
+      var validateOn = this.model.parentModel.get('settings').validate_on; // blur, change
 
+      // Add events to this view or to the optionsviews
+      if (this.$input.is('select')) {
+        // selectbox triggers changes on the select element and not on the options
+        elementSelector = (this.input === this.el) ? '' : ' select';
+
+        this.events = {};
+        this.events['change' + elementSelector] = 'updateModel';
+        this.events[validateOn + elementSelector] = 'updateModel';
+
+        // activate the event handlers
+        this.delegateEvents();
+      }
       // Add events to this view or to the optionsviews
       if (this.optionViews.length > 0) {
         _.each(this.optionViews, function(view, index) {
@@ -135,6 +170,87 @@ define([
       // slightly depending on which element was found
     },
 
+    // If selectbox is required and a non-empty option is chosen -> remove the empty option
+    // If placeholder was set, remove it & change color to original
+    checkSelectRequired: function() {
+
+      var rules = this.model.getRules();
+      var requiredRule = _.where(rules, {'name' : 'required'});
+      var removeEmpty = false;
+      if (requiredRule.length > 0) {
+        if (this.model.parentModel.get('settings').remove_empty) {
+          // required field AND remove_empty-setting true, so remove empty option when non-empty is chosen
+          removeEmpty = true;
+        }
+      }
+
+      var originalColor;
+
+      // get the empty option
+      var $emptyOption = this.$el.find('option[value=""]');
+      var $select = this.$el.find('select');
+
+      var value = this.model.get('value');
+
+      if (value && value.length > 0) {
+
+        // a value was chosen, remove placeholder and make text color normal
+        originalColor = $select.data('ufoOriginalColor');
+        if (originalColor) {
+          // revert to original text color
+          $select.css('color', $select.data('ufoOriginalColor'));
+        }
+        // remove 'hint' class
+        $select.removeClass('hint');
+
+        // if this field was required AND remove_empty was set to true,
+        // then remove the empty option
+        if (removeEmpty) {
+          _.each(this.emptyOptions, function(view, index) {
+            view.remove();
+          });
+        }
+        else
+        {
+          // show the empty option that might have been hidden before
+          if ($emptyOption.data('ufoOriginalDisplay')) {
+            $emptyOption.css('display', $emptyOption.data('ufoOriginalDisplay')); // make visible
+            $emptyOption.text(''); // hide the text
+          }
+        }
+
+      }
+      else
+      {
+        // no value was chosen, add placeholder and make text color gray
+        // get original text color
+        originalColor = $select.css('color');
+
+        // add class 'hint' and placeholder text
+        $emptyOption.addClass('hint').text(this.model.attributes.placeholder);
+        $select.addClass('hint');
+        // get new text color
+        var newColor = $select.css('color');
+        // if old and new color are the same, then there is no css to 'fade' the text
+        // we assume normal text is black #000 and we make it gray #DDD
+        if (originalColor == newColor) {
+          if (! $select.data('ufoOriginalColor')) {
+            // remember original color
+            $select.data('ufoOriginalColor', originalColor);
+          }
+          $select.css('color', '#bbb');
+          // hide the empty option
+          if (! $emptyOption.data('ufoOriginalDisplay')) {
+            $emptyOption.data('ufoOriginalDisplay', $emptyOption.css('display'));
+          }
+          $emptyOption.css('display', 'none'); // hide
+          $emptyOption.text(isIE8 ? '' : this.model.attributes.placeholder); // make text visible
+        }
+
+      }
+
+    },
+
     // get the value of the view
     // if the view contains a single input element (has an empty collection), get the value from the input
     // if the view contains subview (a collection with models with subviews), get the value from the subviews
@@ -150,7 +266,6 @@ define([
           var value = view.getValue();
           if (value) result.push(value);
         });
-
         return result;
       }
     },
