@@ -6,8 +6,9 @@ define([
   'backbone',
   'ultraform/views/form',
   'ultraform/collections/element',
+  'ultraform/collections/submitButton',
   'ultraform/views/errorBlock'
-], function($, _, Backbone, FormView, ElementCollection, ErrorBlockView){
+], function($, _, Backbone, FormView, ElementCollection, SubmitButtonCollection, ErrorBlockView){
 
   var FormModel = Backbone.Model.extend({
 
@@ -23,6 +24,25 @@ define([
 
       // create the collection of elements
       this.elementCollection = new ElementCollection();
+
+      // find the commit button(s) and add them to a collection
+      var submitButtonElements = view.$el.find('input[type="submit"]');
+
+      // create the collection of submit buttons (usually one but we want to be prepared for a form with more than one button)
+      this.submitButtonCollection = new SubmitButtonCollection(
+
+        _.map(
+          submitButtonElements,
+          function(element){
+            return {
+              parentModel: model,
+              el: element,
+              state: 'unchanged-invalid'
+            }
+          }
+        )
+
+      );
 
       // create the view for the error block
       var errorView = new ErrorBlockView({
@@ -52,6 +72,10 @@ define([
         invalidCount: 0 // number of invalid elements in the form
       }, {silent:true});
 
+      this.on('change', function(model, options){
+        console.log('model changed: ', model);
+      });
+
       // return created views so we can extend functionality in the afterExtend function
       return {
         view: view,
@@ -73,6 +97,8 @@ define([
     // return the new attributes property for the model
     parse: function(response) {
 
+      var formModel = this;
+
       this.set('messages', response.messages || {});
 
       // get the settings for this form
@@ -80,7 +106,17 @@ define([
         settings: _.extend(this.get('settings'), response.settings)
       });
 
-      this.elementCollection.add(response.elements, {
+      // submitbutton names
+      var submitButtonNames = this.submitButtonCollection.map( function(model){
+        return model.get('el').name;
+      });
+
+      // remove submitbutton from elements
+      var elements = _.filter( response.elements, function(element){
+        return ! _.contains( submitButtonNames, element.name );
+      });
+
+      this.elementCollection.add( elements, {
         parentModel: this
       });
 

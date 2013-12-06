@@ -2,5 +2,6 @@
 // jquery-private.js file:
 define(['jquery'], function () {
 
-    return jQuery.noConflict( true );
+    return jQuery;
+
 });
