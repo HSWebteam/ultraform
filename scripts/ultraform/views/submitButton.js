@@ -8,17 +8,12 @@ define([
 
 		initialize: function(){
 
-			console.log('this view: ', this);
-
 			// check state initially
 			this.checkState.call(this);
 
 			// update DOM to reflect the submit state
 			this.listenTo(this.model, 'change', this.checkState);
 
-			console.log('model state', this.model.get('state'));
-
-			console.log('submit button view created');
 		},
 
 		checkState: function() {

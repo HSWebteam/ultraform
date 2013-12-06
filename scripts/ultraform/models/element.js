@@ -60,7 +60,8 @@ define([
       this.initializeValidations.call(this, $domElement);
 
       // when validation values change, update the parent model
-      this.parentModel.listenTo(this, 'change:validationError', this.parentModel.updateValidation);
+      this.parentModel.listenTo(this, 'change:validationError', this.parentModel.updateState);
+      this.parentModel.listenTo(this, 'change:changeState', this.parentModel.updateState);
 
       // return the created views so we can extend the initialize functionality
       return {
@@ -83,11 +84,12 @@ define([
       this.set({
         value: value,
         oldValue: this.get('value'),
-        changeState: (this.get('changeState')=='changed' || (value == this.get('value')) ? 'unchanged' : 'changed')
+        changeState: (this.get('changeState')=='changed' || value != this.get('value')) ? 'changed' : 'unchanged'
       });
 
       // do the validation
       this.validate(this.attributes);
+
     },
 
     // pending validations
@@ -140,7 +142,6 @@ define([
     // the real work is done in Backbone.Validate
     validate: function(attributes, $el) {
 
-console.log('validate arguments', arguments);
       // in case of an array, make a concatenated string of it
       var serializedValue = this.serialize(attributes.value);
 

@@ -116,7 +116,7 @@ define([
       // *** trigger some jQuery events on change nd validation
       this.listenTo(this.model, 'change:value', function(model, value, options){
 
-        that.$el.trigger('changed.ufo', {
+        that.$el.trigger('changed.el.ufo', {
           $element: that.$el,
           $input: that.$input,
           newValue: value,
@@ -134,7 +134,7 @@ define([
         this.$el.toggleClass('success ufo-valid', state=='valid');
         this.$el.toggleClass('ufo-pending', state=='pending');
 
-        that.$el.trigger(state+'.ufo', {
+        that.$el.trigger(state+'.el.ufo', {
           $element: that.$el,
           $input: that.$input,
           newValue: model.get('value'),
@@ -152,7 +152,7 @@ define([
         this.$el.toggleClass('ufo-changed', state=='changed');
         this.$el.toggleClass('ufo-unchanged', state=='unchanged');
 
-        that.$el.trigger(state+'.ufo', {
+        that.$el.trigger(state+'.el.ufo', {
           $element: that.$el,
           $input: that.$input,
           newValue: model.get('value'),

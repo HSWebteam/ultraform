@@ -68,6 +68,7 @@ define([
       });
 
       this.set({
+        changeState: 'unchanged',
         validationState: 'valid', // whether all elements in the form are valid
         invalidCount: 0 // number of invalid elements in the form
       }, {silent:true});
@@ -124,7 +125,7 @@ define([
 
     // see if there are any invalid elements and act on it
     // this function needs to be called by the elementModels on any validation change
-    updateValidation: function() {
+    updateState: function() {
       var model = this;
       var invalidCount = this.elementCollection.where({validationState:'invalid'}).length;
       var set = {invalidCount: invalidCount};
@@ -135,6 +136,14 @@ define([
         set.validationState = 'pending';
       } else {
         set.validationState = 'valid';
+      }
+
+      var changeCount = this.elementCollection.where({changeState:'changed'}).length;
+
+      if (changeCount > 0) {
+        set.changeState = 'changed';
+      } else {
+        set.changeState = 'unchanged';
       }
 
       // use _.defer here so that the change events for the elementModels can be finished
