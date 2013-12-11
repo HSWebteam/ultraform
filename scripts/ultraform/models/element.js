@@ -12,6 +12,8 @@ define([
 
     initialize: function(attributes, options) {
 
+      var that = this;
+
       // set parents
       this.parentModel = options.parentModel;
 
@@ -62,6 +64,11 @@ define([
       // when validation values change, update the parent model
       this.parentModel.listenTo(this, 'change:validationError', this.parentModel.updateState);
       this.parentModel.listenTo(this, 'change:changeState', this.parentModel.updateState);
+
+      // do a silent validation then the model is ready (has loaded all elements)
+      this.listenTo(this.parentModel, 'ready', function(){
+        that.validate(that.attributes, /*silent*/true);
+      });
 
       // return the created views so we can extend the initialize functionality
       return {
@@ -138,9 +145,14 @@ define([
 
     },
 
-    // keep the validate function in the model small
-    // the real work is done in Backbone.Validate
-    validate: function(attributes, $el) {
+    // validate the element
+    // silent - if true, do not change the input element display,
+    //          which enable the submit button so 'see' which input elements are invalid
+    validate: function(attributes, silent) {
+
+      if (silent == null) {
+        silent = false;
+      }
 
       // in case of an array, make a concatenated string of it
       var serializedValue = this.serialize(attributes.value);
@@ -195,7 +207,7 @@ define([
             model._pendingValidations.push( validationResult );
 
             // update validationState
-            model.set({validationState:'pending', validationError:'pending'});
+            model.set({validationState:'pending', validationError:'pending'}, {silent: silent});
           }
 
         }
@@ -229,8 +241,8 @@ define([
           model._pendingValidations.push( deferred );
 
           // update validation state
-          model.set({validationState:'pending', validationError:'pending'});
-
+          model.set({validationState:'pending', validationError:'pending'}, {silent: silent});
+          model.parentModel.updateState();
         }
       });
 
@@ -257,7 +269,8 @@ define([
         model.set({
           validationState: isValid ? 'valid' : 'invalid',
           validationError: isValid ? 'valid' : firstError
-        });
+        }, {silent: silent});
+        model.parentModel.updateState();
 
       });
 
@@ -266,7 +279,7 @@ define([
     // some validations need initialization
     // for instance the matching rule needs to listen to changes in the matching model
     // this needs to be called after all element models are created
-    initializeValidations: function($el) {
+    initializeValidations: function() {
       var rules = this.getRules();
       var model = this;
 
@@ -274,7 +287,7 @@ define([
       $.each(rules, function(index, rule){
         if (rule.name in model.validationInitializations) {
           // initialize the validation
-          model.validationInitializations[rule.name].call(model, rule.args, $el);
+          model.validationInitializations[rule.name].call(model, rule.args);
         }
       });
 
@@ -282,7 +295,7 @@ define([
 
     // list of rules with initialization functions
     validationInitializations: {
-      matches: function(args, $el) {
+      matches: function(args) {
         var model = this;
 
         // get the model that this element matches with
@@ -291,7 +304,7 @@ define([
         // start listening to changes to matching model to validate this model
         function validateOnModelChange(matchingModel) {
           model.listenTo(matchingModel, 'change', function(){
-            model.validate(model.attributes, $el);
+            model.validate(model.attributes);
           });
         }
 

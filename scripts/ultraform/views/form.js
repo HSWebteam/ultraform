@@ -20,8 +20,11 @@ define([
         this.$el.toggleClass('ufo-changed', state=='changed');
         this.$el.toggleClass('ufo-unchanged', state=='unchanged');
 
-        that.$el.trigger(state+'.form.ufo', {
+        that.$el.trigger('ufo_'+state, {
           $element: that.$el,
+          change: (that.model.get('changeState') == 'changed'),
+          valid: (that.model.get('validationState') == 'valid'),
+          errors: that.model.get('validationErrors')
         });
       });
 
@@ -32,10 +35,19 @@ define([
         this.$el.toggleClass('ufo-valid', state=='valid');
         this.$el.toggleClass('ufo-invalid', state=='invalid');
 
-        that.$el.trigger(state+'.form.ufo', {
+        that.$el.trigger('ufo_'+state, {
           $element: that.$el,
+          change: (that.model.get('changeState') == 'changed'),
+          valid: (that.model.get('validationState') == 'valid'),
+          errors: that.model.get('validationErrors')
         });
       });
+
+      // trigger a jquery ready when the form is ready
+      this.listenTo(this.model, 'ready', function(model, value, options){
+        that.$el.trigger('ufo-ready'); // form and elements are loaded; the firsttime silent validation of all input elements has not yet been done
+      });
+
 		}
 
   });

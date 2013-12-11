@@ -388,7 +388,7 @@ define([
 
     // sync the model with the UI
     updateModel: function() {
-      this.model.setValueAndValidate( this.getValue(), this.$el ); // also include the $el for triggering events
+      this.model.setValueAndValidate( this.getValue() ); // also include the $el for triggering events
     }
 
 

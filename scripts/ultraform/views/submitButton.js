@@ -17,17 +17,44 @@ define([
 		},
 
 		checkState: function() {
-			// button state kan be:
-			// - unchanged-invalid (this is the initial value)
-			// - unchanged-valid (this should be the value after a first validation run (the server should not send us invalid forms))
-			// - changed-invalid
-			// - changed-valid (the button should only in this case be enabled)
+
+			var changeState = this.model.get('changeState');
+			var validationState = this.model.get('validationState');
+			var $el = this.$el;
 
 			// update the button class to reflect the state
-			var state = this.model.get('state');
-			var states = _.map( state.split('-'), function(s){return 'ufo-'+s;} ).join(' ');
-			this.$el.removeClass( 'ufo-valid ufo-invalid ufo-changed ufo-unchanged' );
-			this.$el.addClass( states );
+			$el.removeClass( 'ufo-valid ufo-invalid ufo-changed ufo-unchanged ufo-pending' );
+			$el.addClass( 'ufo-' + changeState );
+			$el.addClass( 'ufo-' + validationState );
+
+			// change button display
+      if (validationState == 'valid' && changeState == 'changed') {
+
+        // changed and valid --> we can use the button
+        originalColor = $el.data('ufoOriginalColor');
+        if (originalColor) {
+          // revert to original text color
+          $el.css('color', $el.data('ufoOriginalColor'));
+        }
+
+      }
+      else
+      {
+        // form is invalid or there are not changes to save --> set button to disabled
+        originalColor = $el.css('color');
+
+        // get new text color
+        var newColor = $el.css('color');
+        // if old and new color are the same, then there is no css to 'fade' the text
+        // we assume normal text is black #000 and we make it gray #DDD
+        if (originalColor == newColor) {
+          if (! $el.data('ufoOriginalColor')) {
+            // remember original color
+            $el.data('ufoOriginalColor', originalColor);
+          }
+          $el.css('color', 'red');
+        }
+      }
 
 
 		}

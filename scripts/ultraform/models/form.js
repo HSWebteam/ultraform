@@ -121,14 +121,22 @@ define([
         parentModel: this
       });
 
+      // trigger ready event
+      this.trigger('ready');
+
     },
 
     // see if there are any invalid elements and act on it
     // this function needs to be called by the elementModels on any validation change
     updateState: function() {
       var model = this;
-      var invalidCount = this.elementCollection.where({validationState:'invalid'}).length;
-      var set = {invalidCount: invalidCount};
+      var invalids = this.elementCollection.where({validationState:'invalid'})
+
+      var invalidCount = invalids.length;
+      var set = {
+        invalidCount: invalidCount,
+        validationErrors: invalids.map(function(invalid){return invalid.get('validationError');})
+      };
 
       if (invalidCount > 0) {
         set.validationState = 'invalid';

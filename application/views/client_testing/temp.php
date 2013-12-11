@@ -484,7 +484,9 @@ The following errors were encountered in the form:<br>
 	<!-- For testing -->
 	<script>
 
-
+$('form').on('invalid', function(){
+	console.log("THIS IS INVLAID");
+});
 
 	</script>
 
