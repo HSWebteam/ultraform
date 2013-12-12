@@ -78,9 +78,9 @@ define([
     },
 
     // if input is an array, concatenate it with , to create a string to compare against
-	  serialize: function(input) {
-	    return _.isArray(input) ? input.sort().join(',') : input;
-	  },
+    serialize: function(input) {
+      return _.isArray(input) ? input.sort().join(',') : input;
+    },
 
     // first set the value, then validate
     // (this differs from set('value',value,{validate:true})) in that

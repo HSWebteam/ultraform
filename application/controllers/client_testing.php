@@ -236,6 +236,11 @@ class Client_Testing extends CI_Controller {
 				'settings' => array(
 					'validate_on' => 'keyup',
 					'remove_empty' => FALSE,
+
+					'disable_submit' => TRUE, // disable the submit button when there are no unsaved changes or when there are validation errors
+        			'submit_set_title' => TRUE, // show a basic tooltip on the submit button indicating why you cannot save
+        			'submit_title_text' => 'You cannot save because', // start text for simple tooltip
+        			'submit_title_nochange' => 'there are no changes to save' // reason to display when there are no changes to save
 				)
 			);
 

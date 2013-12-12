@@ -8,6 +8,8 @@ define([
 
 		initialize: function(){
 
+      var that = this;
+
 			// check state initially
 			this.checkState.call(this);
 
@@ -19,13 +21,18 @@ define([
 		checkState: function() {
 
 			var changeState = this.model.get('changeState');
-			var validationState = this.model.get('validationState');
+      var validationState = this.model.get('validationState');
+			var validationErrors = this.model.get('validationErrors');
 			var $el = this.$el;
+      var settings = this.model.parentModel.get('settings');
 
 			// update the button class to reflect the state
 			$el.removeClass( 'ufo-valid ufo-invalid ufo-changed ufo-unchanged ufo-pending' );
 			$el.addClass( 'ufo-' + changeState );
 			$el.addClass( 'ufo-' + validationState );
+
+      // if we do not disable submit -> end here
+      if (! settings.disable_submit) return;
 
 			// change button display
       if (validationState == 'valid' && changeState == 'changed') {
@@ -36,6 +43,10 @@ define([
           // revert to original text color
           $el.css('color', $el.data('ufoOriginalColor'));
         }
+
+        // remove title
+        if (settings.submit_set_title)
+        this.$el.prop('title', '');
 
       }
       else
@@ -53,6 +64,22 @@ define([
             $el.data('ufoOriginalColor', originalColor);
           }
           $el.css('color', 'red');
+        }
+
+        // update current tooltip
+        if (settings.submit_set_title) {
+
+          var title = settings.submit_title_text;
+
+          if (changeState == 'unchanged') {
+            title += '\n - ' + settings.submit_title_nochange;
+          } else {
+            _.forEach(validationErrors, function(error){
+              title += '\n - ' + error;
+            });
+          }
+
+          this.$el.prop('title', title);
         }
       }
 

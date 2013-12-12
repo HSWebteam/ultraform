@@ -38,7 +38,7 @@ define([
               parentModel: model,
               el: element,
               state: 'unchanged-invalid'
-            }
+            };
           }
         )
 
@@ -73,10 +73,6 @@ define([
         invalidCount: 0 // number of invalid elements in the form
       }, {silent:true});
 
-      this.on('change', function(model, options){
-        console.log('model changed: ', model);
-      });
-
       // return created views so we can extend functionality in the afterExtend function
       return {
         view: view,
@@ -86,7 +82,12 @@ define([
 
     defaults: {
       settings: {
-        validate_on: 'blur'
+        validate_on: 'blur', // validate inputs on the 'validate_on' event
+        remove_empty: false, // remove empty options from required select inputs when a non-empty option is chosen
+        disable_submit: true, // disable the submit button when there are no unsaved changes or when there are validation errors
+        submit_set_title: true, // show a basic tooltip on the submit button indicating why you cannot save
+        submit_title_text: 'You cannot save because', // start text for simple tooltip
+        submit_title_nochange: 'there are no changes to save' // reason to display when there are no changes to save
       }
     },
 
@@ -130,7 +131,7 @@ define([
     // this function needs to be called by the elementModels on any validation change
     updateState: function() {
       var model = this;
-      var invalids = this.elementCollection.where({validationState:'invalid'})
+      var invalids = this.elementCollection.where({validationState:'invalid'});
 
       var invalidCount = invalids.length;
       var set = {

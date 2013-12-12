@@ -30,7 +30,6 @@ define([
 
       // update state with parent state
       this.listenTo(this.parentModel, 'change', function(model, value, options){
-        console.log('change !!! ' + model.get('changeState') + ' ' + model.get('validationState'), model.get('validationErrors'));
         that.set({
           changeState: model.get('changeState'),
           validationState: model.get('validationState'),
