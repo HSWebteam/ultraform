@@ -114,8 +114,8 @@ define([
         var ruleName = rule.split(START_ARGS_AT)[0];
 
         // find start and end of arguments
-        var argsStart = rule.indexOf(START_ARGS_AT);
-        var argsEnd = rule.lastIndexOf(END_ARGS_AT);
+        var argsStart = _.indexOf(rule, START_ARGS_AT);
+        var argsEnd = _.lastIndexOf(rule, END_ARGS_AT);
         // string containing the arguments
         var ruleArgs = (argsStart==-1) ? [] : rule.slice(argsStart+1, argsEnd).split(SPLIT_ARGS_AT);
 

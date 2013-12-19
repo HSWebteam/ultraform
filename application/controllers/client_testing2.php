@@ -201,8 +201,9 @@ class Client_Testing2 extends CI_Controller {
 					array(
 						'name' => 'sushitype',
 						'label' => 'Sushi type',
+						'placeholder' => 'Choose a sushi type!',
 						'value' => '',
-						'rules' => 'ohlala|ohla|required', // not required, so empty option should allways be available
+						'rules' => 'ohlala|ohla|required', // if required, empty option should hide, depending on the remove_empty option
 						'options' => array(
 							'makizushi' => 'Makizushi',
 							'hosomaki' => 'Hosomaki',
@@ -233,8 +234,8 @@ class Client_Testing2 extends CI_Controller {
 					'valid_emails' => '%s veld moet geldige emailadressen bevatten, gescheiden door komma\'s'
 				),
 				'settings' => array(
-					'validateOn' => 'keyup',
-					'removeEmpty' => TRUE,
+					'validate_on' => 'keyup',
+					'remove_empty' => FALSE,
 				)
 			);
 

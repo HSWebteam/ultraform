@@ -475,7 +475,7 @@ The following errors were encountered in the form:<br>
 	<div id="qunit-fixture"></div>
 
 	<!-- load main.js via requireJS -->
-	<script src="scripts/jquery/jquery.js"></script>
+	<script src="scripts/jquery/jquery-1.8.3.min.js"></script>
 	<!--<script data-main="scripts/ultraform/ultraform.js" src="scripts/require/require.js"></script>-->
 	<script src="scripts/ultraform/ultraform-min.js"></script>
 
