@@ -16,6 +16,13 @@ define([
 			// update DOM to reflect the submit state
 			this.listenTo(this.model, 'change', this.checkState);
 
+      // discard button action when button class is ufo-disabled
+      this.$el.click(function(e){
+        if (that.$el.hasClass('ufo-disabled')) {
+          e.preventDefault();
+        }
+      });
+
 		},
 
 		checkState: function() {
@@ -26,8 +33,12 @@ define([
 			var $el = this.$el;
       var settings = this.model.parentModel.get('settings');
 
+      // get original color so we can after setting classes if any color has changed
+      // in which case we do not have to change the color with Javascript
+      var originalColor = $el.css('color');
+
 			// update the button class to reflect the state
-			$el.removeClass( 'ufo-valid ufo-invalid ufo-changed ufo-unchanged ufo-pending' );
+			$el.removeClass( 'ufo-valid ufo-invalid ufo-changed ufo-unchanged ufo-pending ufo-disabled disabled' );
 			$el.addClass( 'ufo-' + changeState );
 			$el.addClass( 'ufo-' + validationState );
 
@@ -36,6 +47,8 @@ define([
 
 			// change button display
       if (validationState == 'valid' && changeState == 'changed') {
+
+        this.$el.removeClass(settings.use_disabled_class ? 'ufo-disabled disabled' : 'ufo-disabled');
 
         // changed and valid --> we can use the button
         originalColor = $el.data('ufoOriginalColor');
@@ -52,8 +65,7 @@ define([
       else
       {
         // form is invalid or there are not changes to save --> set button to disabled
-        originalColor = $el.css('color');
-
+        this.$el.addClass(settings.use_disabled_class ? 'ufo-disabled disabled' : 'ufo-disabled');
         // get new text color
         var newColor = $el.css('color');
         // if old and new color are the same, then there is no css to 'fade' the text

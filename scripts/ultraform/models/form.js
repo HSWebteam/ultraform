@@ -85,6 +85,7 @@ define([
         validate_on: 'blur', // validate inputs on the 'validate_on' event
         remove_empty: false, // remove empty options from required select inputs when a non-empty option is chosen
         disable_submit: true, // disable the submit button when there are no unsaved changes or when there are validation errors
+        use_disabled_class: false, // use the disabled class on a button (forces twitter bootstrap to add the disabled property, disabling hover events and titles)
         submit_set_title: true, // show a basic tooltip on the submit button indicating why you cannot save
         submit_title_text: 'You cannot save because', // start text for simple tooltip
         submit_title_nochange: 'there are no changes to save' // reason to display when there are no changes to save

@@ -173,6 +173,11 @@ define([
         this.events['change' + elementSelector] = 'updateModel';
         this.events[validateOn + elementSelector] = 'updateModel';
 
+        if (validateOn !== 'keyup') {
+          // we do a silent validation on keyup if we do no normal validation
+          this.events['keyup' + elementSelector] = 'updateModelSilent';
+        }
+
         // activate the event handlers
         this.delegateEvents();
       }
@@ -198,6 +203,11 @@ define([
         this.events = {};
         this.events['keypress' + elementSelector] = 'handleKey';
         this.events[validateOn + elementSelector] = 'updateModel';
+
+        if (validateOn !== 'keyup') {
+          // we do a silent validation on keyup if we do no normal validation
+          this.events['keyup' + elementSelector] = 'updateModelSilent';
+        }
 
         // activate the event handlers
         this.delegateEvents();
@@ -389,6 +399,11 @@ define([
     // sync the model with the UI
     updateModel: function() {
       this.model.setValueAndValidate( this.getValue() ); // also include the $el for triggering events
+    },
+
+    // sync the model with the UI but do not show valdation next to inputs
+    updateModelSilent: function() {
+      this.model.setValueAndValidate( this.getValue(), true ); // also include the $el for triggering events
     }
 
 

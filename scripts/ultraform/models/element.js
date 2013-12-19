@@ -85,7 +85,8 @@ define([
     // first set the value, then validate
     // (this differs from set('value',value,{validate:true})) in that
     // the an invalid validation will not prevent setting the value
-    setValueAndValidate: function(value) {
+    // if silent==true, then do not display the error message next to the inputs
+    setValueAndValidate: function(value, silent) {
 
       // set the value, regardless of the validation results
       this.set({
@@ -95,7 +96,7 @@ define([
       });
 
       // do the validation
-      this.validate(this.attributes);
+      this.validate(this.attributes, silent);
 
     },
 
