@@ -26,7 +26,7 @@ define([
       this.elementCollection = new ElementCollection();
 
       // find the commit button(s) and add them to a collection
-      var submitButtonElements = view.$el.find('input[type="submit"]');
+      var submitButtonElements = view.$el.find('input[type="submit"], button[type="submit"]');
 
       // create the collection of submit buttons (usually one but we want to be prepared for a form with more than one button)
       this.submitButtonCollection = new SubmitButtonCollection(
