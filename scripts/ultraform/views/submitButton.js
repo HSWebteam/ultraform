@@ -6,15 +6,23 @@ define([
 
 	var SubmitButtonView = Backbone.View.extend({
 
+    constructor: function(){
+      Backbone.View.apply( this, arguments );
+      // disable button to prevent clicks before config is loaded
+      this.$el.addClass('ufo-disabled disabled');
+    },
+
 		initialize: function(){
 
       var that = this;
 
-			// check state initially
-			this.checkState.call(this);
-
 			// update DOM to reflect the submit state
-			this.listenTo(this.model, 'change', this.checkState);
+      this.listenToOnce(this.model.parentModel, 'ready', function(){
+        // check state initially
+        that.checkState.call(that);
+        // start listening for model change
+        that.listenTo(that.model, 'change', that.checkState);
+      });
 
       // discard button action when button class is ufo-disabled
       this.$el.click(function(e){
@@ -24,6 +32,7 @@ define([
       });
 
 		},
+
 
 		checkState: function() {
 

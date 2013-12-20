@@ -28,13 +28,13 @@ $config['template_dir'] = '/ultraform_templates/';
 */
 
 // Client starts validating on
-$config['validate_on'] = 'keyup'; // Default: keyup
+$config['validate_on'] = 'change'; // Default: keyup
 
 // Removes the empty select field after a option is chosen in a dropdown element
 $config['remove_empty'] = FALSE; // Default: FALSE
 
 // Will disable submitting until a change in the form is detected
-$config['disable_submit'] = FALSE; // Default: FALSE
+$config['disable_submit'] = TRUE; // Default: TRUE
 
 // Use the 'disabled' class on the submit button if TRUE.
 // This causes Twitter Bootstrap to add the 'disabled' property to the button
@@ -44,14 +44,14 @@ $config['use_disabled_class'] = FALSE; // Default: FALSE
 
 // Update the title of the submit button to reflect the reason why the submit
 // button is disabled
-$config['submit_set_title'] = FALSE; // Defualt: TRUE
+$config['submit_set_title'] = TRUE; // Defualt: TRUE
 
 // first line to appear in the submit button title
-$config['submit_title_text'] = 'You cannot save becausex';
+$config['submit_title_text'] = 'You cannot save because';
 
 // second line to appear in the submit button title in case there are no
 // changes to save
-$config['submit_title_nochange'] = 'There are no changes to savex';
+$config['submit_title_nochange'] = 'There are no changes to save';
 
 
 /*

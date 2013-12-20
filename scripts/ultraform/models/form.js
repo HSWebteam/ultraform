@@ -110,6 +110,7 @@ define([
         settings: _.extend(this.get('settings'), response.config)
       });
 
+
       // submitbutton names
       var submitButtonNames = this.submitButtonCollection.map( function(model){
         return model.get('el').name;
