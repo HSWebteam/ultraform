@@ -104,9 +104,10 @@ define([
 
       this.set('messages', response.messages || {});
 
+
       // get the settings for this form
       this.set({
-        settings: _.extend(this.get('settings'), response.settings)
+        settings: _.extend(this.get('settings'), response.config)
       });
 
       // submitbutton names
