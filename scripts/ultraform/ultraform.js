@@ -4,12 +4,8 @@ require.config({
   map: {
     // '*' means all modules will get 'jquery-private'
     // for their 'jquery' dependency.
-    '*': { 'jquery': 'jquery/jquery-private' },
+    '*': { 'jquery': 'jquery/jquery-private' }
 
-    // 'jquery-private' wants the real jQuery module
-    // though. If this line was not here, there would
-    // be an unresolvable cyclic dependency.
-    'jquery-private': { 'jquery': 'jquery' }
   },
   paths: {
 //    jquery: 'jquery/jquery',

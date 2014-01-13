@@ -11,6 +11,9 @@ define([
   var ElementModel = Backbone.Model.extend({
 
     initialize: function(attributes, options) {
+
+      var that = this;
+
       // set parents
       this.parentModel = options.parentModel;
 
@@ -18,7 +21,9 @@ define([
       this.set({
         id: this.parentModel.get('domid') + '-' + attributes.name,
         validationState: 'unknown', // state after the last validation, can be valid, invalid or pending
-        validationError: 'unknown' // last validation error message or 'valid' or 'pending'
+        validationError: 'unknown', // last validation error message or 'valid' or 'pending'
+        changeState: 'unchanged',
+        oldValue: this.get('value')
       }, {silent: true});
 
       var domSelector = '#' + this.id;
@@ -54,10 +59,16 @@ define([
       }
 
       // initialize validations
-      this.initializeValidations.call(this);
+      this.initializeValidations.call(this, $domElement);
 
       // when validation values change, update the parent model
-      this.parentModel.listenTo(this, 'change:validationError', this.parentModel.updateValidation);
+      this.parentModel.listenTo(this, 'change:validationError', this.parentModel.updateState);
+      this.parentModel.listenTo(this, 'change:changeState', this.parentModel.updateState);
+
+      // do a silent validation then the model is ready (has loaded all elements)
+      this.listenTo(this.parentModel, 'ready', function(){
+        that.validate(that.attributes, /*silent*/true);
+      });
 
       // return the created views so we can extend the initialize functionality
       return {
@@ -67,20 +78,26 @@ define([
     },
 
     // if input is an array, concatenate it with , to create a string to compare against
-	  serialize: function(input) {
-	    return _.isArray(input) ? input.sort().join(',') : input;
-	  },
+    serialize: function(input) {
+      return _.isArray(input) ? input.sort().join(',') : input;
+    },
 
     // first set the value, then validate
     // (this differs from set('value',value,{validate:true})) in that
     // the an invalid validation will not prevent setting the value
-    setValueAndValidate: function(value) {
+    // if silent==true, then do not display the error message next to the inputs
+    setValueAndValidate: function(value, silent) {
 
       // set the value, regardless of the validation results
-      this.set('value', value);
+      this.set({
+        value: value,
+        oldValue: this.get('value'),
+        changeState: (this.get('changeState')=='changed' || value != this.get('value')) ? 'changed' : 'unchanged'
+      });
 
       // do the validation
-      this.validate(this.attributes);
+      this.validate(this.attributes, silent);
+
     },
 
     // pending validations
@@ -114,8 +131,8 @@ define([
         var ruleName = rule.split(START_ARGS_AT)[0];
 
         // find start and end of arguments
-        var argsStart = rule.indexOf(START_ARGS_AT);
-        var argsEnd = rule.lastIndexOf(END_ARGS_AT);
+        var argsStart = _.indexOf(rule, START_ARGS_AT);
+        var argsEnd = _.lastIndexOf(rule, END_ARGS_AT);
         // string containing the arguments
         var ruleArgs = (argsStart==-1) ? [] : rule.slice(argsStart+1, argsEnd).split(SPLIT_ARGS_AT);
 
@@ -129,9 +146,14 @@ define([
 
     },
 
-    // keep the validate function in the model small
-    // the real work is done in Backbone.Validate
-    validate: function(attributes) {
+    // validate the element
+    // silent - if true, do not change the input element display,
+    //          which enable the submit button so 'see' which input elements are invalid
+    validate: function(attributes, silent) {
+
+      if (silent == null) {
+        silent = false;
+      }
 
       // in case of an array, make a concatenated string of it
       var serializedValue = this.serialize(attributes.value);
@@ -186,7 +208,7 @@ define([
             model._pendingValidations.push( validationResult );
 
             // update validationState
-            model.set({validationState:'pending', validationError:'pending'});
+            model.set({validationState:'pending', validationError:'pending'}, {silent: silent});
           }
 
         }
@@ -220,7 +242,8 @@ define([
           model._pendingValidations.push( deferred );
 
           // update validation state
-          model.set({validationState:'pending', validationError:'pending'});
+          model.set({validationState:'pending', validationError:'pending'}, {silent: silent});
+          model.parentModel.updateState();
         }
       });
 
@@ -247,7 +270,8 @@ define([
         model.set({
           validationState: isValid ? 'valid' : 'invalid',
           validationError: isValid ? 'valid' : firstError
-        });
+        }, {silent: silent});
+        model.parentModel.updateState();
 
       });
 

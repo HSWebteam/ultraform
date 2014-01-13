@@ -201,8 +201,9 @@ class Client_Testing2 extends CI_Controller {
 					array(
 						'name' => 'sushitype',
 						'label' => 'Sushi type',
+						'placeholder' => 'Choose a sushi type!',
 						'value' => '',
-						'rules' => 'ohlala|ohla|required', // not required, so empty option should allways be available
+						'rules' => 'ohlala|ohla|required', // if required, empty option should hide, depending on the remove_empty option
 						'options' => array(
 							'makizushi' => 'Makizushi',
 							'hosomaki' => 'Hosomaki',
@@ -232,9 +233,15 @@ class Client_Testing2 extends CI_Controller {
 					'valid_email' => 'Het %s veld moet een geldig email adres bevatten',
 					'valid_emails' => '%s veld moet geldige emailadressen bevatten, gescheiden door komma\'s'
 				),
-				'settings' => array(
-					'validateOn' => 'keyup',
-					'removeEmpty' => TRUE,
+				'config' => array(
+					'validate_on' => 'keyup',
+					'remove_empty' => FALSE,
+
+					'disable_submit' => TRUE, // disable the submit button when there are no unsaved changes or when there are validation errors
+					'use_disabled_class' => TRUE, // add disabled class wehn disabling button
+        			'submit_set_title' => TRUE, // show a basic tooltip on the submit button indicating why you cannot save
+        			'submit_title_text' => 'You cannot save because q', // start text for simple tooltip
+        			'submit_title_nochange' => 'there are no changes to save q' // reason to display when there are no changes to save
 				)
 			);
 
