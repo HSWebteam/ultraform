@@ -13,11 +13,11 @@ function create_menu(basepath)
 
 		'<h3>Basic Info</h3>' +
 		'<ul>' +
-			'<li><a href="'+base+'general/requirements.html">Server Requirements</a></li>' +
+			'<li><a href="'+base+'requirements.html">Server Requirements</a></li>' +
 			'<li><a href="'+base+'license.html">License Agreement</a></li>' +
 			'<li><a href="'+base+'changelog.html">Change Log</a></li>' +
 			'<li><a href="'+base+'roadmap.html">Roadmap</a></li>' +
-			'<li><a href="'+base+'general/credits.html">Credits</a></li>' +
+			'<li><a href="'+base+'credits.html">Credits</a></li>' +
 		'</ul>' +
 	
 		'</td><td class="td_sep" valign="top">' +
@@ -36,19 +36,20 @@ function create_menu(basepath)
 
 		'<h3>Important Functions</h3>' +
 		'<ul>' +
-			'<li><a href="'+base+'libraries/constructor.html">Constructor</a></li>' +
-			'<li><a href="'+base+'libraries/add.html">Add</a></li>' +		
-			'<li><a href="'+base+'libraries/set.html">Set options/values/config</a></li>' +
-			'<li><a href="'+base+'libraries/render.html">Render</a></li>' +
-			'<li><a href="'+base+'libraries/validate.html">Validate</a></li>' +
-			'<li><a href="'+base+'libraries/export.html">Export</a></li>' +
+			'<li><a href="'+base+'functions/constructor.html">Constructor</a></li>' +
+			'<li><a href="'+base+'functions/add.html">Add</a></li>' +		
+			'<li><a href="'+base+'functions/set.html">Set options/values/config</a></li>' +
+			'<li><a href="'+base+'functions/render.html">Render</a></li>' +
+			'<li><a href="'+base+'functions/validate.html">Validate</a></li>' +
+			'<li><a href="'+base+'functions/export.html">Export</a></li>' +
 		'</ul>' +
 
 		'</td><td class="td_sep" valign="top">' +
 
 		'<h3>Other Stuff</h3>' +
 		'<ul>' +
-			'<li><a href="'+base+'installation/troubleshooting.html">FAQ / Troubleshooting</a></li>' +
+			'<li><a href="'+base+'other/faq.html">FAQ / Troubleshooting</a></li>' +
+			'<li><a href="./other/tips.html">Tips & Tricks</a></li>' +
 		'</ul>' +
 
 		'</td></tr></table>');
