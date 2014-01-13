@@ -113,7 +113,53 @@ define([
       }
 
       // *** ATTACH TO SOME MODEL EVENTS ***
-      this.listenTo(this.model, 'change:validationError', this.onValidation);
+      // *** trigger some jQuery events on change nd validation
+      this.listenTo(this.model, 'change:value', function(model, value, options){
+
+        that.$el.trigger('changed.el.ufo', {
+          $element: that.$el,
+          $input: that.$input,
+          newValue: value,
+          oldValue: model.get('oldValue'),
+          label: model.get('label')
+        });
+
+      });
+
+      this.listenTo(this.model, 'change:validationError', function(model, value, options){
+
+        var state = model.get('validationState');
+
+        this.$el.toggleClass('error ufo-invalid', state=='invalid');
+        this.$el.toggleClass('success ufo-valid', state=='valid');
+        this.$el.toggleClass('ufo-pending', state=='pending');
+
+        that.$el.trigger(state+'.el.ufo', {
+          $element: that.$el,
+          $input: that.$input,
+          newValue: model.get('value'),
+          oldValue: model.get('oldValue'),
+          error: (state == 'valid' ? '' : value),
+          label: model.get('label')
+        });
+
+      });
+
+      this.listenTo(this.model, 'change:changeState', function(model, value, options){
+
+        var state = model.get('changeState');
+
+        this.$el.toggleClass('ufo-changed', state=='changed');
+        this.$el.toggleClass('ufo-unchanged', state=='unchanged');
+
+        that.$el.trigger(state+'.el.ufo', {
+          $element: that.$el,
+          $input: that.$input,
+          newValue: model.get('value'),
+          oldValue: model.get('oldValue'),
+          label: model.get('label')
+        });
+      });
 
       // Set events depending on validateOn setting of the form
       var validateOn = this.model.parentModel.get('settings').validate_on; // blur, change
@@ -126,6 +172,11 @@ define([
         this.events = {};
         this.events['change' + elementSelector] = 'updateModel';
         this.events[validateOn + elementSelector] = 'updateModel';
+
+        if (validateOn !== 'keyup') {
+          // we do a silent validation on keyup if we do no normal validation
+          this.events['keyup' + elementSelector] = 'updateModelSilent';
+        }
 
         // activate the event handlers
         this.delegateEvents();
@@ -152,6 +203,11 @@ define([
         this.events = {};
         this.events['keypress' + elementSelector] = 'handleKey';
         this.events[validateOn + elementSelector] = 'updateModel';
+
+        if (validateOn !== 'keyup') {
+          // we do a silent validation on keyup if we do no normal validation
+          this.events['keyup' + elementSelector] = 'updateModelSilent';
+        }
 
         // activate the event handlers
         this.delegateEvents();
@@ -342,36 +398,14 @@ define([
 
     // sync the model with the UI
     updateModel: function() {
-      this.model.setValueAndValidate( this.getValue() );
+      this.model.setValueAndValidate( this.getValue() ); // also include the $el for triggering events
     },
 
-    // to be run when validation was performed
-    onValidation: function(model) {
-      if (model.get('validationState')=='valid') {
-        this.onValid(model);
-      }
-      else if (model.get('validationState')=='invalid') {
-        this.onInvalid(model);
-      }
-      else if (model.get('validationState')=='pending') {
-        this.onValidationPending(model);
-      }
-    },
-
-    // hide the validationerror from the DOM
-    onValid: function(model) {
-      this.$el.removeClass('error').addClass('success');
-    },
-
-    // show the validationerror in the DOM
-    onInvalid: function(model) {
-      this.$el.removeClass('success').addClass('error');
-    },
-
-    onValidationPending: function(model) {
-      this.$el.removeClass('success').removeClass('error');
-      // actions to perform while waiting for validation
+    // sync the model with the UI but do not show valdation next to inputs
+    updateModelSilent: function() {
+      this.model.setValueAndValidate( this.getValue(), true ); // also include the $el for triggering events
     }
+
 
   });
 

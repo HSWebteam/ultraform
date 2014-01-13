@@ -233,9 +233,15 @@ class Client_Testing extends CI_Controller {
 					'valid_email' => 'Het %s veld moet een geldig email adres bevatten',
 					'valid_emails' => '%s veld moet geldige emailadressen bevatten, gescheiden door komma\'s'
 				),
-				'settings' => array(
+				'config' => array(
 					'validate_on' => 'keyup',
 					'remove_empty' => FALSE,
+
+					'disable_submit' => TRUE, // disable the submit button when there are no unsaved changes or when there are validation errors
+					'use_disabled_class' => FALSE, // do not add "disabled" class when disabling button
+        			'submit_set_title' => TRUE, // show a basic tooltip on the submit button indicating why you cannot save
+        			'submit_title_text' => 'You cannot save because xy', // start text for simple tooltip
+        			'submit_title_nochange' => 'there are no changes to save xy' // reason to display when there are no changes to save
 				)
 			);
 

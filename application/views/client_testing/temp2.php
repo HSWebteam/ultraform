@@ -466,7 +466,7 @@ The following errors were encountered in the form:<br>
 		<span class="red">(and now choose your favourite kind of sushi!)</span>
 	</div>
 	<div class="ufogroup">
-		<input type="submit" name="submit_2" value="Submit" />
+		<input type="submit" id="ufo-forms-33-submit_2" name="submit_2" value="Submit" />
 		<input type="reset" name="reset_2" value="Reset" />
 	</div>
 </form>
