@@ -55,20 +55,8 @@ Installation Instructions
 <!-- START CONTENT -->
 <div id="content">
 
-<h1>Installation Instructions</h1>
-<p>Installing Ultraform is really quite easy. Execute the following steps:
-	<ol>
-		<li>Download the latest build from the <a href="https://github.com/HSWebteam/ultraform">repo</a>.</li>
-		<li>Open the <var>application/config/ultraform.php</var> file with a text editor and set your <a href="configuration.html">preferred configuration</a>.</li>
-		<li>Put the following files in your application:<ul>
-			<li><var>application/config/ultraform.php</var></li>
-			<li><var>application/libraries/Ultraform.php</var></li>
-			<li><var>application/views/ultraform_templates/*</var> (all the files in the directory)</li>
-			<li><var>{javascript dir}/ultraform-min.js</var></li>
-		</ul></li>
-		<li>Create forms directory (default: application/forms)</li>
-		<li><a href="http://getbootstrap.com/getting-started/">Install Bootstrap 3.x</a> (we have included a version in the repo) or your own prefered layout framework.</li>
-	</ol>
+<h1>Client Communication</h1>
+<p>TODO</p>
 </div>
 <!-- END CONTENT -->
 
