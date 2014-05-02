@@ -59,7 +59,12 @@ define([
           "ufo-form" : initoptions.name,
           "ufo-id" : initoptions.id
         },
-        success: function(data){
+        success: function(data, status, xhr){
+          var contentType = xhr.getResponseHeader("content-type") || "";
+          if (contentType.indexOf('json') == -1) {
+            console.error('Ultraform: the response Content-Type was "'+contentType+'" but should be "application/json"');
+          }
+
           model.parse(data);
         },
         error: function() {
