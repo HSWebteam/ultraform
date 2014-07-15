@@ -59,13 +59,6 @@ define([
 
         this.$el.removeClass(settings.use_disabled_class ? 'ufo-disabled disabled' : 'ufo-disabled');
 
-        // changed and valid --> we can use the button
-        originalColor = $el.data('ufoOriginalColor');
-        if (originalColor) {
-          // revert to original text color
-          $el.css('color', $el.data('ufoOriginalColor'));
-        }
-
         // remove title
         if (settings.submit_set_title)
         this.$el.prop('title', '');
@@ -75,17 +68,6 @@ define([
       {
         // form is invalid or there are not changes to save --> set button to disabled
         this.$el.addClass(settings.use_disabled_class ? 'ufo-disabled disabled' : 'ufo-disabled');
-        // get new text color
-        var newColor = $el.css('color');
-        // if old and new color are the same, then there is no css to 'fade' the text
-        // we assume normal text is black #000 and we make it gray #DDD
-        if (originalColor == newColor) {
-          if (! $el.data('ufoOriginalColor')) {
-            // remember original color
-            $el.data('ufoOriginalColor', originalColor);
-          }
-          $el.css('color', 'red');
-        }
 
         // update current tooltip
         if (settings.submit_set_title) {
