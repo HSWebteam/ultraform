@@ -54,6 +54,11 @@ $config['submit_title_text'] = 'You cannot save because';
 $config['submit_title_nochange'] = 'There are no changes to save';
 
 
+// if set to true, do not check whether the form has been changed (allow saving even if nothing has changed)
+// this is for the client, what actually happens is that upon loading the form starts in changed state
+$config['allow_save_on_nochange'] = TRUE;
+
+
 /*
 | -------------------------------------------------------------------------
 | END EDITABLE CONFIG. DO NOT EDIT BELOW THIS LINE.
@@ -61,7 +66,7 @@ $config['submit_title_nochange'] = 'There are no changes to save';
 */
 
 // Array of exportable config fields
-$config['export_array'] = array('validate_on', 'remove_empty', 'disable_submit', 'use_disabled_class', 'submit_set_title', 'submit_title_text', 'submit_title_nochange');
+$config['export_array'] = array('validate_on', 'remove_empty', 'disable_submit', 'use_disabled_class', 'submit_set_title', 'submit_title_text', 'submit_title_nochange', 'allow_save_on_nochange');
 
 /* End of file ultraform.php */
 /* Location: ./application/config/ultraform.php */

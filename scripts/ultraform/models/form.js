@@ -98,7 +98,8 @@ define([
         use_disabled_class: false, // use the disabled class on a button (forces twitter bootstrap to add the disabled property, disabling hover events and titles)
         submit_set_title: true, // show a basic tooltip on the submit button indicating why you cannot save
         submit_title_text: 'You cannot save because', // start text for simple tooltip
-        submit_title_nochange: 'there are no changes to save' // reason to display when there are no changes to save
+        submit_title_nochange: 'there are no changes to save', // reason to display when there are no changes to save
+        allow_save_on_nochange: false // start with not allowing saving, probably until we get the config from the server
       }
     },
 
@@ -109,17 +110,19 @@ define([
     // make submodels for every element in the returned object,
     // return the new attributes property for the model
     parse: function(response) {
-
       var formModel = this;
 
       this.set('messages', response.messages || {});
-
 
       // get the settings for this form
       this.set({
         settings: _.extend(this.get('settings'), response.config)
       });
 
+      // if allow_save_on_nochange is true, then set changestate to changed so we can save
+      if (this.get('settings').allow_save_on_nochange) {
+        this.set({changeState: 'changed'});
+      }
 
       // submitbutton names
       var submitButtonNames = this.submitButtonCollection.map( function(model){
@@ -162,7 +165,7 @@ define([
 
       var changeCount = this.elementCollection.where({changeState:'changed'}).length;
 
-      if (changeCount > 0) {
+      if (changeCount > 0 || model.get('settings').allow_save_on_nochange) {
         set.changeState = 'changed';
       } else {
         set.changeState = 'unchanged';

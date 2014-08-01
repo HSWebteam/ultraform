@@ -240,8 +240,9 @@ class Client_Testing extends CI_Controller {
 					'disable_submit' => TRUE, // disable the submit button when there are no unsaved changes or when there are validation errors
 					'use_disabled_class' => FALSE, // do not add "disabled" class when disabling button
         			'submit_set_title' => TRUE, // show a basic tooltip on the submit button indicating why you cannot save
-        			'submit_title_text' => 'You cannot save because xy', // start text for simple tooltip
-        			'submit_title_nochange' => 'there are no changes to save xy' // reason to display when there are no changes to save
+        			'submit_title_text' => 'You cannot save because xyz', // start text for simple tooltip
+        			'submit_title_nochange' => 'there are no changes to save xyz', // reason to display when there are no changes to save
+        			'allow_save_on_nochange' => TRUE
 				)
 			);
 
