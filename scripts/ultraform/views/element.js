@@ -126,7 +126,7 @@ define([
 
       });
 
-      this.listenTo(this.model, 'change:validationError', function(model, value, options){
+      this.listenTo(this.model, 'change:validationError change:validationSilency', function(model, value, options){
 
         var state = model.get('validationState');
 

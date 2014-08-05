@@ -15,6 +15,10 @@ define([
 
       // listen to model validation changes
       this.listenTo(this.model, 'change:validationError', this.onValidation);
+      // in the case where the same value is first silently and then non-silently updated
+      // whe validationError stays the same but we still need to update the elementError
+      // for that case the validationSilency needs to be checked
+      this.listenTo(this.model, 'change:validationSilency', this.onValidation);
     },
 
     // to be run when validation was performed

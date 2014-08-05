@@ -67,6 +67,7 @@
 		"sauce": {
 			"name": "sauce",
 			"type": "checkgroup",
+            "rules": "required",
 			"options": [
 				"bechamel",
 				"creme",
