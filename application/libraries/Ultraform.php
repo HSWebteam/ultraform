@@ -231,6 +231,8 @@ class Ultraform {
 	 *
 	 * @param string $element_name name
 	 * @param array $value value
+	 * 
+	 * @deprecated 2014-08-05 Replaced by set_element_property()
 	 */
 	public function set_value($element_name, $value)
 	{
@@ -257,6 +259,38 @@ class Ultraform {
 		}
 	}
 
+	/**
+	 * Sets the value of a element on runtime
+	 *
+	 * @param string $element_name name
+	 * @param array $value value
+	 */
+	public function set_element_property($element_name, $property, $value)
+	{
+		// See if the element exists
+		if(array_key_exists($element_name, $this->elements))
+		{
+			// If this is a checkgroup then we use a different assignment method
+			if(is_array($value))
+			{
+				// These are the values for
+				$this->elements[$element_name]->set_checkgroup_values($value);
+			}
+			else
+			{
+				// Set property of element object
+				$this->elements[$element_name]->$property = $value;
+			}
+	
+			return TRUE;
+		}
+		else
+		{
+			// Return error if the element does not exist
+			return 'ERROR: No element with that name';
+		}
+	}	
+	
 	/**
 	 * Sets the options of a element on runtime
 	 *
