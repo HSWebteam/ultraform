@@ -588,7 +588,7 @@ class Element {
 	public $options = array();
 	public $selected = array();
 
-	public $rules;
+	public $rules = '';
 	public $placeholder;
 
 	public $error = FALSE;
@@ -654,6 +654,19 @@ class Element {
 		$data['id'] = $this->uniquename;
 		$data['formname'] = $this->form->name;
 		$data['options'] = $this->options;
+		
+		// Check to see if this element is required
+		if(strpos($this->rules, 'required') !== FALSE)
+		{
+			// The field is required
+			$data['required_flag'] = $this->form->config['required_flag'];
+		}
+		else
+		{
+			// The field is not required
+			$data['required_flag'] = '';
+		}
+		
 
 		// Determine what template to use for this element
 		if(file_exists(APPPATH . '/views' . $template_dir . '_' . $this->name . '.php'))
