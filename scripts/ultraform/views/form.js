@@ -20,7 +20,8 @@ define([
         this.$el.toggleClass('ufo-changed', state=='changed');
         this.$el.toggleClass('ufo-unchanged', state=='unchanged');
 
-        that.$el.trigger('ufo_'+state, {
+        that.$el.trigger({
+          type: 'ufo_'+state,
           $element: that.$el,
           change: (that.model.get('changeState') == 'changed'),
           valid: (that.model.get('validationState') == 'valid'),
@@ -35,7 +36,8 @@ define([
         this.$el.toggleClass('ufo-valid', state=='valid');
         this.$el.toggleClass('ufo-invalid', state=='invalid');
 
-        that.$el.trigger('ufo_'+state, {
+        that.$el.trigger({
+          type: 'ufo_'+state,
           $element: that.$el,
           change: (that.model.get('changeState') == 'changed'),
           valid: (that.model.get('validationState') == 'valid'),

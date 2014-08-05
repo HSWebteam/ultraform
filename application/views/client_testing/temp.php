@@ -483,7 +483,9 @@ The following errors were encountered in the form:<br>
 	<script>var $base_url = "<?php echo base_url(); ?>"</script>
 	<!-- For testing -->
 	<script>
-
+$('#ufo-forms-33').on('valid', function(){console.log('valid')});
+$('#ufo-forms-33').on('pending', function(){console.log('pending')});
+$('#ufo-forms-33').on('invalid', function(){console.log('invalid')});
 	</script>
 
 </body>
