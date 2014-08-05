@@ -296,6 +296,10 @@ label.checkbox {
 	float:left;
 }
 
+.ufo-disabled {
+	color:red;
+}
+
 </style>
 </head>
 <body>
