@@ -1,5 +1,5 @@
 <div class="form-group">
-	<label for="<?php echo $name;?>" class="col-lg-3 control-label"><?php echo $label?>: </label>
+	<label for="<?php echo $name;?>" class="col-lg-3 control-label"><?php echo $label?><?php echo $required_flag;?>: </label>
 	<div class="col-lg-9">
 		<input id="<?php echo $id;?>" class="form-control" type="text" name="<?php echo $name;?>" placeholder="<?php echo $placeholder;?>" value="<?php echo $value; ?>">
 	</div>

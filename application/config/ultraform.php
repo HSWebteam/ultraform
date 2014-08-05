@@ -27,6 +27,9 @@ $config['template_dir'] = '/ultraform_templates/';
 | -------------------------------------------------------------------------
 */
 
+// Displays the value as a required flag. Useable in the templates.
+$config['required_flag'] = '*';
+
 // Client starts validating on
 $config['validate_on'] = 'keyup'; // Default: keyup
 

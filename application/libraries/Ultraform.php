@@ -231,6 +231,8 @@ class Ultraform {
 	 *
 	 * @param string $element_name name
 	 * @param array $value value
+	 * 
+	 * @deprecated 2014-08-05 Replaced by set_element_property()
 	 */
 	public function set_value($element_name, $value)
 	{
@@ -257,6 +259,38 @@ class Ultraform {
 		}
 	}
 
+	/**
+	 * Sets the value of a element on runtime
+	 *
+	 * @param string $element_name name
+	 * @param array $value value
+	 */
+	public function set_element_property($element_name, $property, $value)
+	{
+		// See if the element exists
+		if(array_key_exists($element_name, $this->elements))
+		{
+			// If this is a checkgroup then we use a different assignment method
+			if(is_array($value))
+			{
+				// These are the values for
+				$this->elements[$element_name]->set_checkgroup_values($value);
+			}
+			else
+			{
+				// Set property of element object
+				$this->elements[$element_name]->$property = $value;
+			}
+	
+			return TRUE;
+		}
+		else
+		{
+			// Return error if the element does not exist
+			return 'ERROR: No element with that name';
+		}
+	}	
+	
 	/**
 	 * Sets the options of a element on runtime
 	 *
@@ -588,7 +622,7 @@ class Element {
 	public $options = array();
 	public $selected = array();
 
-	public $rules;
+	public $rules = '';
 	public $placeholder;
 
 	public $error = FALSE;
@@ -654,6 +688,19 @@ class Element {
 		$data['id'] = $this->uniquename;
 		$data['formname'] = $this->form->name;
 		$data['options'] = $this->options;
+		
+		// Check to see if this element is required
+		if(strpos($this->rules, 'required') !== FALSE)
+		{
+			// The field is required
+			$data['required_flag'] = $this->form->config['required_flag'];
+		}
+		else
+		{
+			// The field is not required
+			$data['required_flag'] = '';
+		}
+		
 
 		// Determine what template to use for this element
 		if(file_exists(APPPATH . '/views' . $template_dir . '_' . $this->name . '.php'))

@@ -1,6 +1,6 @@
 <div class="form-group">
 	<div class="checkgroup">
-		<label for="<?php echo $name;?>" class="col-lg-3 control-label"><?php echo $label?>: </label>
+		<label for="<?php echo $name;?>" class="col-lg-3 control-label"><?php echo $label?><?php echo $required_flag;?>: </label>
 		<div class="col-lg-9">
 			
 			<?php foreach($options as $key => $option):?>
