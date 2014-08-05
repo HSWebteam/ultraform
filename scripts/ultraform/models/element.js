@@ -21,7 +21,8 @@ define([
       this.set({
         id: this.parentModel.get('domid') + '-' + attributes.name,
         validationState: 'unknown', // state after the last validation, can be valid, invalid or pending
-        validationError: 'unknown', // last validation error message or 'valid' or 'pending'
+        validationError: 'unknown', // last validation error message or 'valid' or 'pending',
+        validationSilency: 'silent', // when validation changes from silent to non-silent we need to update the elementError even if the input value stays the same
         changeState: 'unchanged',
         oldValue: this.get('value')
       }, {silent: true});
@@ -208,7 +209,7 @@ define([
             model._pendingValidations.push( validationResult );
 
             // update validationState
-            model.set({validationState:'pending', validationError:'pending'}, {silent: silent});
+            model.set({validationState:'pending', validationError:'pending', validationSilency: silent ? 'silent' : 'non-silent'}, {silent: silent});
           }
 
         }
@@ -242,7 +243,7 @@ define([
           model._pendingValidations.push( deferred );
 
           // update validation state
-          model.set({validationState:'pending', validationError:'pending'}, {silent: silent});
+          model.set({validationState:'pending', validationError:'pending', validationSilency: silent ? 'silent' : 'non-silent'}, {silent: silent});
           model.parentModel.updateState();
         }
       });
@@ -269,7 +270,8 @@ define([
         // if no validation errors were found: set validation state to valid
         model.set({
           validationState: isValid ? 'valid' : 'invalid',
-          validationError: isValid ? 'valid' : firstError
+          validationError: isValid ? 'valid' : firstError,
+          validationSilency: silent ? 'silent' : 'non-silent'
         }, {silent: silent});
         model.parentModel.updateState();
 

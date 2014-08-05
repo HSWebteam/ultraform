@@ -234,7 +234,7 @@ class Client_Testing extends CI_Controller {
 					'valid_emails' => '%s veld moet geldige emailadressen bevatten, gescheiden door komma\'s'
 				),
 				'config' => array(
-					'validate_on' => 'keyup',
+					'validate_on' => 'change',
 					'remove_empty' => FALSE,
 
 					'disable_submit' => TRUE, // disable the submit button when there are no unsaved changes or when there are validation errors
