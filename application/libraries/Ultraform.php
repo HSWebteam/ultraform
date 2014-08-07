@@ -410,7 +410,7 @@ class Ultraform {
 			// Set validation rules for all elements
 			foreach($this->elements as $element)
 			{
-				$this->CI->form_validation->set_rules($element->name, $element->name, $element->rules); //TODO: See if we don't need to get some sort of string for human readable error message
+				$this->CI->form_validation->set_rules($element->name, $element->label, $element->rules); //TODO: See if we don't need to get some sort of string for human readable error message
 			}
 
 			// Run validation
