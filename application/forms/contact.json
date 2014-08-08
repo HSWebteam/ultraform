@@ -40,6 +40,7 @@
 				"temaki": "Temaki",
 				"uramaki": "Uramaki"
 			},
+			"placeholder": "Choose a sushi type!",
 			"config": {
 				"hide_empty": "true"
 			}
