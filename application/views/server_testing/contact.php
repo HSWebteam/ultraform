@@ -40,6 +40,7 @@
 						Please leave your username and password for contacting.
 						<?php echo $contact_form->render('username');?>
 						<?php echo $contact_form->render('password');?>
+						<?php echo $contact_form->render('yo');?>
 						<?php echo $contact_form->render('address');?><br>
 						These are tests for different label sources.
 						<?php echo $contact_form->render('labeltest');?>

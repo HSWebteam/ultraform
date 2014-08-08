@@ -1,7 +1,7 @@
 <div class="form-group">
-	<label for="<?php echo $name;?>" class="col-lg-3 control-label"><?php echo $label;?><?php echo $required_flag;?>: </label>
+	<label for="<?php echo $e->name;?>" class="col-lg-3 control-label"><?php echo $e->label;?><?php echo $e->required;?>: </label>
 	<div class="col-lg-9">
-		<input id="<?php echo $id;?>" class="form-control" type="password" name="<?php echo $name;?>" value="<?php echo $value; ?>" placeholder="<?php echo $placeholder;?>">
+		<input id="<?php echo $e->id;?>" class="form-control" type="password" name="<?php echo $e->name;?>" value="<?php echo $e->value; ?>" placeholder="<?php echo $e->placeholder;?>">
 	</div>
-	<div id="<?php echo $id;?>_error" class="error"><?php echo $error_text;?></div>
+	<div id="<?php echo $e->id;?>_error" class="error"><?php echo $e->error_text;?></div>
 </div>

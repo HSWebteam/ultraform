@@ -11,7 +11,7 @@
         "username": {
         	"name": "username",
         	"type": "text",
-        	"rules": "required|min_length[5]|max_length[12]"
+        	"rules": "required|min_length[5]|max_length[12]"        	
         },
         "address": {
         	"name": "address",
@@ -43,6 +43,11 @@
 			"config": {
 				"hide_empty": "true"
 			}
+		},
+		"yo": {
+			"name": "yo",
+			"type": "text",
+			"something": "something"
 		},
 		"fish": {
 			"name": "fish",
