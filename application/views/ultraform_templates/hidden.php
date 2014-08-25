@@ -1,1 +1,1 @@
-<input id="<?php echo $id;?>" class="form-control" type="hidden" name="<?php echo $name;?>" placeholder="<?php echo $placeholder;?>" value="<?php echo $value; ?>">
+<input id="<?php echo $e->id;?>" class="form-control" type="hidden" name="<?php echo $e->name;?>" placeholder="<?php echo $e->placeholder;?>" value="<?php echo $e->value; ?>">

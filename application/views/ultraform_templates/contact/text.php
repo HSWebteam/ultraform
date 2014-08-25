@@ -1,5 +1,6 @@
 <div style="background-color: green; color: lightgreen;">
-	<label for="<?php echo $name;?>"><?php echo $label?>: </label>
-	<input id="<?php echo $id;?>" type="text" name="<?php echo $name;?>" placeholder="<?php echo $placeholder;?>" value="<?php echo $value; ?>">
-	<div id="<?php echo $id;?>_error" class="error"><?php echo $error_text;?></div>
+	<?php if(isset($e->something)):?>Yo voor <?php echo $e->name;?><?php endif;?>
+	<label for="<?php echo $e->name;?>"><?php echo $e->label?>: </label>
+	<input id="<?php echo $e->id;?>" type="text" name="<?php echo $e->name;?>" placeholder="<?php echo $e->placeholder;?>" value="<?php echo $e->value; ?>">
+	<div id="<?php echo $e->id;?>_error" class="error"><?php echo $e->error_text;?></div>
 </div>

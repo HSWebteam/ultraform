@@ -410,7 +410,7 @@ class Ultraform {
 			// Set validation rules for all elements
 			foreach($this->elements as $element)
 			{
-				$this->CI->form_validation->set_rules($element->name, $element->name, $element->rules); //TODO: See if we don't need to get some sort of string for human readable error message
+				$this->CI->form_validation->set_rules($element->name, $element->label, $element->rules); //TODO: See if we don't need to get some sort of string for human readable error message
 			}
 
 			// Run validation
@@ -602,9 +602,6 @@ class Ultraform {
  */
 class Element {
 
-	// CI object
-	public $CI;
-
 	public $id;
 	public $name;
 	public $uniquename; // Used when we need a unique reference to this element
@@ -612,7 +609,7 @@ class Element {
 
 	public $config = array();
 
-	// A refrence back to its parent Ultraform object
+	// A reference back to its parent Ultraform object
 	public $form;
 
 	// The type of the element
@@ -625,6 +622,8 @@ class Element {
 	public $rules = '';
 	public $placeholder;
 
+	public $required = FALSE;
+	
 	public $error = FALSE;
 	public $error_text;
 
@@ -633,9 +632,6 @@ class Element {
 	 */
 	public function __construct($form, $data)
 	{
-		// Get the CI instance
-		$this->CI =& get_instance();
-
 		// Assign parent form
 		$this->form = $form;
 
@@ -662,6 +658,7 @@ class Element {
 		// Set the label and placeholder for this element
 		$this->generate_label();
 		$this->generate_placeholder();
+		$this->set_required();
 
 		// Generate any options this element has
 		if(!empty($this->options))
@@ -678,45 +675,24 @@ class Element {
 		// Load the template data
 		$template_dir = $this->form->config['template_dir'];
 
-		// View data
-		$data = (array)$this;
-
-		// Create a data array to pass to the element view
-		$data['label'] = $this->label;
-		$data['placeholder'] = $this->placeholder;
-		$data['name'] = $this->name;
-		$data['id'] = $this->uniquename;
-		$data['formname'] = $this->form->name;
-		$data['options'] = $this->options;
+		// Assign this element to the template as $e
+		$data['e'] = $this;
 		
-		// Check to see if this element is required
-		if(strpos($this->rules, 'required') !== FALSE)
-		{
-			// The field is required
-			$data['required_flag'] = $this->form->config['required_flag'];
-		}
-		else
-		{
-			// The field is not required
-			$data['required_flag'] = '';
-		}
-		
-
 		// Determine what template to use for this element
 		if(file_exists(APPPATH . '/views' . $template_dir . '_' . $this->name . '.php'))
 		{
 			// Step 1: Check to see if the element itself has a unique template
-			$html = $this->CI->load->view($template_dir . '_' . $this->name, $data);
+			$html = $this->form->CI->load->view($template_dir . '_' . $this->name, $data, TRUE);
 		}
 		elseif(file_exists(APPPATH . '/views' . $template_dir . '/' . $this->form->name . '/' . $this->type . '.php'))
 		{
 			// Step 2: Check to see if the element has a template in this specific form
-			$html = $this->CI->load->view($template_dir . '/' . $this->form->name . '/' . $this->type, $data);
+			$html = $this->form->CI->load->view($template_dir . '/' . $this->form->name . '/' . $this->type, $data, TRUE);
 		}
 		else
 		{
 			// Step 3: If step 1 and 2 are FALSE then we use the default element template
-			$html = $this->CI->load->view($template_dir . $this->type, $data);
+			$html = $this->form->CI->load->view($template_dir . $this->type, $data, TRUE);
 		}
 
 		return $html;
@@ -883,6 +859,26 @@ class Element {
 		}
 	}
 
+	/**
+	 * Checks to see if this element is required
+	 */
+	public function set_required()
+	{
+		// Check to see if this element is required
+		if(strpos($this->rules, 'required') !== FALSE)
+		{
+			// The field is required
+			$this->required = $this->form->config['required_flag'];
+		}
+		else
+		{
+			// The field is not required
+			$this->required = FALSE;
+		}
+		
+		return TRUE;
+	}
+					
 	/**
 	 * To string
 	 */
