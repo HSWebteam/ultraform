@@ -16,6 +16,13 @@ define([
 
       var model = this;
 
+      // if set to true, the form will be marked changed, even if none of the elements on the form are changed
+      model.markedChanged = false;
+
+      // if set to true, the form will be marked valid, even if the state of the elements on the form suggest otherwise.
+      // This can be used to force save the form
+      model.markedValid = false;
+
       // create the view for the form
       var view = new FormView({
         model: this,
@@ -98,7 +105,8 @@ define([
         use_disabled_class: false, // use the disabled class on a button (forces twitter bootstrap to add the disabled property, disabling hover events and titles)
         submit_set_title: true, // show a basic tooltip on the submit button indicating why you cannot save
         submit_title_text: 'You cannot save because', // start text for simple tooltip
-        submit_title_nochange: 'there are no changes to save' // reason to display when there are no changes to save
+        submit_title_nochange: 'there are no changes to save', // reason to display when there are no changes to save
+        allow_save_on_nochange: false // start with not allowing saving, probably until we get the config from the server
       }
     },
 
@@ -109,17 +117,19 @@ define([
     // make submodels for every element in the returned object,
     // return the new attributes property for the model
     parse: function(response) {
-
       var formModel = this;
 
       this.set('messages', response.messages || {});
-
 
       // get the settings for this form
       this.set({
         settings: _.extend(this.get('settings'), response.config)
       });
 
+      // if allow_save_on_nochange is true, then set changestate to changed so we can save
+      if (this.get('settings').allow_save_on_nochange) {
+        this.set({changeState: 'changed'});
+      }
 
       // submitbutton names
       var submitButtonNames = this.submitButtonCollection.map( function(model){
@@ -143,6 +153,7 @@ define([
     // see if there are any invalid elements and act on it
     // this function needs to be called by the elementModels on any validation change
     updateState: function() {
+
       var model = this;
       var invalids = this.elementCollection.where({validationState:'invalid'});
 
@@ -152,7 +163,9 @@ define([
         validationErrors: invalids.map(function(invalid){return invalid.get('validationError');})
       };
 
-      if (invalidCount > 0) {
+      if (model.markedValid) {
+        set.validationState = 'valid';
+      } else if (invalidCount > 0) {
         set.validationState = 'invalid';
       } else if (this.elementCollection.findWhere({validationState:'pending'})) {
         set.validationState = 'pending';
@@ -162,7 +175,9 @@ define([
 
       var changeCount = this.elementCollection.where({changeState:'changed'}).length;
 
-      if (changeCount > 0) {
+      if (model.markedChanged) {
+        set.changeState = 'changed';
+      } else if (changeCount > 0 || model.get('settings').allow_save_on_nochange) {
         set.changeState = 'changed';
       } else {
         set.changeState = 'unchanged';
@@ -173,6 +188,26 @@ define([
       // this is usefull for animations where we want ErrorView to be changed before
       // the ErrorBlockView is changed
       _.defer(function(){model.set(set);});
+    },
+
+    // mark form valid (true) or unmark valid (false)
+    // in case of false, the form will only be valid if all fields are valid
+    // if case of true, the form will allways be valid
+    markValid: function(mark)
+    {
+      if (mark == null) mark = true;
+      this.markedValid = mark;
+      this.updateState();
+    },
+
+    // mark form changed (true) or unmark changed (false)
+    // in case of false, the form will only be seen as changed if a field is changed
+    // if case of true, the form will allways be seen as changed
+    markChanged: function(mark)
+    {
+      if (mark == null) mark = true;
+      this.markedChanged = mark;
+      this.updateState();
     }
 
   });
