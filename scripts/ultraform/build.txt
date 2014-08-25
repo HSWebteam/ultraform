@@ -1,0 +1,3 @@
+To build the ultraform-min.js file, execute the following command:
+
+r.js -o build.js

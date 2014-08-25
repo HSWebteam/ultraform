@@ -36,14 +36,15 @@ require([
       // return the object to create a form of
       return {
         domid: this.id,
-        id: idParts[2],
+        id: (idParts.length < 3) ? idParts[1] : idParts[2],
         name: idParts[1]
       };
 
     }).get(); // $().map().get() creates an array of return values
 
     // create a FormModel for every form while adding it to a new FormCollection
-    new FormCollection( collectionData );
+    // register "ufo_formcollection" on the window object to make it possible for users to call the collection
+    window.ufo_formcollection = new FormCollection( collectionData );
   });
 
 
