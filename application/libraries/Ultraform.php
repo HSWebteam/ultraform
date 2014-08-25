@@ -20,6 +20,9 @@ class Ultraform {
 	// JSON source of the form
 	public $source = NULL;
 
+	// Store code if input is a JSON string rather than the JSON file name
+	public $json = NULL;
+
 	// Language data
 	public $lang = NULL;
 
@@ -41,6 +44,17 @@ class Ultraform {
 		{
 			// This is the codeigniter loader, ignore it
 			return FALSE;
+		}
+
+		// WEBTEAM EDIT: changed functionality unique to Ways of Working: 
+		// check if the form is JSON rather than a file name
+		// to support dynamic forms where the JSON code is preprocessed in the controller
+		$jsontest = $form;
+		json_decode($jsontest);
+		if(json_last_error() == JSON_ERROR_NONE)
+		{
+			// store json in public var
+			$this->json = $form;
 		}
 
 		$this->source = $form;
@@ -125,8 +139,16 @@ class Ultraform {
 	 */
 	public function load()
 	{
-		// Load the form data using forms_dir and forms_ext from the config
-		$data = file_get_contents($this->config['forms_dir'] . $this->source . $this->config['forms_ext']);
+		if($this->json === NULL)
+		{
+			// Load the form data using forms_dir and forms_ext from the config
+			$data = file_get_contents($this->config['forms_dir'] . $this->source . $this->config['forms_ext']);
+		}
+		else
+		{
+			// Load the form data from the stored json
+			$data = $this->json;
+		}		
 
 		// Decode the JSON, return objects
 		$data = json_decode($data);
@@ -138,11 +160,11 @@ class Ultraform {
 			echo 'Form ' . $this->name . ' was empty.';
 			exit;
 		}
-
+		
 		// Try to load a language file for this form
-		if(file_exists($this->CI->input->server('DOCUMENT_ROOT') . '/' . APPPATH . 'language/' . $this->CI->config->item('language') . '/ufo_' . $this->source . '_lang.php'))
+		if(file_exists($this->CI->input->server('DOCUMENT_ROOT') . '/' . APPPATH . 'language/' . $this->CI->config->item('language') . '/ufo_' . $this->name . '_lang.php'))
 		{
-			$this->lang = $this->CI->lang->load('ufo_' . $this->source, '' , TRUE);
+			$this->lang = $this->CI->lang->load('ufo_' . $this->name, '' , TRUE);
 		}
 
 		// Load config for this form
@@ -385,7 +407,8 @@ class Ultraform {
 				}
 			}
 
-			return 'No element with that name';
+			// WEBTEAM EDIT: return empty tring to enable dynamic forms with selective fields.
+			return ''; // 'No element with that name';
 		}
 	}
 
@@ -410,7 +433,7 @@ class Ultraform {
 			// Set validation rules for all elements
 			foreach($this->elements as $element)
 			{
-				$this->CI->form_validation->set_rules($element->name, $element->label, $element->rules); //TODO: See if we don't need to get some sort of string for human readable error message
+				$this->CI->form_validation->set_rules($element->name, $element->name, $element->rules); //TODO: See if we don't need to get some sort of string for human readable error message
 			}
 
 			// Run validation
@@ -677,7 +700,7 @@ class Element {
 
 		// Assign this element to the template as $e
 		$data['e'] = $this;
-		
+
 		// Determine what template to use for this element
 		if(file_exists(APPPATH . '/views' . $template_dir . '_' . $this->name . '.php'))
 		{
@@ -791,7 +814,7 @@ class Element {
 		{
 			$this->label = $this->name;
 		}
-
+		
 		return $this->label;
 	}
 
@@ -822,6 +845,7 @@ class Element {
 	 */
 	public function set_options($options)
 	{
+
 		$this->options = $options;
 
 		return TRUE;
