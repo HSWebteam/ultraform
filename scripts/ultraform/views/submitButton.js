@@ -55,7 +55,7 @@ define([
       if (! settings.disable_submit) return;
 
 			// change button display
-      if (validationState == 'valid' && changeState == 'changed') {
+      if (validationState == 'valid' && changeState == 'changed' || settings.allow_save_on_nochange ) {
 
         this.$el.removeClass(settings.use_disabled_class ? 'ufo-disabled disabled' : 'ufo-disabled')
                 .addClass(settings.use_disabled_class ? 'ufo-enabled enabled' : 'ufo-enabled');

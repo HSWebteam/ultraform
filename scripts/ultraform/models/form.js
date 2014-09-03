@@ -16,9 +16,6 @@ define([
 
       var model = this;
 
-      // if set to true, the form will be marked changed, even if none of the elements on the form are changed
-      model.markedChanged = false;
-
       // if set to true, the form will be marked valid, even if the state of the elements on the form suggest otherwise.
       // This can be used to force save the form
       model.markedValid = false;
@@ -126,11 +123,6 @@ define([
         settings: _.extend(this.get('settings'), response.config)
       });
 
-      // if allow_save_on_nochange is true, then set changestate to changed so we can save
-      if (this.get('settings').allow_save_on_nochange) {
-        this.set({markChanged: true});
-      }
-
       // submitbutton names
       var submitButtonNames = this.submitButtonCollection.map( function(model){
         return model.get('el').name;
@@ -175,9 +167,7 @@ define([
 
       var changeCount = this.elementCollection.where({changeState:'changed'}).length;
 
-      if (model.markedChanged) {
-        set.changeState = 'changed';
-      } else if (changeCount > 0 || model.get('settings').allow_save_on_nochange) {
+      if (changeCount > 0) {
         set.changeState = 'changed';
       } else {
         set.changeState = 'unchanged';
@@ -197,16 +187,6 @@ define([
     {
       if (mark == null) mark = true;
       this.markedValid = mark;
-      this.updateState();
-    },
-
-    // mark form changed (true) or unmark changed (false)
-    // in case of false, the form will only be seen as changed if a field is changed
-    // if case of true, the form will allways be seen as changed
-    markChanged: function(mark)
-    {
-      if (mark == null) mark = true;
-      this.markedChanged = mark;
       this.updateState();
     }
 
