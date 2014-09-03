@@ -76,7 +76,7 @@ define([
       }
       else {
 
-        var modelValueArray = (_.isArray(modelValue)) ? modelValue : [modelValue];
+        var modelValueArray = (_.isArray(modelValue)) ? modelValue : [modelValue + ''];
 
         if (modelValue === null || typeof modelValue == 'undefined') {
           // the model did not give a value

@@ -128,7 +128,7 @@ define([
 
       // if allow_save_on_nochange is true, then set changestate to changed so we can save
       if (this.get('settings').allow_save_on_nochange) {
-        this.set({changeState: 'changed'});
+        this.set({markChanged: true});
       }
 
       // submitbutton names

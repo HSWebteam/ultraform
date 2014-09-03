@@ -9,7 +9,7 @@ define([
     constructor: function(){
       Backbone.View.apply( this, arguments );
       // disable button to prevent clicks before config is loaded
-      this.$el.addClass('ufo-disabled disabled');
+      this.$el.addClass('ufo-disabled disabled').removeClass('ufo-enabled enabled');
     },
 
 		initialize: function(){
@@ -47,7 +47,7 @@ define([
       var originalColor = $el.css('color');
 
 			// update the button class to reflect the state
-			$el.removeClass( 'ufo-valid ufo-invalid ufo-changed ufo-unchanged ufo-pending ufo-disabled disabled' );
+			$el.removeClass( 'ufo-valid ufo-invalid ufo-changed ufo-unchanged ufo-pending ufo-disabled disabled ufo-enabled enabled' );
 			$el.addClass( 'ufo-' + changeState );
 			$el.addClass( 'ufo-' + validationState );
 
@@ -57,7 +57,8 @@ define([
 			// change button display
       if (validationState == 'valid' && changeState == 'changed') {
 
-        this.$el.removeClass(settings.use_disabled_class ? 'ufo-disabled disabled' : 'ufo-disabled');
+        this.$el.removeClass(settings.use_disabled_class ? 'ufo-disabled disabled' : 'ufo-disabled')
+                .addClass(settings.use_disabled_class ? 'ufo-enabled enabled' : 'ufo-enabled');
 
         // remove title
         if (settings.submit_set_title)
@@ -67,7 +68,8 @@ define([
       else
       {
         // form is invalid or there are not changes to save --> set button to disabled
-        this.$el.addClass(settings.use_disabled_class ? 'ufo-disabled disabled' : 'ufo-disabled');
+        this.$el.addClass(settings.use_disabled_class ? 'ufo-disabled disabled' : 'ufo-disabled')
+                .removeClass(settings.use_disabled_class ? 'ufo-enabled enabled' : 'ufo-enabled');
 
         // update current tooltip
         if (settings.submit_set_title) {
