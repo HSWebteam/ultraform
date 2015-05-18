@@ -140,7 +140,7 @@ class Ultraform {
 		}
 
 		// Try to load a language file for this form
-		if(file_exists($this->CI->input->server('DOCUMENT_ROOT') . '/' . APPPATH . 'language/' . $this->CI->config->item('language') . '/ufo_' . $this->source . '_lang.php'))
+		if(file_exists(FCPATH . APPPATH . 'language/' . $this->CI->config->item('language') . '/ufo_' . $this->source . '_lang.php'))
 		{
 			$this->lang = $this->CI->lang->load('ufo_' . $this->source, '' , TRUE);
 		}
